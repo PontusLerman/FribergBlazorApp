@@ -1,0 +1,6 @@
+@FribergWebAPI_HostAddress = http://localhost:5187
+
+GET {{FribergWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
