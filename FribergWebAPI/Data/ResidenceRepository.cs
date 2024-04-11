@@ -14,7 +14,7 @@ namespace FribergWebAPI.Data
 
 		public ResidenceRepository(ApplicationDbContext context)
 		{
-			context = context;
+			this.context = context;
 		}
 		
 		public async Task<IEnumerable<Residence>> GetAll()
