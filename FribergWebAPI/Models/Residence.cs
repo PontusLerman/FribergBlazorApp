@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FribergWebAPI.Models
 {
@@ -13,7 +9,7 @@ namespace FribergWebAPI.Models
         public string? Municipality { get; set; }
         public decimal StartingPrice { get; set; }
         public decimal LivingArea { get; set; }
-        public decimal Biarea { get; set; }
+        public decimal BiArea { get; set; }
         public decimal PlotArea { get; set; }
         public string? ObjectDescription { get; set; }
         public int NumberOfRooms { get; set; }

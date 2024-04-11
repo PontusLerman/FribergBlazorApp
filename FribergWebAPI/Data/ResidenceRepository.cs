@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace FribergWebAPI.Data
 {
 	public class ResidenceRepository : IResidence
 	{
-		 private readonly ApplicationDbContext context;
+		private readonly ApplicationDbContext context;
 
 		public ResidenceRepository(ApplicationDbContext context)
 		{

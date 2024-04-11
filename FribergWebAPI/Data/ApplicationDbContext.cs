@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+	: base(options){}
 
-    public DbSet<Residence> Residences { get; set; }
+	public DbSet<Residence> Residences { get; set; }
 
 }
