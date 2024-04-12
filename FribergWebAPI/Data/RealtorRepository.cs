@@ -1,7 +1,9 @@
 ﻿using FribergWebAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergWebAPI.Data
 {
+    //Pontus
     public class RealtorRepository : IRealtor
     {
         private readonly ApplicationDbContext applicationDbContext;
@@ -10,24 +12,33 @@ namespace FribergWebAPI.Data
         {
             this.applicationDbContext = applicationDbContext;
         }
-        public Task AddAsync(Realtor realtor)
+        public async Task AddAsync(Realtor realtor)
         {
-            throw new NotImplementedException();
+            await applicationDbContext.AddAsync<Realtor>(realtor);
+            await applicationDbContext.SaveChangesAsync();
+            
         }
 
-        public Task DeleteAsync(Realtor realtor)
+        public async Task DeleteAsync(Realtor realtor)
         {
-            throw new NotImplementedException();
+            applicationDbContext.Remove<Realtor>(realtor);
+            await applicationDbContext.SaveChangesAsync();
         }
 
-        public Task<Realtor> GetByIdAsync(int id)
+        public async Task<IEnumerable<Realtor>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await applicationDbContext.Set<Realtor>().ToListAsync();
         }
 
-        public Task UpdateAsync(Realtor realtor)
+        public async Task<Realtor> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await applicationDbContext.Set<Realtor>().FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task UpdateAsync(Realtor realtor)
+        {
+            applicationDbContext.Update<Realtor>(realtor);
+            await applicationDbContext.SaveChangesAsync();
         }
     }
 }

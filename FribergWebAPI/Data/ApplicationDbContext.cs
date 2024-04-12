@@ -9,6 +9,7 @@ namespace FribergWebAPI.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options){ }
 
+        //Pontus
         public DbSet<Realtor> realtors { get; set; }
     }
 }
