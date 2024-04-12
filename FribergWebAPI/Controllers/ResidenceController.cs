@@ -17,7 +17,7 @@ namespace FribergWebAPI.Controllers
 			this.context = context;
 		}
 
-		// GET: api/Bostad
+		// GET: api/Residence
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Residence>>> GetResidence()
 		{
@@ -25,7 +25,7 @@ namespace FribergWebAPI.Controllers
 			return Ok(residence);
 		}
 
-		// GET: api/Bostad/5
+		// GET: api/Residence/5
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Residence>> GetResidence(int id)
 		{
@@ -39,7 +39,7 @@ namespace FribergWebAPI.Controllers
 			return Ok(residence);
 		}
 
-		// POST: api/Bostad
+		// POST: api/Residence
 		[HttpPost]
 		public async Task<ActionResult<Residence>> PostResidence(Residence residence)
 		{
@@ -47,7 +47,7 @@ namespace FribergWebAPI.Controllers
 			return CreatedAtAction(nameof(GetResidence), new { id = residence.Id }, residence);
 		}
 
-		// PUT: api/Bostad/5
+		// PUT: api/Residence/5
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutResidence(int id, Residence residence)
 		{
@@ -60,7 +60,7 @@ namespace FribergWebAPI.Controllers
 			return NoContent();
 		}
 
-		// DELETE: api/Bostad/5
+		// DELETE: api/Residence/5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteResidence(int id)
 		{
