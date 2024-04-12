@@ -9,9 +9,9 @@ namespace FribergWebAPI.Controllers
 	public class ResidenceController : ControllerBase
 	{
 		private readonly ApplicationDbContext context;
-		private readonly ResidenceRepository residenceRepository;
+		private readonly IResidence residenceRepository;
 
-		public ResidenceController(ApplicationDbContext context, ResidenceRepository residenceRepository)
+		public ResidenceController(ApplicationDbContext context, IResidence residenceRepository)
 		{
 			this.residenceRepository = residenceRepository;
 			this.context = context;

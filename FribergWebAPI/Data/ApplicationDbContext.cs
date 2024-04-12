@@ -7,5 +7,4 @@ public class ApplicationDbContext : DbContext
 	: base(options){}
 
 	public DbSet<Residence> Residences { get; set; }
-
 }
