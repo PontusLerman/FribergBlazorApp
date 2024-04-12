@@ -12,27 +12,28 @@ namespace FribergWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AgenciesController : ControllerBase
+    public class AgenciesController : ControllerBase //author: Johan Krångh
     {
-        private readonly FribergAPIContext _context;
+        private readonly IAgency agencyRepo;
 
-        public AgenciesController(FribergAPIContext context)
+        public AgenciesController(IAgency agencyRepo)
         {
-            _context = context;
+            this.agencyRepo = agencyRepo;
         }
 
         // GET: api/Agencies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Agency>>> GetAgency()
         {
-            return await _context.Agency.ToListAsync();
+            var agencies = await agencyRepo.GetAllAsync();
+            return Ok(agencies);
         }
 
         // GET: api/Agencies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Agency>> GetAgency(int id)
         {
-            var agency = await _context.Agency.FindAsync(id);
+            var agency = await agencyRepo.GetByIdAsync(id);
 
             if (agency == null)
             {
@@ -52,23 +53,7 @@ namespace FribergWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(agency).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AgencyExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await agencyRepo.UpdateAsync(agency);
 
             return NoContent();
         }
@@ -78,8 +63,7 @@ namespace FribergWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Agency>> PostAgency(Agency agency)
         {
-            _context.Agency.Add(agency);
-            await _context.SaveChangesAsync();
+            await agencyRepo.AddAsync(agency);
 
             return CreatedAtAction("GetAgency", new { id = agency.AgencyId }, agency);
         }
@@ -88,21 +72,15 @@ namespace FribergWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAgency(int id)
         {
-            var agency = await _context.Agency.FindAsync(id);
+            var agency = await agencyRepo.GetByIdAsync(id);
             if (agency == null)
             {
                 return NotFound();
             }
 
-            _context.Agency.Remove(agency);
-            await _context.SaveChangesAsync();
+            await agencyRepo.DeleteAsync(agency);
 
             return NoContent();
-        }
-
-        private bool AgencyExists(int id)
-        {
-            return _context.Agency.Any(e => e.AgencyId == id);
         }
     }
 }
