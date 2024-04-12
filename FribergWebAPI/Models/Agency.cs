@@ -2,8 +2,9 @@
 {
     public class Agency
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string LogoURL { get; set; } = "";
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public string AgencyDescription { get; set; }
+        public string AgencyLogoURL { get; set; } = "";
     }
 }

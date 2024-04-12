@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using FribergWebAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<FribergAPIContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FribergAPIContext") ?? throw new InvalidOperationException("Connection string 'FribergAPIContext' not found.")));
 
 // Add services to the container.
 
