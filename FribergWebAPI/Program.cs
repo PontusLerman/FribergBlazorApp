@@ -19,10 +19,10 @@ builder.Services.AddScoped<ICategory, CategoryRepository>();
 
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
+builder.Services.AddScoped<IMunicipality, MunicipalityRepository>();
 
 //author: Pontus
 builder.Services.AddScoped<IRealtor, RealtorRepository>();
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
