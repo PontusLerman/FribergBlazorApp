@@ -8,13 +8,11 @@ namespace FribergWebAPI.Controllers
 	[Route("api/[controller]")]
 	public class ResidenceController : ControllerBase
 	{
-		private readonly ApplicationDbContext context;
 		private readonly IResidence residenceRepository;
 
-		public ResidenceController(ApplicationDbContext context, IResidence residenceRepository)
+		public ResidenceController(IResidence residenceRepository)
 		{
 			this.residenceRepository = residenceRepository;
-			this.context = context;
 		}
 
 		// GET: api/Residence
