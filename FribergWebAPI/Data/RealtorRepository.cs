@@ -15,8 +15,7 @@ namespace FribergWebAPI.Data
         public async Task AddAsync(Realtor realtor)
         {
             await applicationDbContext.AddAsync<Realtor>(realtor);
-            await applicationDbContext.SaveChangesAsync();
-            
+            await applicationDbContext.SaveChangesAsync();            
         }
 
         public async Task DeleteAsync(Realtor realtor)
@@ -27,12 +26,13 @@ namespace FribergWebAPI.Data
 
         public async Task<IEnumerable<Realtor>> GetAllAsync()
         {
-            return await applicationDbContext.Set<Realtor>().ToListAsync();
+            return await applicationDbContext.Realtors.OrderBy(r=>r.FirstName).ToListAsync();
+            //return await applicationDbContext.Set<Realtor>().ToListAsync();
         }
 
         public async Task<Realtor> GetByIdAsync(int id)
         {
-            return await applicationDbContext.Set<Realtor>().FirstOrDefaultAsync(x => x.Id == id);
+            return await applicationDbContext.Realtors.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task UpdateAsync(Realtor realtor)

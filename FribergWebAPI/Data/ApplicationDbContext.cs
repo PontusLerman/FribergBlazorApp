@@ -12,7 +12,7 @@ namespace FribergWebAPI.Data
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options){ }
 
 		//author: Pontus
-		public DbSet<Realtor> realtors { get; set; }
+		public DbSet<Realtor> Realtors { get; set; }
 		
 		//author: Johan
 		public DbSet<FribergWebAPI.Models.Agency> Agency { get; set; } = default!;
