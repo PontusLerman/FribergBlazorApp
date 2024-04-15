@@ -1,4 +1,3 @@
-
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +11,11 @@ namespace FribergWebAPI.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options){ }
 
-        //Pontus
+        //author: Pontus
         public DbSet<Realtor> realtors { get; set; }
+        //author: Johan
         public DbSet<FribergWebAPI.Models.Agency> Agency { get; set; } = default!;
+        //author: Christian
+        public DbSet<Residence> Residences { get; set; }
     }
 }

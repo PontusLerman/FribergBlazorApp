@@ -3,9 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using FribergWebAPI.Data;
 using FribergWebAPI.Models;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FribergAPIContext") ?? throw new InvalidOperationException("Connection string 'FribergAPIContext' not found.")));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
 
 // Add services to the container.
 
@@ -14,6 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 builder.Services.AddControllers();
+//author: Christian
+builder.Services.AddScoped<IResidence, ResidenceRepository>();
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
 //author: Pontus
@@ -24,16 +30,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
