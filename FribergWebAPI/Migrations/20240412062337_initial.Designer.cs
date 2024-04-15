@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FribergWebAPI.Migrations
 {
-    [DbContext(typeof(FribergAPIContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240412062337_initial")]
     partial class initial
     {

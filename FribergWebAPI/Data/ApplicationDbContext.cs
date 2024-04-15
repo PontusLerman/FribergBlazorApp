@@ -7,9 +7,9 @@ using FribergWebAPI.Models;
 
 namespace FribergWebAPI.Data
 {
-    public class FribergAPIContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public FribergAPIContext (DbContextOptions<FribergAPIContext> options)
+        public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }

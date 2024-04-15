@@ -5,39 +5,39 @@ namespace FribergWebAPI.Data
 {
     public class AgencyRepository : IAgency //author: Johan Krångh
     {
-        private readonly FribergAPIContext fribergAPIContext;
+        private readonly ApplicationDbContext applicationDbContext;
 
-        public AgencyRepository(FribergAPIContext fribergAPIContext)
+        public AgencyRepository(ApplicationDbContext applicationDbContext)
         {
-            this.fribergAPIContext = fribergAPIContext;
+            this.applicationDbContext = applicationDbContext;
         }
 
         public async Task AddAsync(Agency agency)
         {
-            await fribergAPIContext.Agency.AddAsync(agency);
-            await fribergAPIContext.SaveChangesAsync();
+            await applicationDbContext.Agency.AddAsync(agency);
+            await applicationDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Agency agency)
         {
-            fribergAPIContext.Agency.Remove(agency);
-            await fribergAPIContext.SaveChangesAsync();
+            applicationDbContext.Agency.Remove(agency);
+            await applicationDbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Agency>> GetAllAsync()
         {
-            return await fribergAPIContext.Agency.ToListAsync();
+            return await applicationDbContext.Agency.ToListAsync();
         }
 
         public async Task<Agency> GetByIdAsync(int id)
         {
-            return await fribergAPIContext.Agency.FirstOrDefaultAsync(x => x.AgencyId == id);
+            return await applicationDbContext.Agency.FirstOrDefaultAsync(x => x.AgencyId == id);
         }
 
         public async Task UpdateAsync(Agency agency)
         {
-            fribergAPIContext.Update(agency);
-            await fribergAPIContext.SaveChangesAsync();
+            applicationDbContext.Update(agency);
+            await applicationDbContext.SaveChangesAsync();
         }
     }
 }
