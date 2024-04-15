@@ -17,5 +17,6 @@ namespace FribergWebAPI.Data
         public DbSet<FribergWebAPI.Models.Agency> Agency { get; set; } = default!;
         //author: Christian
         public DbSet<Residence> Residences { get; set; }
+        public DbSet<FribergWebAPI.Models.Municipality> Municipality { get; set; } = default!;
     }
 }

@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IResidence, ResidenceRepository>();
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
+builder.Services.AddScoped<IMunicipality, MunicipalityRepository>();
 //author: Pontus
 builder.Services.AddScoped<IRealtor, RealtorRepository>();
 
