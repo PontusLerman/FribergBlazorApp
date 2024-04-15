@@ -15,25 +15,27 @@ namespace FribergWebAPI.Controllers
     [ApiController]
     public class RealtorsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
 
-        public RealtorsController(ApplicationDbContext context)
-        {
-            _context = context;
+        private readonly IRealtor realtorRepository;
+
+        public RealtorsController(IRealtor realtorRepository)
+        {            
+            this.realtorRepository = realtorRepository;
         }
 
         // GET: api/Realtors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Realtor>>> Getrealtors()
         {
-            return await _context.realtors.ToListAsync();
+            var realtors = await realtorRepository.GetAllAsync();
+            return Ok(realtors);
         }
 
         // GET: api/Realtors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Realtor>> GetRealtor(int id)
         {
-            var realtor = await _context.realtors.FindAsync(id);
+            var realtor = await realtorRepository.GetByIdAsync(id);
 
             if (realtor == null)
             {
@@ -52,16 +54,16 @@ namespace FribergWebAPI.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(realtor).State = EntityState.Modified;
+        
+            //_context.Entry(realtor).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await realtorRepository.UpdateAsync(realtor);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RealtorExists(id))
+                if (!await RealtorExists(id))
                 {
                     return NotFound();
                 }
@@ -70,7 +72,6 @@ namespace FribergWebAPI.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
@@ -79,9 +80,7 @@ namespace FribergWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Realtor>> PostRealtor(Realtor realtor)
         {
-            _context.realtors.Add(realtor);
-            await _context.SaveChangesAsync();
-
+            await realtorRepository.AddAsync(realtor);
             return CreatedAtAction("GetRealtor", new { id = realtor.Id }, realtor);
         }
 
@@ -89,21 +88,24 @@ namespace FribergWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRealtor(int id)
         {
-            var realtor = await _context.realtors.FindAsync(id);
+            var realtor = await realtorRepository.GetByIdAsync(id); //_context.realtors.FindAsync(id);
             if (realtor == null)
             {
                 return NotFound();
             }
 
-            _context.realtors.Remove(realtor);
-            await _context.SaveChangesAsync();
+            await realtorRepository.DeleteAsync(realtor);
 
             return NoContent();
         }
 
-        private bool RealtorExists(int id)
+        private async Task<bool> RealtorExists(int id)
         {
-            return _context.realtors.Any(e => e.Id == id);
+            if(await realtorRepository.GetByIdAsync(id) != null) 
+            {  
+                return true; 
+            }
+            return false;
         }
     }
 }
