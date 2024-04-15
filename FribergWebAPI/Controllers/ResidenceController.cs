@@ -2,6 +2,7 @@ using FribergWebAPI.Data;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
+//author: Christian
 namespace FribergWebAPI.Controllers
 {
 	[ApiController]
