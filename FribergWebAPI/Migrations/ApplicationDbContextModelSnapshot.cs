@@ -53,13 +53,13 @@ namespace FribergWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CategoryName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("FribergWebAPI.Models.Municipality", b =>
@@ -102,8 +102,9 @@ namespace FribergWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Phone")
-                        .HasColumnType("int");
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Picture")
                         .IsRequired()
@@ -113,7 +114,7 @@ namespace FribergWebAPI.Migrations
 
                     b.HasIndex("AgencyId");
 
-                    b.ToTable("realtors");
+                    b.ToTable("Realtors");
                 });
 
             modelBuilder.Entity("FribergWebAPI.Models.Residence", b =>
@@ -154,10 +155,6 @@ namespace FribergWebAPI.Migrations
                     b.Property<decimal>("OperatingCostPerYear")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Pictures")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("PlotArea")
                         .HasColumnType("decimal(18,2)");
 
@@ -181,7 +178,7 @@ namespace FribergWebAPI.Migrations
             modelBuilder.Entity("FribergWebAPI.Models.Realtor", b =>
                 {
                     b.HasOne("FribergWebAPI.Models.Agency", "Agency")
-                        .WithMany("Employees")
+                        .WithMany()
                         .HasForeignKey("AgencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -204,7 +201,7 @@ namespace FribergWebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("FribergWebAPI.Models.Realtor", "Realtor")
-                        .WithMany("ResidenceList")
+                        .WithMany()
                         .HasForeignKey("RealtorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -214,16 +211,6 @@ namespace FribergWebAPI.Migrations
                     b.Navigation("Municipality");
 
                     b.Navigation("Realtor");
-                });
-
-            modelBuilder.Entity("FribergWebAPI.Models.Agency", b =>
-                {
-                    b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("FribergWebAPI.Models.Realtor", b =>
-                {
-                    b.Navigation("ResidenceList");
                 });
 #pragma warning restore 612, 618
         }
