@@ -15,7 +15,7 @@ namespace FribergWebAPI.Data
 		
 		public async Task<IEnumerable<Residence>> GetAll()
 		{
-			return await applicationDbContext.Residences.Include(x=>x.Municipality).Include(x => x.Category).Include(x => x.Realtor).ThenInclude(x=>x.Agency).ToListAsync();
+			return await applicationDbContext.Residences.Include(x=>x.Municipality).Include(x => x.Category).Include(x => x.Pictures).Include(x => x.Realtor).ThenInclude(x=>x.Agency).ToListAsync();
 		}
 
 		public async Task<Residence> GetById(int id)

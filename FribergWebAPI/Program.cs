@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using FribergWebAPI.Data;
 using FribergWebAPI.Models;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+				.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 //author: Christian
 builder.Services.AddScoped<IResidence, ResidenceRepository>();
@@ -27,7 +30,6 @@ builder.Services.AddScoped<IRealtor, RealtorRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var app = builder.Build();
 

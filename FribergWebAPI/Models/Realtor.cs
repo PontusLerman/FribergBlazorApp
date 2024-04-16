@@ -12,6 +12,6 @@ namespace FribergWebAPI.Models
         public string Phone { get; set; }
         public string Picture { get; set; }
         public Agency Agency { get; set; }
-        //public virtual List<Residence> ResidenceList { get; set; }
+        public virtual List<Residence> ResidenceList { get; set; }
     }
 }

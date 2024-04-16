@@ -21,5 +21,6 @@ namespace FribergWebAPI.Data
 		//author: Christian
 		public DbSet<Residence> Residences { get; set; }
 		public DbSet<Category> Categories { get; set; }
+	    public DbSet<FribergWebAPI.Models.ResidencePicture> ResidencePicture { get; set; } = default!;
 	}
 }

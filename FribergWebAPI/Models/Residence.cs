@@ -17,7 +17,7 @@ namespace FribergWebAPI.Models
 		public decimal MonthlyFee { get; set; }
 		public decimal OperatingCostPerYear { get; set; }
 		public int ConstructionYear { get; set; }
-		//public List<string> Pictures { get; set; }
+		public virtual List<ResidencePicture> Pictures { get; set; }
 		public Realtor Realtor { get; set; }
 	}
 }
