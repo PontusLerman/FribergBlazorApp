@@ -1,5 +1,6 @@
 using FribergWebAPI.Models;
 
+//author: Christian
 namespace FribergWebAPI.Data
 {
 	public interface ICategory

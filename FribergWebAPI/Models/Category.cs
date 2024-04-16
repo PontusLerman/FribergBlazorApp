@@ -1,5 +1,6 @@
 ﻿namespace FribergWebAPI.Models
 {
+	//author: Christian
 	public class Category
 	{
 		public int Id { get; set; }

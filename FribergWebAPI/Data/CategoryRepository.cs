@@ -1,6 +1,7 @@
 using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
+//author: Christian
 namespace FribergWebAPI.Data
 {
 	public class CategoryRepository : ICategory
@@ -12,7 +13,7 @@ namespace FribergWebAPI.Data
 			this.applicationDbContext = applicationDbContext;
 		}
 
-        public async Task<IEnumerable<Category>> GetAll()
+		public async Task<IEnumerable<Category>> GetAll()
 		{
 			return await applicationDbContext.Categories.ToListAsync();
 		}
@@ -43,5 +44,5 @@ namespace FribergWebAPI.Data
 				await applicationDbContext.SaveChangesAsync();
 			}
 		}
-    }
+	}
 }
