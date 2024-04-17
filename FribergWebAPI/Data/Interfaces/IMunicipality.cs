@@ -1,6 +1,6 @@
 ﻿using FribergWebAPI.Models;
 
-namespace FribergWebAPI.Data
+namespace FribergWebAPI.Data.Interfaces
 {
     public interface IMunicipality //author: Johan
     {

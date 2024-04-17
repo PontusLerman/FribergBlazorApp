@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FribergWebAPI.Data;
 using FribergWebAPI.Models;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text;
+using FribergWebAPI.Data.Interfaces;
 
 namespace FribergWebAPI.Controllers
 {

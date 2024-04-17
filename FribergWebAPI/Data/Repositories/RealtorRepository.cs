@@ -1,7 +1,8 @@
-﻿using FribergWebAPI.Models;
+﻿using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FribergWebAPI.Data
+namespace FribergWebAPI.Data.Repositories
 {
     //Pontus
     public class RealtorRepository : IRealtor
@@ -14,20 +15,20 @@ namespace FribergWebAPI.Data
         }
         public async Task AddAsync(Realtor realtor)
         {
-            await applicationDbContext.AddAsync<Realtor>(realtor);
+            await applicationDbContext.AddAsync(realtor);
             applicationDbContext.Entry(realtor.Agency).State = EntityState.Unchanged;
-            await applicationDbContext.SaveChangesAsync();            
+            await applicationDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Realtor realtor)
         {
-            applicationDbContext.Remove<Realtor>(realtor);
+            applicationDbContext.Remove(realtor);
             await applicationDbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Realtor>> GetAllAsync()
-        {    
-            return await applicationDbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r=>r.FirstName).ToListAsync();
+        {
+            return await applicationDbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r => r.FirstName).ToListAsync();
             //return await applicationDbContext.Set<Realtor>().ToListAsync();
         }
 
@@ -38,7 +39,7 @@ namespace FribergWebAPI.Data
 
         public async Task UpdateAsync(Realtor realtor)
         {
-            applicationDbContext.Update<Realtor>(realtor);
+            applicationDbContext.Update(realtor);
             await applicationDbContext.SaveChangesAsync();
         }
     }

@@ -4,6 +4,8 @@ using FribergWebAPI.Data;
 using FribergWebAPI.Models;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using FribergWebAPI.Data.Repositories;
+using FribergWebAPI.Data.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,7 @@ builder.Services.AddScoped<ICategory, CategoryRepository>();
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
 builder.Services.AddScoped<IMunicipality, MunicipalityRepository>();
+builder.Services.AddScoped<IResidencePicture, ResidencePictureRepository>();
 
 //author: Pontus
 builder.Services.AddScoped<IRealtor, RealtorRepository>();
