@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Data;
 using FribergWebAPI.Models;
+using FribergWebAPI.Data.Interfaces;
 
 namespace FribergWebAPI.Controllers
 {
@@ -15,24 +16,27 @@ namespace FribergWebAPI.Controllers
     public class ResidencePicturesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IResidencePicture repo;
 
-        public ResidencePicturesController(ApplicationDbContext context)
+        public ResidencePicturesController(ApplicationDbContext context, IResidencePicture repo)
         {
             _context = context;
+            this.repo = repo;
         }
 
         // GET: api/ResidencePictures
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResidencePicture>>> GetResidencePicture()
         {
-            return await _context.ResidencePicture.ToListAsync();
+            var residencePictures = await repo.GetAllAsync();
+            return Ok(residencePictures);
         }
 
         // GET: api/ResidencePictures/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ResidencePicture>> GetResidencePicture(int id)
         {
-            var residencePicture = await _context.ResidencePicture.FindAsync(id);
+            var residencePicture = await repo.GetByIdAsync(id);
 
             if (residencePicture == null)
             {
@@ -52,23 +56,7 @@ namespace FribergWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(residencePicture.ResidenceId).State = EntityState.Unchanged;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ResidencePictureExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await repo.UpdateAsync(residencePicture);
 
             return NoContent();
         }
@@ -78,8 +66,7 @@ namespace FribergWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ResidencePicture>> PostResidencePicture(ResidencePicture residencePicture)
         {
-            _context.ResidencePicture.Add(residencePicture);
-            await _context.SaveChangesAsync();
+            await repo.AddAsync(residencePicture);
 
             return CreatedAtAction("GetResidencePicture", new { id = residencePicture.Id }, residencePicture);
         }
@@ -88,21 +75,15 @@ namespace FribergWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteResidencePicture(int id)
         {
-            var residencePicture = await _context.ResidencePicture.FindAsync(id);
+            var residencePicture = await repo.GetByIdAsync(id);
             if (residencePicture == null)
             {
                 return NotFound();
             }
 
-            _context.ResidencePicture.Remove(residencePicture);
-            await _context.SaveChangesAsync();
+            await repo.DeleteAsync(residencePicture);
 
             return NoContent();
-        }
-
-        private bool ResidencePictureExists(int id)
-        {
-            return _context.ResidencePicture.Any(e => e.Id == id);
         }
     }
 }

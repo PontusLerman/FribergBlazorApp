@@ -2,7 +2,7 @@
 
 namespace FribergWebAPI.Data.Interfaces
 {
-    public interface IResidencePicture
+    public interface IResidencePicture //author: Johan
     {
         Task AddAsync(ResidencePicture residencePicture);
         Task DeleteAsync(ResidencePicture residencePicture);

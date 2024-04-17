@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FribergWebAPI.Data.Repositories
 {
-    public class ResidencePictureRepository : IResidencePicture
+    public class ResidencePictureRepository : IResidencePicture //author: Johan
     {
         private readonly ApplicationDbContext applicationDbContext;
 

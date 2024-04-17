@@ -25,6 +25,7 @@ builder.Services.AddScoped<ICategory, CategoryRepository>();
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
 builder.Services.AddScoped<IMunicipality, MunicipalityRepository>();
+builder.Services.AddScoped<IResidencePicture, ResidencePictureRepository>();
 
 //author: Pontus
 builder.Services.AddScoped<IRealtor, RealtorRepository>();
