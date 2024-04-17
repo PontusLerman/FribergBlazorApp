@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergBlazorApp", "FribergBlazorApp\FribergBlazorApp.csproj", "{E2976159-3E29-4872-91AF-2DEBAA4601DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergWebAPI", "FribergWebAPI\FribergWebAPI.csproj", "{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergBlazorApp.Client", "FribergBlazorApp.Client\FribergBlazorApp.Client.csproj", "{4300FA3F-8EBE-4762-AAE2-B2E2A3EF28B8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergWebAPI", "FribergWebAPI\FribergWebAPI.csproj", "{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergBlazorApp", "FribergBlazorApp\FribergBlazorApp.csproj", "{A8A3E125-DCF2-476D-AFB0-69449B081E4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E2976159-3E29-4872-91AF-2DEBAA4601DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2976159-3E29-4872-91AF-2DEBAA4601DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2976159-3E29-4872-91AF-2DEBAA4601DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2976159-3E29-4872-91AF-2DEBAA4601DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4300FA3F-8EBE-4762-AAE2-B2E2A3EF28B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4300FA3F-8EBE-4762-AAE2-B2E2A3EF28B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4300FA3F-8EBE-4762-AAE2-B2E2A3EF28B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4300FA3F-8EBE-4762-AAE2-B2E2A3EF28B8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8A3E125-DCF2-476D-AFB0-69449B081E4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A3E125-DCF2-476D-AFB0-69449B081E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A3E125-DCF2-476D-AFB0-69449B081E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A3E125-DCF2-476D-AFB0-69449B081E4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
