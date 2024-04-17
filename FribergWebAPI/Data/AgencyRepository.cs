@@ -26,12 +26,12 @@ namespace FribergWebAPI.Data
 
         public async Task<IEnumerable<Agency>> GetAllAsync()
         {
-            return await applicationDbContext.Agency.ToListAsync();
+            return await applicationDbContext.Agency.Include(a=>a.Employees).ToListAsync();
         }
 
         public async Task<Agency> GetByIdAsync(int id)
         {
-            return await applicationDbContext.Agency.FirstOrDefaultAsync(x => x.AgencyId == id);
+            return await applicationDbContext.Agency.Include(a => a.Employees).FirstOrDefaultAsync(x => x.AgencyId == id);
         }
 
         public async Task UpdateAsync(Agency agency)

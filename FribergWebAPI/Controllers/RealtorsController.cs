@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Data;
 using FribergWebAPI.Models;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Text;
 
 namespace FribergWebAPI.Controllers
 {
@@ -27,7 +30,7 @@ namespace FribergWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Realtor>>> Getrealtors()
         {
-            var realtors = await realtorRepository.GetAllAsync();
+            var realtors = await realtorRepository.GetAllAsync();   
             return Ok(realtors);
         }
 
