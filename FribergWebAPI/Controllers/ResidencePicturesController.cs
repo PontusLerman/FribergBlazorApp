@@ -25,7 +25,7 @@ namespace FribergWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResidencePicture>>> GetResidencePicture()
         {
-            return await _context.ResidencePicture.Include(r=>r.Residence).ToListAsync();
+            return await _context.ResidencePicture.ToListAsync();
         }
 
         // GET: api/ResidencePictures/5
@@ -52,7 +52,7 @@ namespace FribergWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(residencePicture.Residence).State = EntityState.Unchanged;
+            _context.Entry(residencePicture.ResidenceId).State = EntityState.Unchanged;
 
             try
             {
