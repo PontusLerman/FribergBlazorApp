@@ -1,7 +1,8 @@
-﻿using FribergWebAPI.Models;
+﻿using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FribergWebAPI.Data
+namespace FribergWebAPI.Data.Repositories
 {
     public class AgencyRepository : IAgency //author: Johan Krångh
     {

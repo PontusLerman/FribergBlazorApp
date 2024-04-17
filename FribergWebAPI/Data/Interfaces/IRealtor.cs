@@ -1,6 +1,6 @@
 ﻿using FribergWebAPI.Models;
 
-namespace FribergWebAPI.Data
+namespace FribergWebAPI.Data.Interfaces
 {
     //Pontus
     public interface IRealtor

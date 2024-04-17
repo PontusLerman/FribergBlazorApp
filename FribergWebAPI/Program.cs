@@ -4,6 +4,8 @@ using FribergWebAPI.Data;
 using FribergWebAPI.Models;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using FribergWebAPI.Data.Repositories;
+using FribergWebAPI.Data.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
