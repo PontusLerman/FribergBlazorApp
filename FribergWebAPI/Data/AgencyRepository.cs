@@ -26,7 +26,7 @@ namespace FribergWebAPI.Data
 
         public async Task<IEnumerable<Agency>> GetAllAsync()
         {
-            return await applicationDbContext.Agency.Include(a=>a.Employees).ToListAsync();
+            return await applicationDbContext.Agency.Include(a => a.Employees).ToListAsync();
         }
 
         public async Task<Agency> GetByIdAsync(int id)

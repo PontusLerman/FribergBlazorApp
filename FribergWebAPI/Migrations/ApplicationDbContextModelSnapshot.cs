@@ -237,13 +237,11 @@ namespace FribergWebAPI.Migrations
 
             modelBuilder.Entity("FribergWebAPI.Models.ResidencePicture", b =>
                 {
-                    b.HasOne("FribergWebAPI.Models.Residence", "Residence")
+                    b.HasOne("FribergWebAPI.Models.Residence", null)
                         .WithMany("Pictures")
                         .HasForeignKey("ResidenceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Residence");
                 });
 
             modelBuilder.Entity("FribergWebAPI.Models.Agency", b =>
