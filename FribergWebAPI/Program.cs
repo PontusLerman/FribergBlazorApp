@@ -17,7 +17,9 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("https://localhost:7280",
-                                              "https://localhost:7082");
+                                              "https://localhost:7082",
+                                              "https://localhost:5187",
+                                              "https://localhost:5072");
                       });
 });
 
