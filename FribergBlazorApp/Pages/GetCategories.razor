@@ -1,0 +1,53 @@
+﻿@page "/categories"
+
+@inject HttpClient Http
+
+<h3>Categories</h3>
+
+@if (category == null)
+{
+    <p><em>Loading...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+   @*  <p>@categoriesString</p> *@
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td>@category.id</td>
+                <td>@category.name</td>
+                </tr>
+            
+        </tbody>
+    </table>
+}
+
+@code {
+    private Category category;
+    private string categoriesString;
+    private string? errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            category = await Http.GetFromJsonAsync<Category>("api/Category/1");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+}
