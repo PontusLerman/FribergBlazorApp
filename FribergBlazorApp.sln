@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergWebAPI", "FribergWebAPI\FribergWebAPI.csproj", "{8A556F9E-CBED-4585-A9FD-C89BBE81C6F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergBlazorApp", "FribergBlazorApp\FribergBlazorApp.csproj", "{A8A3E125-DCF2-476D-AFB0-69449B081E4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergBlazorApp", "FribergBlazorApp\FribergBlazorApp.csproj", "{A8A3E125-DCF2-476D-AFB0-69449B081E4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
