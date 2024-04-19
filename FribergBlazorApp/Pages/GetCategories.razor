@@ -36,14 +36,13 @@ else
 
 @code {
     private List<Category> categories;
-    private string categoriesString;
     private string? errorString;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            categories = await Http.GetFromJsonAsync<List<Category>>("https://localhost:7280/api/category");
+            categories = await Http.GetFromJsonAsync<List<Category>>("api/category");
         }
         catch (Exception ex)
         {
