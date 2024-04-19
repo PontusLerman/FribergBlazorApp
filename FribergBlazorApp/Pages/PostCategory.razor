@@ -1,6 +1,5 @@
 ﻿@page "/postcategories"
-@using FribergBlazorApp.Models
-@using System.Net.Http.Json
+@inject HttpClient client
 
 <h3>Post Category</h3>
 
@@ -12,9 +11,6 @@
 @code {
     Category category = new Category();
     string returnText = "";
-
-    [Inject]
-    HttpClient client { get; set; }
 
     async Task CreateCategory()
     {

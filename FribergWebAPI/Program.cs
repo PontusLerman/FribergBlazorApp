@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using FribergWebAPI.Data;
-using FribergWebAPI.Models;
 using System.Text.Json.Serialization;
-using System.Text.Json;
 using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.Data.Interfaces;
 
@@ -14,13 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy(name: MyAllowSpecificOrigins,
-					  policy =>
-					  {
-						  policy.WithOrigins("https://localhost:7280",
-											  "https://localhost:7082")
-											  .AllowAnyHeader();
-							
-					  });
+					policy =>
+					{
+						policy.WithOrigins("https://localhost:7280",
+											"https://localhost:7082")
+											.AllowAnyHeader()
+											.AllowAnyMethod(); 
+						
+					});
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

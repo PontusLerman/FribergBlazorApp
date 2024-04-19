@@ -1,6 +1,6 @@
 ﻿@page "/categories"
-
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <h3>Categories</h3>
 
@@ -19,7 +19,8 @@ else
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>                
+                <th>Name</th>    
+                <th>Action</th>             
             </tr>
         </thead>
         <tbody>
@@ -27,7 +28,9 @@ else
             {
                 <tr>
                     <td>@item.id</td>
-                    <td>@item.name</td>                   
+                    <td>@item.name</td>
+                    <td><button @onclick="() => EditCategory(item.id)">Edit</button></td>
+                    <td><button @onclick="() => RemoveCategory(item.id)">Delete</button></td>
                 </tr>
             }
         </tbody>
@@ -49,5 +52,15 @@ else
         {
             errorString = $"Exception: {ex.Message}";
         }
+    }
+
+    private void EditCategory(int categoryId)
+    {
+        Navigation.NavigateTo($"/editcategory/{categoryId}");
+    }
+
+    private void RemoveCategory(int categoryId)
+    {
+        Navigation.NavigateTo($"deletecategory/{categoryId}");
     }
 }
