@@ -1,17 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using FribergWebAPI.Data;
-using FribergWebAPI.Models;
+using System.Text.Json.Serialization;
+using FribergWebAPI.Data.Repositories;
+using FribergWebAPI.Data.Interfaces;
 
+var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy(name: MyAllowSpecificOrigins,
+					policy =>
+					{
+						policy.WithOrigins("https://localhost:7280",
+											"https://localhost:7082")
+											.AllowAnyHeader()
+											.AllowAnyMethod(); 
+						
+					});
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+				.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 //author: Christian
 builder.Services.AddScoped<IResidence, ResidenceRepository>();
@@ -20,6 +36,7 @@ builder.Services.AddScoped<ICategory, CategoryRepository>();
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
 builder.Services.AddScoped<IMunicipality, MunicipalityRepository>();
+builder.Services.AddScoped<IResidencePicture, ResidencePictureRepository>();
 
 //author: Pontus
 builder.Services.AddScoped<IRealtor, RealtorRepository>();
@@ -27,7 +44,6 @@ builder.Services.AddScoped<IRealtor, RealtorRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var app = builder.Build();
 
@@ -40,6 +56,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

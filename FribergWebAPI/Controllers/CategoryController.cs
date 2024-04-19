@@ -1,4 +1,4 @@
-using FribergWebAPI.Data;
+using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 

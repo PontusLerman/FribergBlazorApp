@@ -175,10 +175,32 @@ namespace FribergWebAPI.Migrations
                     b.ToTable("Residences");
                 });
 
+            modelBuilder.Entity("FribergWebAPI.Models.ResidencePicture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Picture")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResidenceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResidenceId");
+
+                    b.ToTable("ResidencePicture");
+                });
+
             modelBuilder.Entity("FribergWebAPI.Models.Realtor", b =>
                 {
                     b.HasOne("FribergWebAPI.Models.Agency", "Agency")
-                        .WithMany()
+                        .WithMany("Employees")
                         .HasForeignKey("AgencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -201,7 +223,7 @@ namespace FribergWebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("FribergWebAPI.Models.Realtor", "Realtor")
-                        .WithMany()
+                        .WithMany("ResidenceList")
                         .HasForeignKey("RealtorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -211,6 +233,30 @@ namespace FribergWebAPI.Migrations
                     b.Navigation("Municipality");
 
                     b.Navigation("Realtor");
+                });
+
+            modelBuilder.Entity("FribergWebAPI.Models.ResidencePicture", b =>
+                {
+                    b.HasOne("FribergWebAPI.Models.Residence", null)
+                        .WithMany("Pictures")
+                        .HasForeignKey("ResidenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FribergWebAPI.Models.Agency", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("FribergWebAPI.Models.Realtor", b =>
+                {
+                    b.Navigation("ResidenceList");
+                });
+
+            modelBuilder.Entity("FribergWebAPI.Models.Residence", b =>
+                {
+                    b.Navigation("Pictures");
                 });
 #pragma warning restore 612, 618
         }

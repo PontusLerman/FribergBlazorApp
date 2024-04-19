@@ -1,0 +1,51 @@
+﻿@page "/editcategory/{id}"
+@inject HttpClient client
+@inject NavigationManager Navigation
+
+<h3>Update Category</h3>
+
+<input type="text" @bind="category.name" />
+<button @onclick="UpdateCategory">Update Category</button>
+
+<p>@returnText</p>
+
+@code {
+    Category category = new Category();
+    string returnText = "";
+
+    [Parameter]
+    public string id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            category = await client.GetFromJsonAsync<Category>($"api/category/{id}");
+        }
+        catch (Exception ex)
+        {
+            returnText = "Error1: " + ex.Message;
+        }
+    }
+
+    async Task UpdateCategory()
+    {
+        try
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync($"api/category/{id}", category);
+            if (response.IsSuccessStatusCode)
+            {
+                returnText = "Category updated successfully!";
+                Navigation.NavigateTo("categories");
+            }
+            else
+            {
+                returnText = "Failed to update category: " + response.ReasonPhrase;
+            }
+        }
+        catch (Exception ex)
+        {
+            returnText = "Error2: " + ex.Message;
+        }
+    }
+}

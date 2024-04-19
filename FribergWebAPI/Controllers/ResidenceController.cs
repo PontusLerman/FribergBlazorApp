@@ -1,11 +1,11 @@
-using FribergWebAPI.Data;
+using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 //author: Christian
 namespace FribergWebAPI.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("api/[controller]")]
 	public class ResidenceController : ControllerBase
 	{
