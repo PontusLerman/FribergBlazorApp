@@ -1,7 +1,8 @@
 ﻿@page "/postcategories"
 @inject HttpClient client
+@inject NavigationManager Navigation
 
-<h3>Post Category</h3>
+<h3>Create Category</h3>
 
 <input type="text" @bind="category.name" />
 <button @onclick="CreateCategory">Create Category</button>
@@ -21,6 +22,7 @@
             if (postResponse.IsSuccessStatusCode)
             {
                 returnText = "Category created successfully!";
+                Navigation.NavigateTo("/Categories");
             }
             else
             {
