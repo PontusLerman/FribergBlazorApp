@@ -1,4 +1,4 @@
-﻿@page "/deletecategory/{id}"
+﻿@page "/dc/{id}"
 @inject HttpClient client
 @inject NavigationManager Navigation
 
@@ -24,7 +24,7 @@
             if (response.IsSuccessStatusCode)
             {
                 returnText = "Category deleted successfully!";
-                Navigation.NavigateTo("categories");
+                Navigation.NavigateTo("/c");
             }
             else
             {

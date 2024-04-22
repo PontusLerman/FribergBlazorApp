@@ -1,4 +1,4 @@
-﻿@page "/postcategories"
+﻿@page "/pc"
 @inject HttpClient client
 @inject NavigationManager Navigation
 
@@ -22,7 +22,7 @@
             if (postResponse.IsSuccessStatusCode)
             {
                 returnText = "Category created successfully!";
-                Navigation.NavigateTo("/Categories");
+                Navigation.NavigateTo("/c");
             }
             else
             {

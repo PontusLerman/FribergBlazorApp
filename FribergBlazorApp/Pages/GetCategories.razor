@@ -1,4 +1,4 @@
-﻿@page "/categories"
+﻿@page "/c"
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
@@ -57,16 +57,16 @@ else
 
     private void AddCategory()
     {
-        Navigation.NavigateTo("/postCategories");
+        Navigation.NavigateTo("/pc");
     }
 
     private void EditCategory(int categoryId)
     {
-        Navigation.NavigateTo($"/editcategory/{categoryId}");
+        Navigation.NavigateTo($"/ec/{categoryId}");
     }
 
     private void RemoveCategory(int categoryId)
     {
-        Navigation.NavigateTo($"deletecategory/{categoryId}");
+        Navigation.NavigateTo($"dc/{categoryId}");
     }
 }
