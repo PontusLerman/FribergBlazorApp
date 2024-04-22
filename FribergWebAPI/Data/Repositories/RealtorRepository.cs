@@ -29,7 +29,6 @@ namespace FribergWebAPI.Data.Repositories
         public async Task<IEnumerable<Realtor>> GetAllAsync()
         {
             return await applicationDbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r => r.FirstName).ToListAsync();
-            //return await applicationDbContext.Set<Realtor>().ToListAsync();
         }
 
         public async Task<Realtor> GetByIdAsync(int id)
