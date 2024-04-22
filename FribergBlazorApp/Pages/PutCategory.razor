@@ -1,4 +1,4 @@
-﻿@page "/editcategory/{id}"
+﻿@page "/ec/{id}"
 @inject HttpClient client
 @inject NavigationManager Navigation
 
@@ -14,7 +14,7 @@
     string returnText = "";
 
     [Parameter]
-    public string id { get; set; }
+    public string? id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,7 +36,7 @@
             if (response.IsSuccessStatusCode)
             {
                 returnText = "Category updated successfully!";
-                Navigation.NavigateTo("categories");
+                Navigation.NavigateTo("/c");
             }
             else
             {

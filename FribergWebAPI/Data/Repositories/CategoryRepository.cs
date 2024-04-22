@@ -25,7 +25,7 @@ namespace FribergWebAPI.Data.Repositories
 
         public async Task Add(Category category)
         {
-            applicationDbContext.Categories.Add(category);
+            await applicationDbContext.Categories.AddAsync(category);
             await applicationDbContext.SaveChangesAsync();
         }
 
