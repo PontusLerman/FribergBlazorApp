@@ -1,0 +1,37 @@
+﻿@page "/postcategories"
+@inject HttpClient client
+@inject NavigationManager Navigation
+
+<h3>Create Category</h3>
+
+<input type="text" @bind="category.name" />
+<button @onclick="CreateCategory">Create Category</button>
+
+<p>@returnText</p>
+
+@code {
+    Category category = new Category();
+    string returnText = "";
+
+    async Task CreateCategory()
+    {
+        try
+        {
+            HttpResponseMessage postResponse = await client.PostAsJsonAsync("api/category", category);
+
+            if (postResponse.IsSuccessStatusCode)
+            {
+                returnText = "Category created successfully!";
+                Navigation.NavigateTo("/Categories");
+            }
+            else
+            {
+                returnText = "Failed to create category: " + postResponse.ReasonPhrase;
+            }
+        }
+        catch (Exception ex)
+        {
+            returnText = "Error: " + ex.Message;
+        }
+    }
+}
