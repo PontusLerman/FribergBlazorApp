@@ -20,7 +20,7 @@ namespace FribergWebAPI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
 		{
-			var Categories = await categoryRepository.GetAllAsync();
+			var Categories = await categoryRepository.GetAll();
 			return Ok(Categories);
 		}
 
@@ -28,7 +28,7 @@ namespace FribergWebAPI.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Category>> GetCategory(int id)
 		{
-			var Category = await categoryRepository.GetByIdAsync(id);
+			var Category = await categoryRepository.GetById(id);
 			if (Category == null)
 			{
 				return NotFound();
@@ -41,7 +41,7 @@ namespace FribergWebAPI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Category>> PostHousingCategory(Category Category)
 		{
-			await categoryRepository.AddAsync(Category);
+			await categoryRepository.Add(Category);
 			return CreatedAtAction(nameof(GetCategory), new { id = Category.Id }, Category);
 		}
 
@@ -54,15 +54,15 @@ namespace FribergWebAPI.Controllers
 				return BadRequest();
 			}
 
-			await categoryRepository.UpdateAsync(Category);
+			await categoryRepository.Update(Category);
 			return NoContent();
 		}
 
 		// DELETE: api/Category/5
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteCategory(Category category)
+		public async Task<IActionResult> DeleteCategory(int id)
 		{
-			await categoryRepository.DeleteAsync(category);
+			await categoryRepository.Delete(id);
 			return NoContent();
 		}
 	}

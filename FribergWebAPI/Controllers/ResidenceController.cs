@@ -20,7 +20,7 @@ namespace FribergWebAPI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Residence>>> GetResidence()
 		{
-			var residence = await residenceRepository.GetAllAsync();
+			var residence = await residenceRepository.GetAll();
 			return Ok(residence);
 		}
 
@@ -28,7 +28,7 @@ namespace FribergWebAPI.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Residence>> GetResidence(int id)
 		{
-			var residence = await residenceRepository.GetByIdAsync(id);
+			var residence = await residenceRepository.GetById(id);
 			
 			if (residence == null)
 			{
@@ -42,7 +42,7 @@ namespace FribergWebAPI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Residence>> PostResidence(Residence residence)
 		{
-			await residenceRepository.AddAsync(residence);
+			await residenceRepository.Add(residence);
 			return CreatedAtAction(nameof(GetResidence), new { id = residence.Id }, residence);
 		}
 
@@ -55,15 +55,15 @@ namespace FribergWebAPI.Controllers
 				return BadRequest();
 			}
 
-			await residenceRepository.UpdateAsync(residence);
+			await residenceRepository.Update(residence);
 			return NoContent();
 		}
 
 		// DELETE: api/Residence/5
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteResidence(Residence residence)
+		public async Task<IActionResult> DeleteResidence(int id)
 		{
-			await residenceRepository.DeleteAsync(residence);
+			await residenceRepository.Delete(id);
 			return NoContent();
 		}
 	}

@@ -23,7 +23,7 @@ namespace FribergWebAPI.Data
 		{
 			modelBuilder.Entity<Residence>()
 			.HasOne(e => e.Category)
-			.WithMany(u => u.Residences)
+			.WithMany(f => f.Residences)
 			.OnDelete(DeleteBehavior.Restrict);
 			
 			modelBuilder.Entity<Realtor>()
