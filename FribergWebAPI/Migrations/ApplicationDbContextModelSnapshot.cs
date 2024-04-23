@@ -211,9 +211,9 @@ namespace FribergWebAPI.Migrations
             modelBuilder.Entity("FribergWebAPI.Models.Residence", b =>
                 {
                     b.HasOne("FribergWebAPI.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Residences")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FribergWebAPI.Models.Municipality", "Municipality")
@@ -247,6 +247,11 @@ namespace FribergWebAPI.Migrations
             modelBuilder.Entity("FribergWebAPI.Models.Agency", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("FribergWebAPI.Models.Category", b =>
+                {
+                    b.Navigation("Residences");
                 });
 
             modelBuilder.Entity("FribergWebAPI.Models.Realtor", b =>
