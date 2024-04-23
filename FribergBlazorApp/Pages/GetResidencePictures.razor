@@ -1,0 +1,72 @@
+﻿@page "/rp"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<h3>Pitcures</h3>
+<td><button @onclick="() => AddPitcures()">Create</button></td>
+
+
+@if (pitcures == null)
+{
+    <p><em>Loading...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>picture</th>    
+                <th>Action</th>             
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in pitcures)
+            {
+                <tr>
+                    <td>@item.id</td>
+                    <td>@item.picture</td>
+                    <td><button @onclick="() => EditPitcures(item.id)">Edit</button></td>
+                    <td><button @onclick="() => RemovePitcures(item.id)">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Picture>? pitcures;
+    private string? errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            pitcures = await Http.GetFromJsonAsync<List<Picture>>("https://localhost:7280/api/residencepictures");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+
+    private void AddPitcures()
+    {
+        Navigation.NavigateTo("/prp");
+    }
+
+    private void EditPitcures(int pitcureId)
+    {
+        Navigation.NavigateTo($"/erp/{pitcureId}");
+    }
+
+    private void RemovePitcures(int pitcureId)
+    {
+        Navigation.NavigateTo($"drp/{pitcureId}");
+    }
+}

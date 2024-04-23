@@ -17,6 +17,19 @@ namespace FribergWebAPI.Data
 		//author: Christian
 		public DbSet<Residence> Residences { get; set; }
 		public DbSet<Category> Categories { get; set; }
-	    public DbSet<ResidencePicture> ResidencePicture { get; set; } = default!;
+		public DbSet<ResidencePicture> ResidencePicture { get; set; } = default!;
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<Residence>()
+			.HasOne(e => e.Category)
+			.WithMany(u => u.Residences)
+			.OnDelete(DeleteBehavior.Restrict);
+			
+			modelBuilder.Entity<Realtor>()
+			.HasOne(r => r.Agency)
+			.WithMany(a => a.Employees)
+			.OnDelete(DeleteBehavior.Restrict);
+		}
 	}
 }

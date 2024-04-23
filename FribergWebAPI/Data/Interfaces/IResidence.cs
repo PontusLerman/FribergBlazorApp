@@ -5,10 +5,10 @@ namespace FribergWebAPI.Data.Interfaces
 {
     public interface IResidence
     {
-        Task<IEnumerable<Residence>> GetAll();
-        Task<Residence> GetById(int id);
-        Task Add(Residence residence);
-        Task Update(Residence residence);
-        Task Delete(int id);
+        Task<IEnumerable<Residence>> GetAllAsync();
+        Task<Residence> GetByIdAsync(int id);
+        Task AddAsync(Residence residence);
+        Task UpdateAsync(Residence residence);
+        Task DeleteAsync(Residence residence);
     }
 }

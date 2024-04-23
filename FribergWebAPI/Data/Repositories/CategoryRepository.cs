@@ -13,36 +13,32 @@ namespace FribergWebAPI.Data.Repositories
             this.applicationDbContext = applicationDbContext;
         }
 
-        public async Task<IEnumerable<Category>> GetAll()
+        public async Task<IEnumerable<Category>> GetAllAsync()
         {
             return await applicationDbContext.Categories.ToListAsync();
         }
 
-        public async Task<Category> GetById(int id)
+        public async Task<Category> GetByIdAsync(int id)
         {
             return await applicationDbContext.Categories.FindAsync(id);
         }
 
-        public async Task Add(Category category)
+        public async Task AddAsync(Category category)
         {
             await applicationDbContext.Categories.AddAsync(category);
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task Update(Category category)
+        public async Task UpdateAsync(Category category)
         {
             applicationDbContext.Entry(category).State = EntityState.Modified;
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(Category category)
         {
-            var category = await applicationDbContext.Categories.FindAsync(id);
-            if (category != null)
-            {
-                applicationDbContext.Categories.Remove(category);
-                await applicationDbContext.SaveChangesAsync();
-            }
+            applicationDbContext.Categories.Remove(category);
+            await applicationDbContext.SaveChangesAsync();
         }
     }
 }
