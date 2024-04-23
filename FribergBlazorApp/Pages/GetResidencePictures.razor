@@ -2,11 +2,11 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
-<h3>Pitcures</h3>
-<td><button @onclick="() => AddPitcures()">Create</button></td>
+<h3>Pictures</h3>
+<td><button @onclick="() => AddPictures()">Create</button></td>
 
 
-@if (pitcures == null)
+@if (pictures == null)
 {
     <p><em>Loading...</em></p>
     <p>@errorString</p>
@@ -26,13 +26,13 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in pitcures)
+            @foreach (var item in pictures)
             {
                 <tr>
                     <td>@item.id</td>
                     <td>@item.picture</td>
-                    <td><button @onclick="() => EditPitcures(item.id)">Edit</button></td>
-                    <td><button @onclick="() => RemovePitcures(item.id)">Delete</button></td>
+                    <td><button @onclick="() => EditPictures(item.id)">Edit</button></td>
+                    <td><button @onclick="() => RemovePictures(item.id)">Delete</button></td>
                 </tr>
             }
         </tbody>
@@ -40,14 +40,14 @@ else
 }
 
 @code {
-    private List<Picture>? pitcures;
+    private List<Picture>? pictures;
     private string? errorString;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            pitcures = await Http.GetFromJsonAsync<List<Picture>>("https://localhost:7280/api/residencepictures");
+            pictures = await Http.GetFromJsonAsync<List<Picture>>("https://localhost:7280/api/residencepictures");
         }
         catch (Exception ex)
         {
@@ -55,18 +55,18 @@ else
         }
     }
 
-    private void AddPitcures()
+    private void AddPictures()
     {
         Navigation.NavigateTo("/prp");
     }
 
-    private void EditPitcures(int pitcureId)
+    private void EditPictures(int pictureId)
     {
-        Navigation.NavigateTo($"/erp/{pitcureId}");
+        Navigation.NavigateTo($"/erp/{pictureId}");
     }
 
-    private void RemovePitcures(int pitcureId)
+    private void RemovePictures(int pictureId)
     {
-        Navigation.NavigateTo($"drp/{pitcureId}");
+        Navigation.NavigateTo($"drp/{pictureId}");
     }
 }
