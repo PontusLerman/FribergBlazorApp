@@ -39,22 +39,22 @@ namespace FribergWebAPI.Controllers
 
 		// POST: api/Category
 		[HttpPost]
-		public async Task<ActionResult<Category>> PostHousingCategory(Category Category)
+		public async Task<ActionResult<Category>> PostHousingCategory(Category category)
 		{
-			await categoryRepository.Add(Category);
-			return CreatedAtAction(nameof(GetCategory), new { id = Category.Id }, Category);
+            await categoryRepository.Add(category);
+			return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
 		}
 
 		// PUT: api/Category/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutCategory(int id, Category Category)
+		public async Task<IActionResult> PutCategory(int id, Category category)
 		{
-			if (id != Category.Id)
+			if (id != category.Id)
 			{
 				return BadRequest();
 			}
 
-			await categoryRepository.Update(Category);
+			await categoryRepository.Update(category);
 			return NoContent();
 		}
 

@@ -1,0 +1,39 @@
+﻿@page "/prp"
+@inject HttpClient client
+@inject NavigationManager Navigation
+
+<h3>Create Picture</h3>
+
+<input type="text" placeholder="Picture URL" @bind="picture.picture" />
+<input type="number" placeholder="Residence ID" @bind="picture.residenceId" />
+<button @onclick="CreatePicture">Create Picture</button>
+
+<p>@returnText</p>
+
+@code {
+    Picture picture = new Picture();
+
+    string returnText = "";
+
+    async Task CreatePicture()
+    {
+        try
+        {
+            HttpResponseMessage postResponse = await client.PostAsJsonAsync("api/residencepictures", picture);
+
+            if (postResponse.IsSuccessStatusCode)
+            {
+                returnText = "Picture created successfully!";
+                Navigation.NavigateTo("/rp");
+            }
+            else
+            {
+                returnText = "Failed to create picture: " + postResponse.ReasonPhrase;
+            }
+        }
+        catch (Exception ex)
+        {
+            returnText = "Error: " + ex.Message;
+        }
+    }
+}

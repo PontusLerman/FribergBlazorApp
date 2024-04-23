@@ -46,7 +46,7 @@ namespace FribergWebAPI.Data.Repositories
 			if (residence != null)
 			{
 				applicationDbContext.Residences.Remove(residence);
-				await applicationDbContext.SaveChangesAsync();
+				await applicationDbContext.SaveChangesAsync();	
 			}
 		}
 	}
