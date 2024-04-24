@@ -21,7 +21,7 @@ else
         <thead>
             <tr>
                 <th>ID</th>
-                <th>picture</th>    
+                <th>Picture</th>
                 <th>Action</th>             
             </tr>
         </thead>
@@ -30,7 +30,7 @@ else
             {
                 <tr>
                     <td>@item.id</td>
-                    <td>@item.picture</td>
+                    <td><img src="@item.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
                     <td><button @onclick="() => EditPictures(item.id)">Edit</button></td>
                     <td><button @onclick="() => RemovePictures(item.id)">Delete</button></td>
                 </tr>
