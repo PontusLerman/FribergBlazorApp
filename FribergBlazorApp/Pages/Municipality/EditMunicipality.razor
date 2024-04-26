@@ -43,7 +43,7 @@ else
         if (Id != null)
         {
             var result = await Http.PutAsJsonAsync($"api/municipalities/{Id}", Municipality);
-            //Municipality = await result.Content.ReadFromJsonAsync<Municipality>();
+            
         }
         else
         {

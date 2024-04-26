@@ -1,5 +1,5 @@
 ﻿@* author: Johan Krångh *@
-@page "/municipalitites"
+@page "/municipalities"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -60,5 +60,6 @@ else
     void EditMunicipality(int id)
     {
         NavigationManager.NavigateTo($"edit-municipality/{id}");
+        NavigationManager.NavigateTo("municipalities");
     }
 }
