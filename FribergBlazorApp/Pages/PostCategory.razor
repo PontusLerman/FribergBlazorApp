@@ -2,10 +2,10 @@
 @inject HttpClient client
 @inject NavigationManager Navigation
 
-<h3>Create Category</h3>
+<h5>Skapa en Kategori</h5>
 
 <input type="text" @bind="category.name" />
-<button @onclick="CreateCategory">Create Category</button>
+<button @onclick="CreateCategory">Skapa</button>
 
 <p>@returnText</p>
 
@@ -21,17 +21,17 @@
 
             if (postResponse.IsSuccessStatusCode)
             {
-                returnText = "Category created successfully!";
+                returnText = "Kategori lyckades att skapas!";
                 Navigation.NavigateTo("/c");
             }
             else
             {
-                returnText = "Failed to create category: " + postResponse.ReasonPhrase;
+                returnText = "Misslyckades med att skapa Kategori!: " + postResponse.ReasonPhrase;
             }
         }
         catch (Exception ex)
         {
-            returnText = "Error: " + ex.Message;
+            returnText = "Fel: " + ex.Message;
         }
     }
 }

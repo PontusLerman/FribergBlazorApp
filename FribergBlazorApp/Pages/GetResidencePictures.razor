@@ -2,13 +2,13 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
-<h3>Pictures</h3>
-<td><button @onclick="() => AddPictures()">Create</button></td>
+<h3>Bilder</h3>
+<td><button @onclick="() => AddPictures()">Skapa en ny bild</button></td>
 
 
 @if (pictures == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Laddar...</em></p>
     <p>@errorString</p>
 }
 else if (errorString != null)
@@ -21,20 +21,22 @@ else
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Picture</th>
-                <th>Residence ID</th>
-                <th>Action</th>             
+                <th>Bild</th>
+                <th>Bostads ID</th>
+                <th>Val</th>             
             </tr>
         </thead>
         <tbody>
             @foreach (var item in pictures)
             {
                 <tr>
-                    <td>@item.id</td>
+                    <td>@item.Id</td>
                     <td><img src="@item.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
-                    <td>@item.residenceId</td>
-                    <td><button @onclick="() => EditPictures(item.id)">Edit</button></td>
-                    <td><button @onclick="() => RemovePictures(item.id)">Delete</button></td>
+                    <td>@item.ResidenceId</td>
+                    <td>
+                        <button @onclick="() => EditPictures(item.Id)">Ändra</button>
+                        <button @onclick="() => RemovePictures(item.Id)">Radera</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -53,7 +55,7 @@ else
         }
         catch (Exception ex)
         {
-            errorString = $"Exception: {ex.Message}";
+            errorString = $"Felmeddelande: {ex.Message}";
         }
     }
 

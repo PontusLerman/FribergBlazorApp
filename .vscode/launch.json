@@ -1,7 +1,28 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "name": "C#: FribergWebAPI [https]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/FribergWebAPI/FribergWebAPI.csproj",
+            "launchConfigurationId": "TargetFramework=;https"
+        },
+        {
+            "name": "C#: FribergBlazorApp [https]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/FribergBlazorApp/FribergBlazorApp.csproj",
+            "launchConfigurationId": "TargetFramework=;https"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "All Projects",
+            "configurations": [
+                "C#: FribergWebAPI [https]",
+                "C#: FribergBlazorApp [https]"
+            ]
+        }
+    ]
 }

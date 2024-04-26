@@ -2,9 +2,9 @@
 {
     public class Picture
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string picture { get; set; }
-        public int residenceId { get; set; }
+        public int ResidenceId { get; set; }
     }
 
 }
