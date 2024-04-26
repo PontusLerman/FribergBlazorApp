@@ -1,18 +1,21 @@
 ﻿@page "/c"
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@using FribergBlazorApp.Helpers
 
-<h3>Categories</h3>
-<td><button @onclick="() => AddCategory()">Create</button></td>
+<h3>Kategorier</h3>
+<div style="position: absolute; right: 50px;">
+    <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+</div>
+<button @onclick="AddCategory">Skapa en ny kategori</button>
 
 @if (categories == null)
 {
-    <p><em>Loading...</em></p>
-    <p>@errorString</p>
+    <p><em>Laddar...</em></p>
 }
 else if (errorString != null)
 {
-    <p>An error occurred: @errorString</p>
+    <p>Ett problem uppstod: @errorString</p>
 }
 else
 {
@@ -20,18 +23,20 @@ else
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>    
-                <th>Action</th>             
+                <th>Namn</th>
+                <th>Val</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in categories)
+            @foreach (var category in FilteredItems())
             {
                 <tr>
-                    <td>@item.id</td>
-                    <td>@item.name</td>
-                    <td><button @onclick="() => EditCategory(item.id)">Edit</button></td>
-                    <td><button @onclick="() => RemoveCategory(item.id)">Delete</button></td>
+                    <td>@category.Id</td>
+                    <td>@category.name</td>
+                    <td>
+                        <button @onclick="() => EditCategory(category.Id)">Ändra</button>
+                        <button @onclick="() => RemoveCategory(category.Id)">Radera </button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -41,18 +46,32 @@ else
 @code {
     private List<Category>? categories;
     private string? errorString;
+    private string? searchTerm;
+    private SearchFilter<Category>? filter;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             categories = await Http.GetFromJsonAsync<List<Category>>("https://localhost:7280/api/category");
+            filter = new SearchFilter<Category>(categories, c => c.name);
         }
         catch (Exception ex)
         {
-            errorString = $"Exception: {ex.Message}";
+            errorString = $"Felmeddelande: {ex.Message}";
         }
     }
+
+    private IEnumerable<Category> FilteredItems()
+    {
+        if (filter != null)
+        {
+            filter.SearchTerm = searchTerm;
+            return filter.FilteredItems;
+        }
+        return categories ?? Enumerable.Empty<Category>();
+    }
+
 
     private void AddCategory()
     {
@@ -66,6 +85,6 @@ else
 
     private void RemoveCategory(int categoryId)
     {
-        Navigation.NavigateTo($"dc/{categoryId}");
+        Navigation.NavigateTo($"/dc/{categoryId}");
     }
 }

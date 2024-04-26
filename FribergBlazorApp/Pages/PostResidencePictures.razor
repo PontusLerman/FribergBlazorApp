@@ -2,11 +2,11 @@
 @inject HttpClient client
 @inject NavigationManager Navigation
 
-<h3>Create Picture</h3>
+<h3>Skapa en Bild</h3>
 
 <input type="text" placeholder="Picture URL" @bind="picture.picture" />
 <input type="number" placeholder="Residence ID" @bind="picture.ResidenceId" />
-<button @onclick="CreatePicture">Create Picture</button>
+<button @onclick="CreatePicture">Skapa</button>
 
 <p>@returnText</p>
 
@@ -23,17 +23,17 @@
 
             if (postResponse.IsSuccessStatusCode)
             {
-                returnText = "Picture created successfully!";
+                returnText = "Bild lyckades med att skapas!";
                 Navigation.NavigateTo("/rp");
             }
             else
             {
-                returnText = "Failed to create picture: " + postResponse.ReasonPhrase;
+                returnText = "Misslyckades med att skapa bild!: " + postResponse.ReasonPhrase;
             }
         }
         catch (Exception ex)
         {
-            returnText = "Error: " + ex.Message;
+            returnText = "Fel: " + ex.Message;
         }
     }
 }

@@ -2,10 +2,10 @@
 @inject HttpClient client
 @inject NavigationManager Navigation
 
-<h3>Update Category</h3>
+<h3>Redigera Kategori</h3>
 
 <input type="text" @bind="category.name" />
-<button @onclick="UpdateCategory">Update Category</button>
+<button @onclick="UpdateCategory">Ändra</button>
 
 <p>@returnText</p>
 
@@ -24,7 +24,7 @@
         }
         catch (Exception ex)
         {
-            returnText = "Error1: " + ex.Message;
+            returnText = "Felmeddelande: " + ex.Message;
         }
     }
 
@@ -35,17 +35,17 @@
             HttpResponseMessage response = await client.PutAsJsonAsync($"api/category/{id}", category);
             if (response.IsSuccessStatusCode)
             {
-                returnText = "Category updated successfully!";
+                returnText = "Kategori lyckades med att ändras!";
                 Navigation.NavigateTo("/c");
             }
             else
             {
-                returnText = "Failed to update category: " + response.ReasonPhrase;
+                returnText = "Misslyckades med att ändra kategori!: " + response.ReasonPhrase;
             }
         }
         catch (Exception ex)
         {
-            returnText = "Error2: " + ex.Message;
+            returnText = "Fel: " + ex.Message;
         }
     }
 }
