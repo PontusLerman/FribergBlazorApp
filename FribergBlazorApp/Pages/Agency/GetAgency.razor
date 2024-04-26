@@ -1,0 +1,56 @@
+﻿@page "/ga"
+@using System.Text.Json
+@inject HttpClient Http
+
+
+<h3>Mäklarbyrår</h3>
+@if (agencies == null)
+{
+    <h3>Loading...</h3>
+}
+else if (errorString != null)
+{
+    <h3>@errorString</h3>
+}
+else
+{
+   <table>
+    <thead>
+        <th></th>
+        <th>Mäklarbyrå</th>
+    </thead>
+    <tbody>
+        @foreach(var agency in agencies)
+        {
+            <tr>
+                <td>@agency.agencyLogoURL</td>
+                <td>@agency.agencyName</td>
+            </tr>  
+        }
+        
+    </tbody>
+    
+</table> 
+}  
+
+@code {
+    List<Agency> agencies = new List<Agency>();
+    string errorString;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            agencies = await Http.GetFromJsonAsync<List<Agency>>("api/agencies");
+            foreach(var a in agencies)
+            {
+                
+            }
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }     
+    }
+}

@@ -1,0 +1,21 @@
+﻿@page "/cea"
+@page "/cea/{id:int}"
+
+@if (Id == null)
+{
+    <h3>Ny mäklarbyrå</h3>
+}
+else
+{
+    <h3>Ändra @agency.agencyName</h3>
+}
+
+<h3>CreateEditAgency</h3>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    public Agency agency { get; set; } = new Agency();
+
+
+}
