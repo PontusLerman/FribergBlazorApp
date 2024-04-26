@@ -2,7 +2,7 @@
 @page "/edit-municipality"
 @page "/edit-municipality/{id:int}"
 @inject HttpClient Http
-
+@inject NavigationManager NavigationManager
 
 @if(Id == null)
 {
@@ -43,12 +43,13 @@ else
         if (Id != null)
         {
             var result = await Http.PutAsJsonAsync($"api/municipalities/{Id}", Municipality);
-            
+            NavigationManager.NavigateTo("municipalities");
         }
         else
         {
             var result = await Http.PostAsJsonAsync($"api/municipalities", Municipality);
             Municipality = await result.Content.ReadFromJsonAsync<Municipality>();
+            NavigationManager.NavigateTo("municipalities");
         }
     }
 }
