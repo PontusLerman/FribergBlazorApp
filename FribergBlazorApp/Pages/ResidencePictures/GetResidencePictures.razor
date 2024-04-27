@@ -1,10 +1,13 @@
 ﻿@page "/rp"
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@using FribergBlazorApp.Helpers
 
 <h3>Bilder</h3>
+<div style="position: absolute; right: 50px;">
+    <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+</div>
 <td><button @onclick="() => AddPictures()">Skapa en ny bild</button></td>
-
 
 @if (pictures == null)
 {
@@ -27,15 +30,15 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in pictures)
+            @foreach (var picture in FilteredItems())
             {
                 <tr>
-                    <td>@item.Id</td>
-                    <td><img src="@item.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
-                    <td>@item.ResidenceId</td>
+                    <td>@picture.Id</td>
+                    <td><img src="@picture.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
+                    <td>@picture.ResidenceId</td>
                     <td>
-                        <button @onclick="() => EditPictures(item.Id)">Ändra</button>
-                        <button @onclick="() => RemovePictures(item.Id)">Radera</button>
+                        <button @onclick="() => EditPictures(picture.Id)">Ändra</button>
+                        <button @onclick="() => RemovePictures(picture.Id)">Radera</button>
                     </td>
                 </tr>
             }
@@ -46,17 +49,30 @@ else
 @code {
     private List<Picture>? pictures;
     private string? errorString;
+    private string? searchTerm;
+    private SearchFilter<Picture>? filter; 
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             pictures = await Http.GetFromJsonAsync<List<Picture>>("https://localhost:7280/api/residencepictures");
+            filter = new SearchFilter<Picture>(pictures, c => c.ResidenceId.ToString());
         }
         catch (Exception ex)
         {
             errorString = $"Felmeddelande: {ex.Message}";
         }
+    }
+
+    private IEnumerable<Picture> FilteredItems()
+    {
+        if (filter != null)
+        {
+            filter.SearchTerm = searchTerm;
+            return filter.FilteredItems;
+        }
+        return pictures ?? Enumerable.Empty<Picture>();
     }
 
     private void AddPictures()
