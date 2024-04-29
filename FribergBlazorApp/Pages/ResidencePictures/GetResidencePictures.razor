@@ -30,7 +30,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var picture in FilteredItems())
+            @foreach (var picture in FilteredItems)
             {
                 <tr>
                     <td>@picture.Id</td>
@@ -57,7 +57,7 @@ else
         try
         {
             pictures = await Http.GetFromJsonAsync<List<Picture>>("https://localhost:7280/api/residencepictures");
-            filter = new SearchFilter<Picture>(pictures, c => c.ResidenceId.ToString());
+            filter = new SearchFilter<Picture>(pictures, c => c.ResidenceId.ToString(), c => c.Id.ToString());
         }
         catch (Exception ex)
         {
@@ -65,14 +65,17 @@ else
         }
     }
 
-    private IEnumerable<Picture> FilteredItems()
+    private IEnumerable<Picture> FilteredItems
     {
-        if (filter != null)
+        get
         {
-            filter.SearchTerm = searchTerm;
-            return filter.FilteredItems;
+            if (filter != null)
+            {
+                filter.SearchTerm = searchTerm;
+                return filter.ApplyFilter();
+            }
+            return pictures ?? Enumerable.Empty<Picture>();
         }
-        return pictures ?? Enumerable.Empty<Picture>();
     }
 
     private void AddPictures()
