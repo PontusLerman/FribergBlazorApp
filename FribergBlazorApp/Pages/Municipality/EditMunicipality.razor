@@ -20,12 +20,16 @@ else
     </div>
     <button type="submit" class="btn btn-primary">Spara</button>
     <button class="btn btn-danger" @onclick="@(() => DeleteMunicipality(Municipality.id))">Ta Bort</button>
+    <p>@errorString</p>
 </EditForm>
+
+
 
 @code {
     [Parameter]
     public int? Id { get; set; }
     public Municipality Municipality { get; set; } = new Municipality();
+    public string errorString = "";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -56,8 +60,15 @@ else
 
     async Task DeleteMunicipality(int id)
     {
-        await Http.DeleteAsync($"api/municipalities/{id}");
-        NavigationManager.NavigateTo("municipalities");
+        var response = await Http.DeleteAsync($"api/municipalities/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("municipalities");            
+        }
+        else
+        {
+            errorString = response.ReasonPhrase;
+        }
     }
 }
 
