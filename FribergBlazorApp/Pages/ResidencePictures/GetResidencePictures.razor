@@ -33,12 +33,12 @@ else
             @foreach (var picture in FilteredItems)
             {
                 <tr>
-                    <td>@picture.Id</td>
+                    <td>@picture.id</td>
                     <td><img src="@picture.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
                     <td>@picture.ResidenceId</td>
                     <td>
-                        <button @onclick="() => EditPictures(picture.Id)">Ändra</button>
-                        <button @onclick="() => RemovePictures(picture.Id)">Radera</button>
+                        <button @onclick="() => EditPictures(picture.id)">Ändra</button>
+                        <button @onclick="() => RemovePictures(picture.id)">Radera</button>
                     </td>
                 </tr>
             }
@@ -57,7 +57,7 @@ else
         try
         {
             pictures = await Http.GetFromJsonAsync<List<Picture>>("https://localhost:7280/api/residencepictures");
-            filter = new SearchFilter<Picture>(pictures, c => c.ResidenceId.ToString(), c => c.Id.ToString());
+            filter = new SearchFilter<Picture>(pictures, c => c.ResidenceId.ToString(), c => c.id.ToString());
         }
         catch (Exception ex)
         {
