@@ -31,11 +31,11 @@ else
             @foreach (var category in FilteredItems)
             {
                 <tr>
-                    <td>@category.Id</td>
+                    <td>@category.id</td>
                     <td>@category.name</td>
                     <td>
-                        <button @onclick="() => EditCategory(category.Id)">Ändra</button>
-                        <button @onclick="() => RemoveCategory(category.Id)">Radera </button>
+                        <button @onclick="() => EditCategory(category.id)">Ändra</button>
+                        <button @onclick="() => RemoveCategory(category.id)">Radera </button>
                     </td>
                 </tr>
             }
@@ -54,7 +54,7 @@ else
         try
         {
             categories = await Http.GetFromJsonAsync<List<Category>>("https://localhost:7280/api/category");
-            filter = new SearchFilter<Category>(categories, c => c.name, c => c.Id.ToString());
+            filter = new SearchFilter<Category>(categories, c => c.name, c => c.id.ToString());
         }
         catch (Exception ex)
         {
