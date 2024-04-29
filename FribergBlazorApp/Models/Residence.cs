@@ -16,7 +16,7 @@
         public decimal monthlyFee { get; set; }
         public decimal operatingCostPerYear { get; set; }
         public int constructionYear { get; set; }
-        public Picture[] pictures { get; set; }
+        public List<Picture>? pictures { get; set; }
         public Realtor realtor { get; set; }
     }    
 
