@@ -1,0 +1,210 @@
+﻿@page "/categories"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+
+@if (!showForm && !showConfirmation)
+{
+    <h3>Kategorier</h3>
+
+    <div style="position: absolute; right: 50px;">
+        <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+    </div>
+
+    <div>
+        <button @onclick="() => ShowForm(CategoryAction.Create)">Skapa en ny kategori</button>
+    </div>
+
+    @if (categories == null)
+    {
+        <p><em>Laddar...</em></p>
+    }
+    else if (errorString != null)
+    {
+        <p>Ett problem uppstod: @errorString</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Namn</th>
+                    <th>Val</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in FilteredItems)
+                {
+                    <tr>
+                        <td>@category.id</td>
+                        <td>@category.name</td>
+                        <td>
+                            <button @onclick="() => ShowForm(CategoryAction.Edit, category)">Ändra</button>
+                            <button @onclick="() => ShowConfirmationDialog(category.id)">Radera </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (showForm)
+{
+    @if (categoryAction == CategoryAction.Create || categoryAction == CategoryAction.Edit)
+    {
+        <div>
+            <h3>@(categoryAction == CategoryAction.Create ? "Skapa en ny kategori" : "Redigera kategori")</h3>
+            <input type="text" @bind="category.name" />
+            <button @onclick="SaveCategory">@(categoryAction == CategoryAction.Create ? "Skapa" : "Spara")</button>
+            <button @onclick="Cancel">Avbryt</button>
+        </div>
+    }
+}
+
+@if (showConfirmation)
+{
+    <div>
+        <h3>Radera kategori</h3>
+        <p>Är du säker på att du vill radera denna kategori?</p>
+        <button @onclick="() => DeleteCategory(selectedCategoryId)">Ja, Radera</button>
+        <button @onclick="Cancel">Avbryt</button>
+    </div>
+}
+
+@code {
+
+    private string baseUrl = "https://localhost:7280/api/category";
+    private List<Category>? categories;
+    private string? errorString;
+    private string? searchTerm;
+    private CategoryAction categoryAction = CategoryAction.None;
+    private Category category = new Category();
+    private bool showForm = false;
+    private bool showConfirmation = false;
+    private int selectedCategoryId;
+
+    private enum CategoryAction
+    {
+        None,
+        Create,
+        Edit
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            categories = await Http.GetFromJsonAsync<List<Category>>(baseUrl);
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Felmeddelande: {ex.Message}";
+        }
+    }
+
+    private IEnumerable<Category> FilteredItems
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return categories ?? Enumerable.Empty<Category>();
+            }
+            return categories?.Where(c => c.name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || c.id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<Category>();
+        }
+    }
+
+    private void ShowForm(CategoryAction action, Category category = null)
+    {
+        categoryAction = action;
+        if (category != null)
+        {
+            this.category = category;
+        }
+        showForm = true;
+    }
+
+    private void ShowConfirmationDialog(int categoryId)
+    {
+        selectedCategoryId = categoryId;
+        showConfirmation = true;
+    }
+
+    private async Task SaveCategory()
+    {
+        if (categoryAction == CategoryAction.Create)
+        {
+            await CreateCategory();
+        }
+        else if (categoryAction == CategoryAction.Edit)
+        {
+            await UpdateCategory();
+        }
+        ResetState();
+    }
+
+    private async Task CreateCategory()
+    {
+        try
+        {
+            HttpResponseMessage response = await Http.PostAsJsonAsync(baseUrl, category);
+            response.EnsureSuccessStatusCode();
+            categories.Add(await response.Content.ReadFromJsonAsync<Category>());
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Fel: {ex.Message}";
+        }
+    }
+
+    private async Task UpdateCategory()
+    {
+        try
+        {
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"{baseUrl}/{category.id}", category);
+            response.EnsureSuccessStatusCode();
+            var index = categories.FindIndex(c => c.id == category.id);
+            categories[index] = category;
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Fel: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteCategory(int categoryId)
+    {
+        try
+        {
+            HttpResponseMessage response = await Http.DeleteAsync($"{baseUrl}/{categoryId}");
+            response.EnsureSuccessStatusCode();
+            categories.RemoveAll(c => c.id == categoryId);
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Fel: {ex.Message}";
+        }
+        showConfirmation = false;
+    }
+
+    private void Cancel()
+    {
+        ResetState();
+    }
+
+    private void ResetState()
+    {
+        category = new Category();
+        categoryAction = CategoryAction.None;
+        showForm = false;
+        showConfirmation = false;
+        selectedCategoryId = 0;
+    }
+}
