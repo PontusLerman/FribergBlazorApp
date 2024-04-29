@@ -26,15 +26,18 @@ else
         <label for="agencyDescription">Mäklarbyrå beskrivning:</label>
         <InputText id="agencyDescription" @bind-Value="agency.agencyDescription" class="form-control" />
     </div>
+    @if (Id==null)
+    {
+        <FribergBlazorApp.Components.CreateRealtor Id=agency.agencyId realtor="realtor"/>
+    }
     <button class="btn btn-primary" type="submit">Spara</button>
-
-
 </EditForm>
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public Agency agency { get; set; } = new Agency();
+    public Realtor realtor { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -57,11 +60,9 @@ else
         }
         else
         {
+            agency.employees.Add(realtor);
             var result = await Http.PostAsJsonAsync($"api/agencies/{Id}", agency);
             NavigationManager.NavigateTo("/ga");
         }
     }
-
-
-
 }
