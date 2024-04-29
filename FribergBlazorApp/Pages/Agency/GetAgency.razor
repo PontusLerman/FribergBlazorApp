@@ -1,7 +1,7 @@
 ﻿@page "/ga"
 @using System.Text.Json
 @inject HttpClient Http
-
+@inject NavigationManager NavigationManager
 
 <h3>Mäklarbyrår</h3>
 @if (agencies == null)
@@ -17,7 +17,7 @@ else
    <table>
     <thead>
         <th></th>
-        <th>Mäklarbyrå</th>
+        <th>Mäklarbyråer</th>
     </thead>
     <tbody>
         @foreach(var agency in agencies)
@@ -25,12 +25,12 @@ else
             <tr>
                 <td>@agency.agencyLogoURL</td>
                 <td>@agency.agencyName</td>
-            </tr>  
-        }
-        
-    </tbody>
-    
+                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cea/{agency.agencyId}"))>Ändra</button></td>
+            </tr>    
+        }       
+    </tbody>   
 </table> 
+<button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cea"))>Skapa</button>
 }  
 
 @code {
@@ -43,10 +43,6 @@ else
         try
         {
             agencies = await Http.GetFromJsonAsync<List<Agency>>("api/agencies");
-            foreach(var a in agencies)
-            {
-                
-            }
         }
         catch (Exception ex)
         {

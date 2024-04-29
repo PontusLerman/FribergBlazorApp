@@ -30,6 +30,11 @@ namespace FribergWebAPI.Data
 			.HasOne(r => r.Agency)
 			.WithMany(a => a.Employees)
 			.OnDelete(DeleteBehavior.Restrict);
-		}
+
+            modelBuilder.Entity<Realtor>()
+            .HasMany(r => r.ResidenceList)
+            .WithOne(a => a.Realtor)
+            .OnDelete(DeleteBehavior.Restrict);
+        }
 	}
 }
