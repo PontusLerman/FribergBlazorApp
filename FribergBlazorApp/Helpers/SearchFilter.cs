@@ -10,8 +10,6 @@ namespace FribergBlazorApp.Helpers
 		private readonly IEnumerable<T> _sourceList;
 		private IEnumerable<T> _filteredItems;
 		private List<Func<T, string>> _propertySelectors;
-		private string _searchTerm;
-
 		public string SearchTerm { get; set;}
 
 		public SearchFilter(IEnumerable<T> sourceList, params Func<T, string>[] propertySelectors)
@@ -19,7 +17,6 @@ namespace FribergBlazorApp.Helpers
 			_sourceList = sourceList;
 			_propertySelectors = propertySelectors.ToList();
 			_filteredItems = _sourceList;
-			_searchTerm = string.Empty;
 		}
 
 		public IEnumerable<T> ApplyFilter()
