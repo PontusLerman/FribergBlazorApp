@@ -16,11 +16,11 @@ else
 <EditForm Model="Residence" OnSubmit="HandleSubmit">
     <div>
         <label for="category">Kategori</label>
-        <InputSelect @bind-Value="selectedCategoryId">
+        <InputSelect id="category" @bind-Value="selectedCategory" class="form-control">
             <option value="">Välj kategori</option>
             @foreach (var c in categories)
             {
-                <option value="@c">@c.name</option>
+                <option value="@c.id">@c.name</option>
             }
         </InputSelect>
     </div>
@@ -30,11 +30,11 @@ else
     </div>
     <div>
         <label for="municipality">Kommun</label>
-        <InputSelect @bind-Value="selectedMunicipalityId">
+        <InputSelect id="municipality" @bind-Value="selectedMunicipality" class="form-control">
             <option value="">Välj kommun</option>
             @foreach (var m in municipalities)
             {
-                <option value="@m">@m.municipalityName</option>
+                <option value="@m.id">@m.municipalityName</option>
             }
         </InputSelect>
     </div>
@@ -74,22 +74,17 @@ else
         <label for="constructionYear">Byggår</label>
         <InputNumber id="constructionYear" @bind-Value="Residence.constructionYear" class="form-control" />
     </div>
-    @* <div>
-        <label for="realtor">Mäklare</label>
-        <InputNumber id="realtor" @bind-Value="Residence.realtor" class="form-control" />
-    </div> *@
-    @*
-        //Dropdown for Residence.realtor, requires lazy loading else JSON-error
+    @* This should be set by user-login, now just for testing purposes *@
         <div>
         <label for="realtor">Mäklare</label>
-        <InputSelect @bind-Value="selectedRealtorId">
+    <InputSelect id="realtor" @bind-Value="selectedRealtor" class="form-control">
             <option value="">Välj mäklare</option>
             @foreach (var r in realtors)
             {
-                <option value="@r">@r.firstName @r.lastName</option>
+                <option value="@r.id">@r.firstName @r.lastName</option>
             }
         </InputSelect>
-    </div>*@
+    </div>
 
     <button type="submit" class="btn btn-primary">Spara</button>
     @* <button class="btn btn-danger" @onclick="@(() => DeleteResidence(Residence.id))">Ta Bort</button> *@
@@ -101,14 +96,14 @@ else
     public int? Id { get; set; }
     public Residence Residence { get; set; } = new Residence();
 
-    //Lists for edit-form dropdowns
-    public List<Category> categories;
-    public List<Municipality> municipalities;
-    public List<Realtor> realtors;
+    // Lists for edit-form dropdowns
+    public List<Category> categories = new List<Category>();
+    public List<Municipality> municipalities = new List<Municipality>();
+    public List<Realtor> realtors = new List<Realtor>();
     //Fields for bind-Value 
-    private int? selectedMunicipalityId = null;
-    private int? selectedCategoryId = null;
-    private int? selectedRealtorId = null;
+    private int? selectedMunicipality;
+    private int? selectedCategory;
+    private int? selectedRealtor;
 
     public string errorString = "";
 
@@ -119,19 +114,6 @@ else
             categories = await Http.GetFromJsonAsync<List<Category>>("api/category");
             municipalities = await Http.GetFromJsonAsync<List<Municipality>>("api/municipalities");
             realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtors");
-
-            if(Residence.municipality != null)
-            {
-                selectedMunicipalityId = Residence.municipality.id;
-            }
-            else if(Residence.category != null)
-            {
-                selectedCategoryId = Residence.category.id;
-            }
-            else if (Residence.realtor != null)
-            {
-                selectedRealtorId = Residence.realtor.id;
-            }
         }
         catch (Exception ex)
         {
@@ -153,6 +135,10 @@ else
 
     async Task HandleSubmit()
     {
+        Residence.category = await Http.GetFromJsonAsync<Category>($"api/category/{selectedCategory}");
+        Residence.municipality = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{selectedMunicipality}");
+        Residence.realtor = await Http.GetFromJsonAsync<Realtor>($"api/realtors/{selectedRealtor}");
+
         if (Id != null)
         {
             var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
