@@ -1,0 +1,154 @@
+﻿@* author: Johan Krångh *@
+@page "/edit-residence"
+@page "/edit-residence/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (Id == null)
+{
+    <h3>Lägg till bostad</h3>
+}
+else
+{
+    <h3>Ändra @Residence.address</h3>
+}
+
+<EditForm Model="Residence" OnSubmit="HandleSubmit">
+    <div>
+        <label for="category">Kategori</label>
+        <InputSelect id="category" @bind-Value="selectedCategory" class="form-control">
+            <option value="">Välj kategori</option>
+            @foreach (var c in categories)
+            {
+                <option value="@c.id">@c.name</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <label for="address">Adress</label>
+        <InputText id="address" @bind-Value="Residence.address" class="form-control" />
+    </div>
+    <div>
+        <label for="municipality">Kommun</label>
+        <InputSelect id="municipality" @bind-Value="selectedMunicipality" class="form-control">
+            <option value="">Välj kommun</option>
+            @foreach (var m in municipalities)
+            {
+                <option value="@m.id">@m.municipalityName</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <label for="startingPrice">Utgångspris</label>
+        <InputNumber id="startingPrice" @bind-Value="Residence.startingPrice" class="form-control" />
+    </div>
+    <div>
+        <label for="livingArea">Boyta</label>
+        <InputNumber id="livingArea" @bind-Value="Residence.livingArea" class="form-control" />
+    </div>
+    <div>
+        <label for="biArea">Biyta</label>
+        <InputNumber id="biArea" @bind-Value="Residence.biArea" class="form-control" />
+    </div>
+    <div>
+        <label for="plotArea">Tomtstorlek</label>
+        <InputNumber id="plotArea" @bind-Value="Residence.plotArea" class="form-control" />
+    </div>
+    <div>
+        <label for="objectDescription">Beskrivning</label>
+        <InputText id="objectDescription" @bind-Value="Residence.objectDescription" class="form-control" />
+    </div>
+    <div>
+        <label for="numberOfRooms">Rum</label>
+        <InputNumber id="numberOfRooms" @bind-Value="Residence.numberOfRooms" class="form-control" />
+    </div>
+    <div>
+        <label for="monthlyFee">Månadskostnad</label>
+        <InputNumber id="monthlyFee" @bind-Value="Residence.monthlyFee" class="form-control" />
+    </div>
+    <div>
+        <label for="operatingCostPerYear">Driftkostnad</label>
+        <InputNumber id="operatingCostPerYear" @bind-Value="Residence.operatingCostPerYear" class="form-control" />
+    </div>
+    <div>
+        <label for="constructionYear">Byggår</label>
+        <InputNumber id="constructionYear" @bind-Value="Residence.constructionYear" class="form-control" />
+    </div>
+    @* This should be set by user-login, now just for testing purposes *@
+        <div>
+        <label for="realtor">Mäklare</label>
+    <InputSelect id="realtor" @bind-Value="selectedRealtor" class="form-control">
+            <option value="">Välj mäklare</option>
+            @foreach (var r in realtors)
+            {
+                <option value="@r.id">@r.firstName @r.lastName</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Spara</button>
+    @* <button class="btn btn-danger" @onclick="@(() => DeleteResidence(Residence.id))">Ta Bort</button> *@
+    <p>@errorString</p>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    public Residence Residence { get; set; } = new Residence();
+
+    // Lists for edit-form dropdowns
+    public List<Category> categories = new List<Category>();
+    public List<Municipality> municipalities = new List<Municipality>();
+    public List<Realtor> realtors = new List<Realtor>();
+    //Fields for bind-Value 
+    private int? selectedMunicipality;
+    private int? selectedCategory;
+    private int? selectedRealtor;
+
+    public string errorString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            categories = await Http.GetFromJsonAsync<List<Category>>("api/category");
+            municipalities = await Http.GetFromJsonAsync<List<Municipality>>("api/municipalities");
+            realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtors");
+        }
+        catch (Exception ex)
+        {
+            errorString = ex.Message;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<Residence>($"api/residence/{Id}");
+            if (result != null)
+            {
+                Residence = result;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        Residence.category = await Http.GetFromJsonAsync<Category>($"api/category/{selectedCategory}");
+        Residence.municipality = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{selectedMunicipality}");
+        Residence.realtor = await Http.GetFromJsonAsync<Realtor>($"api/realtors/{selectedRealtor}");
+
+        if (Id != null)
+        {
+            var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
+            NavigationManager.NavigateTo("residences");
+        }
+        else
+        {
+            var result = await Http.PostAsJsonAsync($"api/residence", Residence);
+            Residence = await result.Content.ReadFromJsonAsync<Residence>();
+            NavigationManager.NavigateTo("residences");
+        }
+    }
+}
