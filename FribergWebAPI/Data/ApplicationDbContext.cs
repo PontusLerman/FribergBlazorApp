@@ -21,6 +21,7 @@ namespace FribergWebAPI.Data
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+
 			modelBuilder.Entity<Residence>()
 			.HasOne(e => e.Category)
 			.WithMany(f => f.Residences)
@@ -30,6 +31,19 @@ namespace FribergWebAPI.Data
 			.HasOne(r => r.Agency)
 			.WithMany(a => a.Employees)
 			.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Municipality>()
+			.HasMany(m => m.Residences)
+			.WithOne(r => r.Municipality)
+			.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Residence>()
+			.HasOne(e => e.Municipality)
+			.WithMany(f => f.Residences)
+			.OnDelete(DeleteBehavior.Restrict);
+			//Supposed to hinder deletion of municipalities in use on
+			//a recidence, doesnt work
+
 		}
 	}
 }

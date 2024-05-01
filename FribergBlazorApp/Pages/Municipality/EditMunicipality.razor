@@ -1,0 +1,74 @@
+﻿@* author: Johan Krångh *@
+@page "/edit-municipality"
+@page "/edit-municipality/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if(Id == null)
+{
+    <h3>Lägg till kommun</h3>
+}
+else
+{
+    <h3>Ändra @Municipality.municipalityName</h3>
+}
+
+<EditForm Model="Municipality" OnSubmit="HandleSubmit">
+    <div>
+        <label for="municipalityName">Kommunnamn</label>
+        <InputText id="municipalityName" @bind-Value="Municipality.municipalityName" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <button class="btn btn-danger" @onclick="@(() => DeleteMunicipality(Municipality.id))">Ta Bort</button>
+    <p>@errorString</p>
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    public Municipality Municipality { get; set; } = new Municipality();
+    public string errorString = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{Id}");
+            if (result != null)
+            {
+                Municipality = result;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id != null)
+        {
+            var result = await Http.PutAsJsonAsync($"api/municipalities/{Id}", Municipality);
+            NavigationManager.NavigateTo("municipalities");
+        }
+        else
+        {
+            var result = await Http.PostAsJsonAsync($"api/municipalities", Municipality);
+            Municipality = await result.Content.ReadFromJsonAsync<Municipality>();
+            NavigationManager.NavigateTo("municipalities");
+        }
+    }
+
+    async Task DeleteMunicipality(int id)
+    {
+        var response = await Http.DeleteAsync($"api/municipalities/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("municipalities");            
+        }
+        else
+        {
+            errorString = response.ReasonPhrase;
+        }
+    }
+}
+
