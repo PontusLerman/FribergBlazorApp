@@ -1,0 +1,45 @@
+﻿@* author: Johan Krångh *@
+@page "/remove-municipality/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3>Ta Bort @(Municipality.municipalityName)?</h3>
+
+
+ <button class="btn btn-danger" @onclick="@(() => RemoveMunicipality(Id))">Ta Bort</button>
+<a class="btn btn-outline-primary" href="municipalities">Tillbaka</a>
+    
+
+<p>@errorString</p>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    public Municipality Municipality { get; set; } = new Municipality();
+    private string? errorString;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{Id}");
+            if (result != null)
+            {
+                Municipality = result;
+            }
+        }
+    }
+
+    async Task RemoveMunicipality(int? id)
+    {
+        var response = await Http.DeleteAsync($"api/municipalities/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavManager.NavigateTo("municipalities");
+        }
+        else
+        {
+            errorString = response.ReasonPhrase;
+        }
+    }
+}

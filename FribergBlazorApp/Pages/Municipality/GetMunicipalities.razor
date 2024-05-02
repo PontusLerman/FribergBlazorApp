@@ -1,7 +1,7 @@
 ﻿@* author: Johan Krångh *@
 @page "/municipalities"
 @inject HttpClient Http
-@inject NavigationManager NavigationManager
+@inject NavigationManager NavManager
 
 <h3>Kommuner</h3>
 
@@ -29,6 +29,7 @@ else
                 <tr>
                     <td>@m.municipalityName</td>       
                     <td><button class="btn btn-outline-primary" @onclick="@(() => EditMunicipality(m.id))">Ändra</button></td>
+                    <td><a class="btn btn-danger" href="remove-municipality/@m.id">Ta Bort</a></td>
                 </tr>
             }
         </tbody>
@@ -55,11 +56,11 @@ else
 
     void AddMunicipality()
     {
-        NavigationManager.NavigateTo("edit-municipality");
+        NavManager.NavigateTo("edit-municipality");
     }
 
     void EditMunicipality(int id)
     {
-        NavigationManager.NavigateTo($"edit-municipality/{id}");        
+        NavManager.NavigateTo($"edit-municipality/{id}");        
     }
 }

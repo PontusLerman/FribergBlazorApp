@@ -18,10 +18,7 @@ else
         <label for="municipalityName">Kommunnamn</label>
         <InputText id="municipalityName" @bind-Value="Municipality.municipalityName" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary">Spara</button>@if (Id != null)
-    {
-        <button class="btn btn-danger" @onclick="@(() => DeleteMunicipality(Municipality.id))">Ta Bort</button>
-    }
+    <button type="submit" class="btn btn-primary">Spara</button>
     <p>@errorString</p>
 </EditForm>
 
@@ -58,19 +55,6 @@ else
             Municipality = await result.Content.ReadFromJsonAsync<Municipality>();
             NavigationManager.NavigateTo("municipalities");
         }
-    }
-
-    async Task DeleteMunicipality(int id)
-    {
-        var response = await Http.DeleteAsync($"api/municipalities/{id}");
-        if (response.IsSuccessStatusCode)
-        {
-            NavigationManager.NavigateTo("municipalities");            
-        }
-        else
-        {
-            errorString = response.ReasonPhrase;
-        }
-    }
+    }    
 }
 
