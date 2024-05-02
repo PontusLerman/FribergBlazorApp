@@ -18,8 +18,10 @@ else
         <label for="municipalityName">Kommunnamn</label>
         <InputText id="municipalityName" @bind-Value="Municipality.municipalityName" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary">Spara</button>
-    <button class="btn btn-danger" @onclick="@(() => DeleteMunicipality(Municipality.id))">Ta Bort</button>
+    <button type="submit" class="btn btn-primary">Spara</button>@if (Id != null)
+    {
+        <button class="btn btn-danger" @onclick="@(() => DeleteMunicipality(Municipality.id))">Ta Bort</button>
+    }
     <p>@errorString</p>
 </EditForm>
 
