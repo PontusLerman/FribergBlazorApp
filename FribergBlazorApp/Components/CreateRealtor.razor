@@ -1,7 +1,7 @@
 ﻿@inject HttpClient Http
 
 <h3>Skapa Mäklare</h3>
-<EditForm model="realor" >
+<EditForm Model="@realtor" >
     <div>
         <label for="firstName">Förnamn:</label>
         <InputText id="firstName" @bind-Value="realtor.firstName" class="form-control" />
@@ -30,10 +30,10 @@
         }
         else
         {
-            <InputSelect id="agencyName" @bind-Value="realtor.agency">
+            <InputSelect id="agencyName" @bind-Value="SelectedAgency" @onchange="HandleAgency">
                 @foreach (var agency in agencies)
             {
-                <option value="@agency">@agency.agencyName</option>
+                <option value="@agency.agencyId">@agency.agencyName</option>
             }
             </InputSelect>
         }
@@ -46,7 +46,8 @@
     public int? Id { get; set; }
     [Parameter]
     public Realtor realtor { get; set; } = new Realtor();
-    public List<Agency>? agencies { get; set; }
+    public List<Agency>? agencies = new List<Agency>();
+    public int? SelectedAgency;
 
 
     protected override async Task OnInitializedAsync()
@@ -65,5 +66,9 @@
                 realtor.agency = result;
             }
         }
+    }
+    async Task HandleAgency()
+    {
+        realtor.agency = await Http.GetFromJsonAsync<Agency>($"api/agencies/{SelectedAgency}");
     }
 }

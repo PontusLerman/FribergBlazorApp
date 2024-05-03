@@ -1,0 +1,57 @@
+﻿@page "/gr"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Mäklare</h3>
+@if (realtors == null)
+{
+    <h3>Loading...</h3>
+}
+else if (errorString != null)
+{
+    <h3>@errorString</h3>
+}
+else
+{
+    <table>
+        <thead>
+            <th>Bild</th>
+            <th>Förnamn</th>
+            <th>Efternamn</th>
+            <th>Telefonnummer</th>
+            <th>Mäklarbyrå</th>
+        </thead>
+        <tbody>
+            @foreach (var realtor in realtors)
+            {
+                <tr>
+                    <td>@realtor.picture</td>
+                    <td>@realtor.firstName</td>
+                    <td>@realtor.lastName</td>
+                    <td>@realtor.phone</td>
+                    <td>@realtor.agency.agencyName</td>
+                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer/{realtor.id}"))>Ändra</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer"))>Skapa</button>
+}
+
+@code {
+    List<Realtor> realtors = new List<Realtor>();
+    string errorString;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtors");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+}

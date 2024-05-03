@@ -1,0 +1,23 @@
+﻿@page "/cer"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>CreateEditRealtor</h3>
+<EditForm model="realtor" OnSubmit="HandleSubmit">
+    <CreateRealtor realtor="realtor"/>
+    <button type="submit" class="btn btn-primary">Spara</button>
+</EditForm>
+
+
+@code {
+    public Realtor realtor { get; set; }
+
+    async Task HandleSubmit()
+    {
+        var result = await Http.PostAsJsonAsync($"api/realtors", realtor);
+       
+        NavigationManager.NavigateTo("gr");
+    }
+
+
+}
