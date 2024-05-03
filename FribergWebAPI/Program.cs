@@ -26,6 +26,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers()
 				.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddAutoMapper(typeof(Program));
 
 //author: Christian
 builder.Services.AddScoped<IResidence, ResidenceRepository>();
