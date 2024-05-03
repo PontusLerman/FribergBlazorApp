@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Models;
 using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.DTOs;
+using AutoMapper;
 
 namespace FribergWebAPI.Controllers
 {
@@ -15,10 +17,12 @@ namespace FribergWebAPI.Controllers
     public class AgenciesController : ControllerBase //author: Johan Krångh
     {
         private readonly IAgency agencyRepo;
+        private readonly IMapper mapper;
 
-        public AgenciesController(IAgency agencyRepo)
+        public AgenciesController(IAgency agencyRepo, IMapper mapper)
         {
             this.agencyRepo = agencyRepo;
+            this.mapper = mapper;
         }
 
         // GET: api/Agencies
@@ -61,8 +65,9 @@ namespace FribergWebAPI.Controllers
         // POST: api/Agencies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Agency>> PostAgency(Agency agency)
+        public async Task<ActionResult<Agency>> PostAgency(CRUDAgencyDto agencyDto)
         {
+            var agency = mapper.Map<Agency>(agencyDto);
             await agencyRepo.AddAsync(agency);
 
             return CreatedAtAction("GetAgency", new { id = agency.AgencyId }, agency);
