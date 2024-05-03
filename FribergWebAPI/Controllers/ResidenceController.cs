@@ -45,8 +45,9 @@ namespace FribergWebAPI.Controllers
 
 		// POST: api/Residence
 		[HttpPost]
-		public async Task<ActionResult<Residence>> PostResidence(Residence residence)
+		public async Task<ActionResult<Residence>> PostResidence(CRUDResidenceDto residenceDto)
 		{
+			var residence = mapper.Map<Residence>(residenceDto);
 			await residenceRepository.Add(residence);
 			return CreatedAtAction(nameof(GetResidence), new { id = residence.Id }, residence);
 		}

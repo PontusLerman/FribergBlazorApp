@@ -2,8 +2,9 @@
 
 namespace FribergWebAPI.DTOs
 {
-    public class ResidenceDto
+    public class CRUDResidenceDto
     {
+        public int Id { get; set; }
         public CategoryDto Category { get; set; }
         public string? Address { get; set; }
         public MunicipalityDto Municipality { get; set; }
@@ -16,7 +17,7 @@ namespace FribergWebAPI.DTOs
         public decimal MonthlyFee { get; set; }
         public decimal OperatingCostPerYear { get; set; }
         public int ConstructionYear { get; set; }
-        public virtual List<ResidencePicture> Pictures { get; set; }
+        public virtual List<ResidencePicture>? Pictures { get; set; }
         public RealtorDto Realtor { get; set; }
     }
 }

@@ -8,10 +8,13 @@ namespace FribergWebAPI.Profiles
     {
         public DtoProfile()
         {
-            CreateMap<Realtor, RealtorDto>();
-            CreateMap<Agency, RealtorAgencyDto>();
-            CreateMap<Residence, ResidenceDto>();
+            CreateMap<Realtor, RealtorDto>().ReverseMap();
+            CreateMap<Agency, RealtorAgencyDto>().ReverseMap();
+            CreateMap<Residence, ResidenceDto>().ReverseMap();
+            CreateMap<Residence, CRUDResidenceDto>().ReverseMap();
             CreateMap<Agency, CRUDAgencyDto>().ReverseMap();
+            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<Municipality, MunicipalityDto>().ReverseMap();
         }
     }
 }
