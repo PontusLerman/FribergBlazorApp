@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Models;
 using FribergWebAPI.Data.Interfaces;
+using AutoMapper;
 
 namespace FribergWebAPI.Controllers
 {
@@ -15,10 +16,12 @@ namespace FribergWebAPI.Controllers
     public class MunicipalitiesController : ControllerBase //author: Johan
     {
         private readonly IMunicipality municipalityRepo;
+        private readonly IMapper mapper;
 
-        public MunicipalitiesController(IMunicipality municipalityRepo)
+        public MunicipalitiesController(IMunicipality municipalityRepo, IMapper mapper)
         {
             this.municipalityRepo = municipalityRepo;
+            this.mapper = mapper;
         }
 
         // GET: api/Municipalities
