@@ -3,6 +3,13 @@ using FribergWebAPI.Data;
 using System.Text.Json.Serialization;
 using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.Data.Interfaces;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using FribergWebAPI.IdentityData;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
 
@@ -21,6 +28,47 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+{
+	options.Password.RequireDigit = true;
+	options.Password.RequiredLength = 8;
+	options.Password.RequireNonAlphanumeric = true;
+	options.Password.RequireUppercase = true;
+	options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+	options.ClientId = "YOUR_GOOGLE_CLIENT_ID";
+	options.ClientSecret = "YOUR_GOOGLE_CLIENT_SECRET";
+});
+
+var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
+builder.Services.AddAuthentication(opt =>
+{
+	opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(cfg =>
+{
+	cfg.RequireHttpsMetadata = false;
+	cfg.SaveToken = true;
+	cfg.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuerSigningKey = true,
+		IssuerSigningKey = new SymmetricSecurityKey(key),
+		ValidateIssuer = false,
+		ValidateAudience = false
+	};
+}); 
 
 // Add services to the container.
 
@@ -54,11 +102,13 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseAuthorization();
+
+app.UseAuthentication();
+
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
-
-app.UseAuthorization();
 
 app.MapControllers();
 
