@@ -27,12 +27,12 @@ namespace FribergWebAPI.Data.Repositories
 
         public async Task<IEnumerable<Municipality>> GetAllAsync()
         {
-            return await applicationDbContext.Municipality.ToListAsync();
+            return await applicationDbContext.Municipality.Include(x => x.Residences).ToListAsync();
         }
 
         public async Task<Municipality> GetByIdAsync(int id)
         {
-            return await applicationDbContext.Municipality.FirstOrDefaultAsync(x => x.Id == id);
+            return await applicationDbContext.Municipality.Include(x => x.Residences).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task UpdateAsync(Municipality municipality)

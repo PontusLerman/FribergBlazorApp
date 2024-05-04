@@ -1,4 +1,6 @@
+using AutoMapper;
 using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,18 +12,21 @@ namespace FribergWebAPI.Controllers
 	public class ResidenceController : ControllerBase
 	{
 		private readonly IResidence residenceRepository;
+        private readonly IMapper mapper;
 
-		public ResidenceController(IResidence residenceRepository)
+        public ResidenceController(IResidence residenceRepository, IMapper mapper)
 		{
 			this.residenceRepository = residenceRepository;
-		}
+            this.mapper = mapper;
+        }
 
 		// GET: api/Residence
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Residence>>> GetResidence()
+		public async Task<ActionResult<IEnumerable<ResidenceDto>>> GetResidence()
 		{
 			var residence = await residenceRepository.GetAll();
-			return Ok(residence);
+			var residenceDtos = mapper.Map<List<ResidenceDto>>(residence);
+            return Ok(residenceDtos);
 		}
 
 		// GET: api/Residence/5
@@ -40,8 +45,9 @@ namespace FribergWebAPI.Controllers
 
 		// POST: api/Residence
 		[HttpPost]
-		public async Task<ActionResult<Residence>> PostResidence(Residence residence)
+		public async Task<ActionResult<Residence>> PostResidence(CRUDResidenceDto residenceDto)
 		{
+			var residence = mapper.Map<Residence>(residenceDto);
 			await residenceRepository.Add(residence);
 			return CreatedAtAction(nameof(GetResidence), new { id = residence.Id }, residence);
 		}

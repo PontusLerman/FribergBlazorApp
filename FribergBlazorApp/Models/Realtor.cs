@@ -9,7 +9,6 @@
         public string phone { get; set; }
         public string picture { get; set; }
         public Agency agency { get; set; }
-        public List<Residence>? residenceList { get; set; }
+        public List<Residence> residenceList { get; set; }
     }
-
 }

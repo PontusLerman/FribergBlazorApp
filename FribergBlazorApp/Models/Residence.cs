@@ -11,12 +11,12 @@
         public decimal livingArea { get; set; }
         public decimal biArea { get; set; }
         public decimal plotArea { get; set; }
-        public string? objectDescription { get; set; }
+        public string objectDescription { get; set; }
         public int numberOfRooms { get; set; }
         public decimal monthlyFee { get; set; }
         public decimal operatingCostPerYear { get; set; }
         public int constructionYear { get; set; }
-        public Picture[] pictures { get; set; }
+        public List<Picture>? pictures { get; set; }
         public Realtor realtor { get; set; }
     }    
 

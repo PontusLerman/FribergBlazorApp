@@ -13,11 +13,9 @@ builder.Services.AddCors(options =>
 	options.AddPolicy(name: MyAllowSpecificOrigins,
 					policy =>
 					{
-						policy.WithOrigins("https://localhost:7280",
-											"https://localhost:7082")
+						policy.WithOrigins("https://localhost:7082")
 											.AllowAnyHeader()
 											.AllowAnyMethod(); 
-						
 					});
 });
 
@@ -28,6 +26,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers()
 				.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddAutoMapper(typeof(Program));
 
 //author: Christian
 builder.Services.AddScoped<IResidence, ResidenceRepository>();
