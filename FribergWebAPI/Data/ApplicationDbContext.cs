@@ -43,7 +43,10 @@ namespace FribergWebAPI.Data
 			.OnDelete(DeleteBehavior.Restrict);
 			//Supposed to hinder deletion of municipalities in use on
 			//a recidence, doesnt work
-
+			modelBuilder.Entity<Residence>()
+				.HasOne(r => r.Realtor)
+				.WithMany(r => r.ResidenceList)
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

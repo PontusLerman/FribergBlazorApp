@@ -147,6 +147,8 @@ else
         else
         {
             var result = await Http.PostAsJsonAsync($"api/residence", Residence);
+            string json = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(json);
             Residence = await result.Content.ReadFromJsonAsync<Residence>();
             NavigationManager.NavigateTo("residences");
         }

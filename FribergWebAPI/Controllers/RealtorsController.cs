@@ -10,6 +10,8 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text;
 using FribergWebAPI.Data.Interfaces;
+using AutoMapper;
+using FribergWebAPI.DTOs;
 
 namespace FribergWebAPI.Controllers
 {
@@ -20,32 +22,36 @@ namespace FribergWebAPI.Controllers
     {
 
         private readonly IRealtor realtorRepository;
+        private readonly IMapper mapper;
 
-        public RealtorsController(IRealtor realtorRepository)
+        public RealtorsController(IRealtor realtorRepository, IMapper mapper)
         {            
             this.realtorRepository = realtorRepository;
+            this.mapper = mapper;
         }
 
         // GET: api/Realtors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Realtor>>> Getrealtors()
+        //[ProducesResponseType(typeof(RealtorDto), 200)]
+        public async Task<ActionResult<IEnumerable<RealtorDto>>> Getrealtors()
         {
-            var realtors = await realtorRepository.GetAllAsync();   
-            return Ok(realtors);
+            var realtors = await realtorRepository.GetAllAsync();
+            var realtorDtos = mapper.Map<List<RealtorDto>>(realtors);
+            return Ok(realtorDtos);
         }
 
         // GET: api/Realtors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Realtor>> GetRealtor(int id)
+        public async Task<ActionResult<RealtorDto>> GetRealtor(int id)
         {
             var realtor = await realtorRepository.GetByIdAsync(id);
-
-            if (realtor == null)
+            var realtorDto = mapper.Map<RealtorDto>(realtor);
+            if (realtorDto == null)
             {
                 return NotFound();
             }
 
-            return realtor;
+            return realtorDto;
         }
 
         // PUT: api/Realtors/5
