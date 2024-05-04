@@ -11,5 +11,4 @@
         public Agency agency { get; set; }
         public List<Residence> residenceList { get; set; }
     }
-
 }
