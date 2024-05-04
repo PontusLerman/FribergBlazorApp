@@ -3,14 +3,15 @@
 @inject NavigationManager NavigationManager
 
 <h3>CreateEditRealtor</h3>
-<EditForm model="realtor" OnSubmit="HandleSubmit">
+<EditForm Model="realtor" OnSubmit="HandleSubmit">
     <CreateRealtor realtor="realtor"/>
     <button type="submit" class="btn btn-primary">Spara</button>
 </EditForm>
 
 
 @code {
-    public Realtor realtor { get; set; }
+    [Parameter]
+    public Realtor realtor { get; set; } = new Realtor();
 
     async Task HandleSubmit()
     {

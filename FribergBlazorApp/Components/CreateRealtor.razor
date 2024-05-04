@@ -1,7 +1,7 @@
 ﻿@inject HttpClient Http
 
 <h3>Skapa Mäklare</h3>
-<EditForm Model="@realtor" >
+@* <EditForm Model="@realtor" > *@
     <div>
         <label for="firstName">Förnamn:</label>
         <InputText id="firstName" @bind-Value="realtor.firstName" class="form-control" />
@@ -38,7 +38,7 @@
             </InputSelect>
         }
     </div>
-</EditForm>
+@* </EditForm> *@
 
 
 @code {
