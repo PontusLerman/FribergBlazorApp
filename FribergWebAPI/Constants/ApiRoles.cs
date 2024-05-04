@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FribergWebAPI.Constants
 {
-	public static class ApiRoles
+	public class ApiRoles
 	{
 		public const string DefaultRealtor = "DefaultRealtor";
 		public const string SuperRealtor = "SuperRealtor";

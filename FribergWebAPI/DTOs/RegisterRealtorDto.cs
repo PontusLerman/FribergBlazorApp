@@ -13,5 +13,6 @@ namespace FribergWebAPI.DTOs
 		public string Phone { get; set; }
 		public string Picture { get; set; }
 		public string Password { get; set; }
+        public List<string> Roles { get; set; }
 	}
 }
