@@ -62,42 +62,49 @@ namespace FribergWebAPI.Controllers
 					}
 				}
 
-				// Return success response
 				return Ok(new { realtor.Id, realtor.Email });
 			}
 			else
 			{
-				// Return error response
 				return BadRequest(result.Errors);
 			}
+		}
+		
+		[HttpGet("{id}")]
+		public async Task<ActionResult<ApplicationUser>> GetUsers(string id)
+		{
+			var user = await _userManager.FindByIdAsync(id);
+			if (user == null)
+			{
+				return NotFound();
+			}
+			
+			return user;
 		}
 		
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateUser(string id, RegisterRealtorDto model)
 		{
-			// Find the user by ID
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
 			{
-				return NotFound(); // Return 404 if user not found
+				return NotFound();
 			}
 
-			// Update user properties
 			user.FirstName = model.FirstName;
 			user.LastName = model.LastName;
 			user.Email = model.Email;
 			user.PhoneNumber = model.Phone;
 			user.Roles = model.Roles;
 
-			// Update the user
 			var result = await _userManager.UpdateAsync(user);
 			if (result.Succeeded)
 			{
-				return NoContent(); // Return 204 if user updated successfully
+				return NoContent();
 			}
 			else
 			{
-				return BadRequest(result.Errors); // Return bad request with errors if update failed
+				return BadRequest(result.Errors);
 			}
 		}
 		
@@ -110,7 +117,6 @@ namespace FribergWebAPI.Controllers
 				return NotFound();
 			}
 
-			// Delete the user
 			var result = await _userManager.DeleteAsync(user);
 			if (result.Succeeded)
 			{

@@ -32,7 +32,6 @@ namespace FribergWebAPI.Controllers
 
         // GET: api/Realtors
         [HttpGet]
-        //[ProducesResponseType(typeof(RealtorDto), 200)]
         public async Task<ActionResult<IEnumerable<RealtorDto>>> Getrealtors()
         {
             var realtors = await realtorRepository.GetAllAsync();
