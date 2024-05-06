@@ -39,19 +39,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAuthentication(options =>
-{
-	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(options =>
-{
-	options.ClientId = "YOUR_GOOGLE_CLIENT_ID";
-	options.ClientSecret = "YOUR_GOOGLE_CLIENT_SECRET";
-});
 
-var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
+
+/* var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(opt =>
 {
 	opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,7 +58,7 @@ builder.Services.AddAuthentication(opt =>
 		ValidateIssuer = false,
 		ValidateAudience = false
 	};
-}); 
+});  */
 
 // Add services to the container.
 
