@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using FribergWebAPI.IdentityData;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using FribergWebAPI.Models;
 
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
 
@@ -29,7 +30,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+builder.Services.AddIdentity<Realtor, IdentityRole>(options => 
 {
 	options.Password.RequireDigit = true;
 	options.Password.RequiredLength = 8;
@@ -39,6 +40,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    //options.ClientId = "686855374153-fhvpksja8ll0a1v74iofld75fviv63f6.apps.googleusercontent.com";
+    //options.ClientSecret = "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";
+});
 
 
 /* var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
