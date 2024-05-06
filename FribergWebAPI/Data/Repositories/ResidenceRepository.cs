@@ -30,7 +30,7 @@ namespace FribergWebAPI.Data.Repositories
 			applicationDbContext.Entry(residence.Category).State = EntityState.Unchanged;
 			applicationDbContext.Entry(residence.Municipality).State = EntityState.Unchanged;
 			applicationDbContext.Entry(residence.Realtor).State = EntityState.Unchanged;
-			applicationDbContext.Entry(residence.Realtor.Agency).State = EntityState.Unchanged;
+            applicationDbContext.Entry(residence.Realtor.Agency).State = EntityState.Unchanged;
 			await applicationDbContext.SaveChangesAsync();
 		}
 

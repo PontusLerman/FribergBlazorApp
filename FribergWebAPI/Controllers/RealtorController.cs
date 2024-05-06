@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.IdentityData;
+using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,51 +10,52 @@ namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class UserController : ControllerBase
+	public class RealtorController : ControllerBase
 	{
-		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly UserManager<Realtor> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 
-		public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+		public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
 		}
 		
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsers()
+		public async Task<ActionResult<IEnumerable<Realtor>>> GetUsers()
 		{
 			var users = await _userManager.Users.ToListAsync();
 			return Ok(users);
 		}
 
 		[HttpPost("register")]
-		public async Task<IActionResult> RegisterRealtor(RegisterRealtorDto model)
+		public async Task<IActionResult> RegisterRealtor(RealtorDto model)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
 
-			var realtor = new ApplicationUser
+			var realtor = new Realtor
 			{
 				UserName = model.Email,
 				Email = model.Email,
 				FirstName = model.FirstName,
 				LastName = model.LastName,
-				PhoneNumber = model.Phone,
+				PhoneNumber = model.PhoneNumber,
+				Picture = model.Picture,
 				Roles = model.Roles
 			};
 
 			// Hash the password
-			var passwordHasher = new PasswordHasher<ApplicationUser>();
+			var passwordHasher = new PasswordHasher<Realtor>();
 			realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
 			var result = await _userManager.CreateAsync(realtor, model.Password);
 
 			if (result.Succeeded)
 			{
-				 foreach (var roleName in model.Roles)
+				foreach (var roleName in model.Roles)
 				{
 					var role = await _roleManager.FindByNameAsync(roleName);
 					if (role != null)
@@ -71,7 +73,7 @@ namespace FribergWebAPI.Controllers
 		}
 		
 		[HttpGet("{id}")]
-		public async Task<ActionResult<ApplicationUser>> GetUsers(string id)
+		public async Task<ActionResult<Realtor>> GetUsers(string id)
 		{
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
@@ -83,7 +85,7 @@ namespace FribergWebAPI.Controllers
 		}
 		
 		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateUser(string id, RegisterRealtorDto model)
+		public async Task<IActionResult> UpdateUser(string id, RealtorDto model)
 		{
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
@@ -94,7 +96,8 @@ namespace FribergWebAPI.Controllers
 			user.FirstName = model.FirstName;
 			user.LastName = model.LastName;
 			user.Email = model.Email;
-			user.PhoneNumber = model.Phone;
+			user.PhoneNumber = model.PhoneNumber;
+			user.Picture = model.Picture;
 			user.Roles = model.Roles;
 
 			var result = await _userManager.UpdateAsync(user);

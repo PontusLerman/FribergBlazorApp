@@ -8,7 +8,7 @@ using FribergWebAPI.Constants;
 
 namespace FribergWebAPI.Data
 {
-	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+	public class ApplicationDbContext : IdentityDbContext<Realtor>
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options)
 		{ 
