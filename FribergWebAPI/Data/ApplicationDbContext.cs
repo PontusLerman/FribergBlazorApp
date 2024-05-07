@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using FribergWebAPI.IdentityData;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using FribergWebAPI.Constants;
@@ -34,13 +33,13 @@ namespace FribergWebAPI.Data
 			{
 				Name = ApiRoles.DefaultRealtor,
 				NormalizedName = ApiRoles.DefaultRealtor,
-				Id = "b0ef5930-faa0-47c1-bdd4-5657ff04ed6d"
+				Id = "1"
 			},
 			new IdentityRole
 			{
 				Name = ApiRoles.SuperRealtor,
 				NormalizedName = ApiRoles.SuperRealtor,
-				Id = "0a6bf8b2-c291-4e50-96c9-cd0e5d5b167f"
+				Id = "2"
 			});
 			
 			//This function makes it so that it doesn't delete it's childrens or parents.

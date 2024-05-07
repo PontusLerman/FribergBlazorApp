@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using FribergWebAPI.DTOs;
-using FribergWebAPI.IdentityData;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -47,8 +46,8 @@ namespace FribergWebAPI.Controllers
 				Roles = model.Roles
 			};
 
-			// Hash the password
-			var passwordHasher = new PasswordHasher<Realtor>();
+            // Hash the password
+            var passwordHasher = new PasswordHasher<Realtor>();
 			realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
 			var result = await _userManager.CreateAsync(realtor, model.Password);
@@ -64,16 +63,22 @@ namespace FribergWebAPI.Controllers
 					}
 				}
 
-				return Ok(new { realtor.Id, realtor.Email });
+				return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
 			}
 			else
 			{
-				return BadRequest(result.Errors);
-			}
+                // Manually add model errors to ModelState
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("FUUUUUUUUUUUUUUUUUUUUUUCK", error.Description);
+                }
+
+                return BadRequest(ModelState); // Return ModelState with errors
+            }
 		}
 		
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Realtor>> GetUsers(string id)
+		public async Task<ActionResult<Realtor>> GetUsersById(string id)
 		{
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
