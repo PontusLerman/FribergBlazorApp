@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.DTOs;
@@ -16,23 +17,42 @@ namespace FribergWebAPI.Controllers
 		private readonly UserManager<Realtor> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 		private readonly IAgency _agency;
-		
-		public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency)
+        private readonly IMapper _mapper;
+
+        public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency, IMapper mapper)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_agency = agency;
+			_mapper = mapper;
 		}
 		
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Realtor>>> GetUsers()
+		public async Task<ActionResult<IEnumerable<RealtorDto>>> GetUsers()
 		{
-			var users = await _userManager.Users
+			var realtors = await _userManager.Users
 			.Include(u => u.Agency)
 			.Include(r => r.ResidenceList)
 			.ToListAsync();
+            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
 
-			return Ok(users);
+            return Ok(realtorDtos);
+		}
+		
+		[HttpGet("{id}")]
+		public async Task<ActionResult<Realtor>> GetUsersById(string id)
+		{
+			var user = await _userManager.Users
+			.Include(u => u.Agency)
+			.Include(r => r.ResidenceList)
+			.FirstOrDefaultAsync(i => i.Id == id);
+			
+			if (user == null)
+			{
+				return NotFound();
+			}
+			
+			return user;
 		}
 
 		[HttpPost("register")]
@@ -42,8 +62,9 @@ namespace FribergWebAPI.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-			
-			var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+
+
+            var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
 			if (agency == null)
 			{
 				return BadRequest("Agency not found");
@@ -86,22 +107,6 @@ namespace FribergWebAPI.Controllers
 
 				return BadRequest(ModelState); // Return ModelState with errors
 			}
-		}
-		
-		[HttpGet("{id}")]
-		public async Task<ActionResult<Realtor>> GetUsersById(string id)
-		{
-			var user = await _userManager.Users
-			.Include(u => u.Agency)
-			.Include(r => r.ResidenceList)
-			.FirstOrDefaultAsync(i => i.Id == id);
-			
-			if (user == null)
-			{
-				return NotFound();
-			}
-			
-			return user;
 		}
 		
 		[HttpPut("{id}")]
