@@ -83,6 +83,7 @@ builder.Services.AddScoped<ICategory, CategoryRepository>();
 
 //author: Johan
 builder.Services.AddScoped<IAgency, AgencyRepository>();
+//builder.Services.AddScoped<AgencyRepository>();
 builder.Services.AddScoped<IMunicipality, MunicipalityRepository>();
 builder.Services.AddScoped<IResidencePicture, ResidencePictureRepository>();
 

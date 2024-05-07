@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -13,17 +15,23 @@ namespace FribergWebAPI.Controllers
 	{
 		private readonly UserManager<Realtor> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
-
-		public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager)
+		private readonly IAgency _agency;
+		
+		public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
+			_agency = agency;
 		}
 		
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Realtor>>> GetUsers()
 		{
-			var users = await _userManager.Users.ToListAsync();
+			var users = await _userManager.Users
+			.Include(u => u.Agency)
+			.Include(r => r.ResidenceList)
+			.ToListAsync();
+
 			return Ok(users);
 		}
 
@@ -34,7 +42,14 @@ namespace FribergWebAPI.Controllers
 			{
 				return BadRequest(ModelState);
 			}
+			
+			var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+			if (agency == null)
+			{
+				return BadRequest("Agency not found");
+			}
 
+			
 			var realtor = new Realtor
 			{
 				UserName = model.Email,
@@ -43,11 +58,12 @@ namespace FribergWebAPI.Controllers
 				LastName = model.LastName,
 				PhoneNumber = model.PhoneNumber,
 				Picture = model.Picture,
-				Roles = model.Roles
+				Roles = model.Roles,
+				Agency = agency
 			};
 
-            // Hash the password
-            var passwordHasher = new PasswordHasher<Realtor>();
+			// Hash the password
+			var passwordHasher = new PasswordHasher<Realtor>();
 			realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
 			var result = await _userManager.CreateAsync(realtor, model.Password);
@@ -67,14 +83,9 @@ namespace FribergWebAPI.Controllers
 			}
 			else
 			{
-                // Manually add model errors to ModelState
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("FUUUUUUUUUUUUUUUUUUUUUUCK", error.Description);
-                }
 
-                return BadRequest(ModelState); // Return ModelState with errors
-            }
+				return BadRequest(ModelState); // Return ModelState with errors
+			}
 		}
 		
 		[HttpGet("{id}")]
