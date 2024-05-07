@@ -91,7 +91,11 @@ namespace FribergWebAPI.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Realtor>> GetUsersById(string id)
 		{
-			var user = await _userManager.FindByIdAsync(id);
+			var user = await _userManager.Users
+			.Include(u => u.Agency)
+			.Include(r => r.ResidenceList)
+			.FirstOrDefaultAsync(i => i.Id == id);
+			
 			if (user == null)
 			{
 				return NotFound();
@@ -108,13 +112,21 @@ namespace FribergWebAPI.Controllers
 			{
 				return NotFound();
 			}
-
+			
+			var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+			if (agency == null)
+			{
+				return BadRequest("Agency not found");
+			}
+			
 			user.FirstName = model.FirstName;
 			user.LastName = model.LastName;
+			user.UserName = model.Email;
 			user.Email = model.Email;
 			user.PhoneNumber = model.PhoneNumber;
 			user.Picture = model.Picture;
 			user.Roles = model.Roles;
+			user.Agency = agency;
 
 			var result = await _userManager.UpdateAsync(user);
 			if (result.Succeeded)
