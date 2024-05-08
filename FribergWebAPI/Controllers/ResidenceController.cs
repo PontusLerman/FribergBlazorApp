@@ -31,16 +31,17 @@ namespace FribergWebAPI.Controllers
 
 		// GET: api/Residence/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Residence>> GetResidence(int id)
+		public async Task<ActionResult<ResidenceDto>> GetResidence(int id)
 		{
 			var residence = await residenceRepository.GetById(id);
-			
-			if (residence == null)
+            var residenceDtos = mapper.Map<List<ResidenceDto>>(residence);
+
+            if (residenceDtos == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(residence);
+			return Ok(residenceDtos);
 		}
 
 		// POST: api/Residence
