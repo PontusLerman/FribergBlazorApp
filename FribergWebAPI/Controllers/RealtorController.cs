@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using FribergWebAPI.Data.Interfaces;
-using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -17,9 +15,9 @@ namespace FribergWebAPI.Controllers
 		private readonly UserManager<Realtor> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 		private readonly IAgency _agency;
-        private readonly IMapper _mapper;
+		private readonly IMapper _mapper;
 
-        public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency, IMapper mapper)
+		public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency, IMapper mapper)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
@@ -34,21 +32,22 @@ namespace FribergWebAPI.Controllers
 			.Include(u => u.Agency)
 			.Include(r => r.ResidenceList)
 			.ToListAsync();
-            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
+			var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
 
-            return Ok(realtorDtos);
+			return Ok(realtorDtos);
 		}
 		
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Realtor>> GetUsersById(string id)
+		public async Task<ActionResult<RealtorDto>> GetUsersById(string id)
 		{
 			var realtors = await _userManager.Users
 			.Include(u => u.Agency)
 			.Include(r => r.ResidenceList)
 			.FirstOrDefaultAsync(i => i.Id == id);
-            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
+			
+			var realtorDtos = _mapper.Map<RealtorDto>(realtors);
 
-            if (realtorDtos == null)
+			if (realtors == null)
 			{
 				return NotFound();
 			}
@@ -57,7 +56,7 @@ namespace FribergWebAPI.Controllers
 		}
 
 		[HttpPost("register")]
-		public async Task<IActionResult> RegisterRealtor(RealtorDto model)
+		public async Task<ActionResult<Realtor>> RegisterRealtor(RealtorDto model)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -65,13 +64,12 @@ namespace FribergWebAPI.Controllers
 			}
 
 
-            var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+			var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
 			if (agency == null)
 			{
 				return BadRequest("Agency not found");
 			}
 
-			
 			var realtor = new Realtor
 			{
 				UserName = model.Email,
@@ -111,10 +109,10 @@ namespace FribergWebAPI.Controllers
 		}
 		
 		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateUser(string id, RealtorDto model)
+		public async Task<ActionResult<Realtor>> UpdateUser(string id, RealtorDto model)
 		{
-			var user = await _userManager.FindByIdAsync(id);
-			if (user == null)
+			var realtor = await _userManager.FindByIdAsync(id);
+			if (realtor == null)
 			{
 				return NotFound();
 			}
@@ -125,16 +123,16 @@ namespace FribergWebAPI.Controllers
 				return BadRequest("Agency not found");
 			}
 			
-			user.FirstName = model.FirstName;
-			user.LastName = model.LastName;
-			user.UserName = model.Email;
-			user.Email = model.Email;
-			user.PhoneNumber = model.PhoneNumber;
-			user.Picture = model.Picture;
-			user.Roles = model.Roles;
-			user.Agency = agency;
+			realtor.FirstName = model.FirstName;
+			realtor.LastName = model.LastName;
+			realtor.UserName = model.Email;
+			realtor.Email = model.Email;
+			realtor.PhoneNumber = model.PhoneNumber;
+			realtor.Picture = model.Picture;
+			realtor.Roles = model.Roles;
+			realtor.Agency = agency;
 
-			var result = await _userManager.UpdateAsync(user);
+			var result = await _userManager.UpdateAsync(realtor);
 			if (result.Succeeded)
 			{
 				return NoContent();

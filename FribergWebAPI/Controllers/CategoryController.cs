@@ -31,11 +31,11 @@ namespace FribergWebAPI.Controllers
 
 		// GET: api/Category/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Category>> GetCategory(int id)
+		public async Task<ActionResult<CategoryDto>> GetCategory(int id)
 		{
 			var categories = await categoryRepository.GetById(id);
-            var categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
-            if (categoryDtos == null)
+			var categoryDtos = _mapper.Map<CategoryDto>(categories);
+			if (categories == null)
 			{
 				return NotFound();
 			}
@@ -47,15 +47,16 @@ namespace FribergWebAPI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Category>> PostCategory(CategoryDto categoryDto)
 		{
-            var category = _mapper.Map<Category>(categoryDto);
-            await categoryRepository.Add(category);
+			var category = _mapper.Map<Category>(categoryDto);
+			await categoryRepository.Add(category);
 			return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
 		}
 
 		// PUT: api/Category/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutCategory(int id, Category category)
+		public async Task<ActionResult<Category>> PutCategory(int id, CategoryDto categoryDto)
 		{
+			var category = _mapper.Map<Category>(categoryDto);
 			if (id != category.Id)
 			{
 				return BadRequest();

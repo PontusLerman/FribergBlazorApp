@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 //author: Christian
 namespace FribergWebAPI.Controllers
 {
-    [ApiController]
+	[ApiController]
 	[Route("api/[controller]")]
 	public class ResidenceController : ControllerBase
 	{
 		private readonly IResidence residenceRepository;
-        private readonly IMapper mapper;
+		private readonly IMapper mapper;
 
-        public ResidenceController(IResidence residenceRepository, IMapper mapper)
+		public ResidenceController(IResidence residenceRepository, IMapper mapper)
 		{
 			this.residenceRepository = residenceRepository;
-            this.mapper = mapper;
-        }
+			this.mapper = mapper;
+		}
 
 		// GET: api/Residence
 		[HttpGet]
@@ -26,7 +26,7 @@ namespace FribergWebAPI.Controllers
 		{
 			var residence = await residenceRepository.GetAll();
 			var residenceDtos = mapper.Map<List<ResidenceDto>>(residence);
-            return Ok(residenceDtos);
+			return Ok(residenceDtos);
 		}
 
 		// GET: api/Residence/5
@@ -34,9 +34,9 @@ namespace FribergWebAPI.Controllers
 		public async Task<ActionResult<ResidenceDto>> GetResidence(int id)
 		{
 			var residence = await residenceRepository.GetById(id);
-            var residenceDtos = mapper.Map<List<ResidenceDto>>(residence);
+			var residenceDtos = mapper.Map<ResidenceDto>(residence);
 
-            if (residenceDtos == null)
+			if (residence == null)
 			{
 				return NotFound();
 			}
@@ -55,8 +55,9 @@ namespace FribergWebAPI.Controllers
 
 		// PUT: api/Residence/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutResidence(int id, Residence residence)
+		public async Task<IActionResult> PutResidence(int id, CRUDResidenceDto residenceDto)
 		{
+			var residence = mapper.Map<Residence>(residenceDto);
 			if (id != residence.Id)
 			{
 				return BadRequest();
