@@ -42,17 +42,18 @@ namespace FribergWebAPI.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Realtor>> GetUsersById(string id)
 		{
-			var user = await _userManager.Users
+			var realtors = await _userManager.Users
 			.Include(u => u.Agency)
 			.Include(r => r.ResidenceList)
 			.FirstOrDefaultAsync(i => i.Id == id);
-			
-			if (user == null)
+            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
+
+            if (realtorDtos == null)
 			{
 				return NotFound();
 			}
 			
-			return user;
+			return Ok(realtorDtos);
 		}
 
 		[HttpPost("register")]
