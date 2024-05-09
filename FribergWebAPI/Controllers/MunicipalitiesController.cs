@@ -10,11 +10,12 @@ using FribergWebAPI.Data.Interfaces;
 using AutoMapper;
 using FribergWebAPI.DTOs;
 
+//author: Johan Krångh, Christian Alp
 namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class MunicipalitiesController : ControllerBase //author: Johan
+	public class MunicipalitiesController : ControllerBase 
 	{
 		private readonly IMunicipality municipalityRepo;
 		private readonly IMapper _mapper;

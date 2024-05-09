@@ -1,4 +1,6 @@
-﻿namespace FribergWebAPI.DTOs
+﻿
+//author: Christian Alp, Johan Krångh, Pontus Lerman
+namespace FribergWebAPI.DTOs
 {
     public class MunicipalityDto
     {

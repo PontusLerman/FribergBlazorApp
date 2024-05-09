@@ -4,7 +4,7 @@ using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-//author: Christian
+//author: Christian Alp
 namespace FribergWebAPI.Controllers
 {
 	[ApiController]

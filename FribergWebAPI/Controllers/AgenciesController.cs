@@ -10,11 +10,12 @@ using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.DTOs;
 using AutoMapper;
 
+//author:  Christian Alp, Johan Krångh
 namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class AgenciesController : ControllerBase //author: Johan Krångh
+	public class AgenciesController : ControllerBase 
 	{
 		private readonly IAgency agencyRepo;
 		private readonly IMapper mapper;
@@ -27,31 +28,32 @@ namespace FribergWebAPI.Controllers
 
 		// GET: api/Agencies
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<CRUDAgencyDto>>> GetAgency()
+		public async Task<ActionResult<IEnumerable<AgencyDto>>> GetAgency()
 		{
-			var agencies = await agencyRepo.GetAllAsync();
-			var CRUDAgencyDto = mapper.Map<List<CRUDAgencyDto>>(agencies);
-			return Ok(CRUDAgencyDto);
+			var agency = await agencyRepo.GetAllAsync();
+			var agencyDtos = mapper.Map<List<AgencyDto>>(agency);
+			return Ok(agencyDtos);
 		}
 
 		// GET: api/Agencies/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Agency>> GetAgency(int id)
+		public async Task<ActionResult<AgencyDto>> GetAgency(int id)
 		{
 			var agency = await agencyRepo.GetByIdAsync(id);
+			var agencyDtos = mapper.Map<AgencyDto>(agency);
 
 			if (agency == null)
 			{
 				return NotFound();
 			}
 
-			return agency;
+			return Ok(agencyDtos);
 		}
 
 		// PUT: api/Agencies/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
-		public async Task<ActionResult<Agency>> PutAgency(int id, CRUDAgencyDto agencyDto)
+		public async Task<ActionResult<AgencyDto>> PutAgency(int id, AgencyDto agencyDto)
 		{
 			var agency = mapper.Map<Agency>(agencyDto);
 			if (id != agency.AgencyId)
@@ -67,7 +69,7 @@ namespace FribergWebAPI.Controllers
 		// POST: api/Agencies
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Agency>> PostAgency(CRUDAgencyDto agencyDto)
+		public async Task<ActionResult<AgencyDto>> PostAgency(AgencyDto agencyDto)
 		{
 			var agency = mapper.Map<Agency>(agencyDto);
 			await agencyRepo.AddAsync(agency);

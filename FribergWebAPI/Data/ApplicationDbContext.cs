@@ -13,14 +13,14 @@ namespace FribergWebAPI.Data
 		{ 
 		}
 	
-		//author: Pontus
+		//author: Pontus Lerman
 		public DbSet<Realtor> Realtors { get; set; }
 		
-		//author: Johan
+		//author: Johan Krångh
 		public DbSet<Agency> Agency { get; set; } = default!;
 		public DbSet<Municipality> Municipality { get; set; } = default!;
 		
-		//author: Christian
+		//author: Christian Alp
 		public DbSet<Residence> Residences { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<ResidencePicture> ResidencePicture { get; set; } = default!;

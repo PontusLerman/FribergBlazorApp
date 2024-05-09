@@ -1,5 +1,5 @@
 
-//author: Christian
+//author: Christian Alp
 namespace FribergWebAPI.Models
 {
 	public class Residence 

@@ -2,7 +2,7 @@ using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-//author: Christian
+//author: Christian Alp
 namespace FribergWebAPI.Data.Repositories
 {
 	public class ResidenceRepository : IResidence

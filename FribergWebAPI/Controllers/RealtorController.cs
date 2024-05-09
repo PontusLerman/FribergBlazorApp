@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+//author: Christian Alp, Pontus Lerman
 namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]

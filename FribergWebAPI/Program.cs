@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using FribergWebAPI.Models;
 
+// Christian Alp, Johan Krångh, Pontus Lerman
+
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);

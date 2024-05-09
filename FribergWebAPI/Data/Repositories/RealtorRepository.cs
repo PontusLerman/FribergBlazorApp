@@ -2,6 +2,7 @@
 using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
+//author: Christian Alp, Pontus Lerman
 namespace FribergWebAPI.Data.Repositories
 {
 	public class RealtorRepository : IRealtor
@@ -28,13 +29,13 @@ namespace FribergWebAPI.Data.Repositories
 
 		public async Task<IEnumerable<Realtor>> GetAllAsync()
 		{
-            return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r => r.FirstName).ToListAsync();
+			return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r => r.FirstName).ToListAsync();
 
 		}
 
 		public async Task<Realtor> GetByIdAsync(int id)
 		{
-            return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).FirstOrDefaultAsync(x => x.Id == id.ToString());
+			return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).FirstOrDefaultAsync(x => x.Id == id.ToString());
 		}
 
 		public async Task UpdateAsync(Realtor realtor)
