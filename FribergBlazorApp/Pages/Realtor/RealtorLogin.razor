@@ -7,18 +7,25 @@
 
 <h3>Login</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+@if (!authService.IsAuthenticated)
+{
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <label for="email">Email</label>
-    <InputText id="email" @bind-Value="loginModel.Email" />
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="loginModel.Email" />
 
-    <label for="password">Password</label>
-    <InputText id="password" @bind-Value="loginModel.Password" />
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="loginModel.Password" />
 
-    <button type="submit">Login</button>
-</EditForm>
+        <button type="submit">Login</button>
+    </EditForm>
+}
+else
+{
+    <p>You are already logged in.</p>
+}
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
@@ -39,11 +46,10 @@
 
             Console.WriteLine($"Token: {authResponse.Token}");
 
-            navigationManager.NavigateTo("/categories");
         }
         catch (Exception ex)
         {
-            errorMessage = "Login failed. Please check your credentials and try again."; 
+            errorMessage = "Login failed. Please check your credentials and try again.";
             Console.WriteLine($"Login error: {ex.Message}");
         }
     }

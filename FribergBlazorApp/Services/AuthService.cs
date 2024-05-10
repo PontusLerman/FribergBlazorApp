@@ -6,11 +6,15 @@ namespace FribergBlazorApp.Services
     public class AuthService
     {
         private readonly HttpClient _httpClient;
+        private bool _isAuthenticated;
 
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _isAuthenticated = false;
         }
+
+        public bool IsAuthenticated => _isAuthenticated;
 
         public async Task<AuthResponseDto> Login(LoginRealtorDto model)
         {
@@ -18,7 +22,10 @@ namespace FribergBlazorApp.Services
             {
                 var response = await _httpClient.PostAsJsonAsync("/api/Realtor/login", model);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+
+                _isAuthenticated = true;
+                return authResponse;
             }
             catch (Exception ex)
             {
@@ -32,7 +39,10 @@ namespace FribergBlazorApp.Services
             {
                 var response = await _httpClient.PostAsJsonAsync("api/Realtor/register", model);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+
+                _isAuthenticated = true;
+                return authResponse;
             }
             catch (Exception ex)
             {
