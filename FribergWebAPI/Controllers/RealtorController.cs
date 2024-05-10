@@ -227,7 +227,6 @@ namespace FribergWebAPI.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("login")]
         public async Task<ActionResult<AuthResponseDto>> LoginRealtor(LoginRealtorDto model)
@@ -266,9 +265,6 @@ namespace FribergWebAPI.Controllers
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-			//var roles = await _userManager.GetRolesAsync(realtor);
-			//var roleClaims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
-
 			var realtorClaims = await _userManager.GetClaimsAsync(realtor);
 
 			var claims = new List<Claim>
@@ -277,8 +273,7 @@ namespace FribergWebAPI.Controllers
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
 				new Claim(ApiClaims.Rid, realtor.Id)
-			}//.Union(roleClaims)
-			.Union(realtorClaims);
+			}.Union(realtorClaims);
 
 			var token = new JwtSecurityToken(
 				issuer: _configuration["JwtSettings:Issuer"],

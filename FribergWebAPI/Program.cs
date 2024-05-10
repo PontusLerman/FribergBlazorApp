@@ -41,17 +41,17 @@ builder.Services.AddIdentity<Realtor, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-//builder.Services.AddAuthentication(options =>
-//{
-//	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-//})
-//.AddCookie()
-//.AddGoogle(options =>
-//{
-//	options.ClientId = "686855374153-fhvpksja8ll0a1v74iofld75fviv63f6.apps.googleusercontent.com";
-//	options.ClientSecret = "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";
-//});
+/* builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+	options.ClientId = "686855374153-fhvpksja8ll0a1v74iofld75fviv63f6.apps.googleusercontent.com";
+	options.ClientSecret = "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";
+});*/ 
 
 builder.Services.AddAuthentication(options =>
 {
