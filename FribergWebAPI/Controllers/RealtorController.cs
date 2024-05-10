@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
+using FribergWebAPI.Constants;
 using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 //author: Christian Alp, Pontus Lerman
 namespace FribergWebAPI.Controllers
@@ -17,14 +22,16 @@ namespace FribergWebAPI.Controllers
 		private readonly RoleManager<IdentityRole> _roleManager;
 		private readonly IAgency _agency;
 		private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-		public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency, IMapper mapper)
+        public RealtorController(UserManager<Realtor> userManager, RoleManager<IdentityRole> roleManager, IAgency agency, IMapper mapper, IConfiguration configuration)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_agency = agency;
 			_mapper = mapper;
-		}
+            _configuration = configuration;
+        }
 		
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<RealtorDto>>> GetUsers()
@@ -56,87 +63,7 @@ namespace FribergWebAPI.Controllers
 			return Ok(realtorDtos);
 		}
 
-		[HttpPost]
-		[Route("register")]
-		public async Task<ActionResult<Realtor>> RegisterRealtor(RealtorDto model)
-		{
-			try
-			{
-				var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
-				if (agency == null)
-				{
-					return BadRequest("Agency not found");
-				}
-
-				Realtor realtor = new Realtor()
-				{
-					UserName = model.Email,
-					Email = model.Email,
-					FirstName = model.FirstName,
-					LastName = model.LastName,
-					PhoneNumber = model.PhoneNumber,
-					Picture = model.Picture,
-					Roles = model.Roles,
-					Agency = agency
-				};
-
-				// Hash the password
-				var passwordHasher = new PasswordHasher<Realtor>();
-				realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
-
-				var result = await _userManager.CreateAsync(realtor, model.Password);
-
-				if (result.Succeeded)
-				{
-					foreach (var roleName in model.Roles)
-					{
-						var role = await _roleManager.FindByNameAsync(roleName);
-						if (role != null)
-						{
-							await _userManager.AddToRoleAsync(realtor, role.Name);
-						}
-					}
-
-					return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
-				}
-				else
-				{
-
-					return BadRequest(ModelState); // Return ModelState with errors
-				}
-
-			}
-			catch (Exception e) 
-			{ 
-				return Problem($"An error occurred: {nameof(RegisterRealtor)}", statusCode: 500);
-			}
-		}
-
-		[HttpPost]
-		[Route("login")]
-        public async Task<ActionResult<Realtor>> LoginRealtor(LoginRealtorDto model)
-		{
-			try
-			{
-				var realtor = await _userManager.FindByEmailAsync(model.Email);
-				var passwordValid = await _userManager.CheckPasswordAsync(realtor, model.Password);
-
-				if (realtor == null || passwordValid == false)
-				{
-					return NotFound();
-				}
-
-				// Add JWT HERE!
-
-				return Accepted();
-			}
-			catch (Exception e)
-			{
-                return Problem($"An error occurred: {nameof(LoginRealtor)}", statusCode: 500);
-            }
-        }
-		
-		[HttpPut("{id}")]
+        [HttpPut("{id}")]
 		public async Task<ActionResult<Realtor>> UpdateUser(string id, RealtorDto model)
 		{
 			var realtor = await _userManager.FindByIdAsync(id);
@@ -157,7 +84,6 @@ namespace FribergWebAPI.Controllers
 			realtor.Email = model.Email;
 			realtor.PhoneNumber = model.PhoneNumber;
 			realtor.Picture = model.Picture;
-			realtor.Roles = model.Roles;
 			realtor.Agency = agency;
 
 			var result = await _userManager.UpdateAsync(realtor);
@@ -190,5 +116,179 @@ namespace FribergWebAPI.Controllers
 				return BadRequest(result.Errors);
 			}
 		}
-	}
+
+        [HttpPost]
+        [Route("register/user-with-existing-agency")]
+        public async Task<ActionResult<Realtor>> RegisterRealtor(RealtorDto model)
+        {
+            try
+            {
+                var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+                if (agency == null)
+                {
+                    return BadRequest("Agency not found, Try create a new agency first");
+                }
+
+                Realtor realtor = new Realtor()
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Picture = model.Picture,
+                    Agency = agency,
+                    Roles = new List<string> { "DefaultRealtor" }
+                };
+
+                // Hash the password
+                var passwordHasher = new PasswordHasher<Realtor>();
+                realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
+
+                var result = await _userManager.CreateAsync(realtor, model.Password);
+
+                if (result.Succeeded)
+                {
+                    var role = await _roleManager.FindByNameAsync("DefaultRealtor");
+                    if (role != null)
+                    {
+                        await _userManager.AddToRoleAsync(realtor, role.Name);
+                        await _userManager.AddClaimAsync(realtor, new Claim(ClaimTypes.Role, role.Name));
+                    }
+
+                    return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
+                }
+                else
+                {
+
+                    return BadRequest(ModelState);
+                }
+
+            }
+            catch
+            {
+                return Problem($"An error occurred: {nameof(RegisterRealtor)}", statusCode: 500);
+            }
+        }
+
+        [HttpPost]
+        [Route("register/user-with-new-agency")]
+        public async Task<ActionResult<Realtor>> RegisterUserWithNewAgency(RealtorCreateAgency model)
+        {
+            try
+            {
+                var newAgency = new Agency
+                {
+                    AgencyId = model.AgencyId,
+                    AgencyName = model.AgencyName,
+                    AgencyLogoURL = model.AgencyLogoURL,
+                    AgencyDescription = model.AgencyDescription
+                };
+
+                await _agency.AddAsync(newAgency);
+
+                var realtor = new Realtor()
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Picture = model.Picture,
+                    Agency = newAgency,
+                    Roles = new List<string> { "SuperRealtor" }
+                };
+
+                // Hash the password
+                var passwordHasher = new PasswordHasher<Realtor>();
+                realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
+
+                var result = await _userManager.CreateAsync(realtor, model.Password);
+
+                if (result.Succeeded)
+                {
+                    var role = await _roleManager.FindByNameAsync("SuperRealtor");
+                    if (role != null)
+                    {
+                        await _userManager.AddToRoleAsync(realtor, role.Name);
+                        await _userManager.AddClaimAsync(realtor, new Claim(ClaimTypes.Role, role.Name));
+                    }
+
+                    return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Problem($"An error occurred: {ex.Message}", statusCode: 500);
+            }
+        }
+
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<ActionResult<AuthResponseDto>> LoginRealtor(LoginRealtorDto model)
+        {
+            try
+            {
+                var realtor = await _userManager.FindByEmailAsync(model.Email);
+                var passwordValid = await _userManager.CheckPasswordAsync(realtor, model.Password);
+
+                if (realtor == null || passwordValid == false)
+                {
+                    return Unauthorized(model);
+                }
+
+                string tokenString = await GenerateToken(realtor);
+
+				var response = new AuthResponseDto
+				{
+					Email = model.Email,
+					Token = tokenString,
+					Id = realtor.Id,
+					Roles = (List<string>)realtor.Roles,
+					FirstName = realtor.FirstName
+				};
+
+                return Ok(response);
+            }
+            catch
+            {
+                return Problem($"An error occurred: {nameof(LoginRealtor)}", statusCode: 500);
+            }
+        }
+
+        private async Task<string> GenerateToken(Realtor realtor)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+			//var roles = await _userManager.GetRolesAsync(realtor);
+			//var roleClaims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
+
+			var realtorClaims = await _userManager.GetClaimsAsync(realtor);
+
+			var claims = new List<Claim>
+			{
+				new Claim(JwtRegisteredClaimNames.Sub, realtor.UserName),
+				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
+				new Claim(ApiClaims.Rid, realtor.Id)
+			}//.Union(roleClaims)
+			.Union(realtorClaims);
+
+			var token = new JwtSecurityToken(
+				issuer: _configuration["JwtSettings:Issuer"],
+				audience: _configuration["JwtSettings:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:DurationInMinutes"])),
+				signingCredentials: credentials
+				);
+
+			return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    }
 }
