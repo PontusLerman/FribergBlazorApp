@@ -10,7 +10,7 @@ namespace FribergWebAPI.Models
 		public string? LastName { get; set; }
 		public Agency Agency { get; set; }
 		public string? Picture { get; set; }
-        public IList<string> Roles { get; set; } = new List<string>();
-        public virtual List<Residence> ResidenceList { get; set; }
+		public IList<string> Roles { get; set; } = new List<string>();
+		public virtual List<Residence> ResidenceList { get; set; }
 	}
 }
