@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using FribergBlazorApp;
 using FribergBlazorApp.Services;
 using Microsoft.AspNetCore.Components.Web;
@@ -10,5 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7280/") });
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddBlazoredLocalStorage();
+
 
 await builder.Build().RunAsync();

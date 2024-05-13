@@ -7,7 +7,7 @@
 
 <h3>Login</h3>
 
-@if (!authService.IsAuthenticated)
+@if (!isAuthenticated)
 {
     <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
         <DataAnnotationsValidator />
@@ -25,6 +25,7 @@
 else
 {
     <p>You are already logged in.</p>
+    <button @onclick="Logout">Logout</button>
 }
 
 @if (!string.IsNullOrEmpty(errorMessage))
@@ -37,20 +38,36 @@ else
 @code {
     private LoginRealtorDto loginModel = new LoginRealtorDto();
     private string errorMessage;
+    private bool isAuthenticated;
+
+    protected override void OnInitialized()
+    {
+        CheckAuthentication();
+    }
+
+    private async Task CheckAuthentication()
+    {
+        isAuthenticated = await authService.IsAuthenticated();
+        StateHasChanged(); 
+    }
 
     private async Task HandleLogin()
     {
         try
         {
             var authResponse = await authService.Login(loginModel);
-
-            Console.WriteLine($"Token: {authResponse.Token}");
-
+            navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
         }
         catch (Exception ex)
         {
             errorMessage = "Login failed. Please check your credentials and try again.";
             Console.WriteLine($"Login error: {ex.Message}");
         }
+    }
+
+    private async Task Logout()
+    {
+        await authService.Logout();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
     }
 }
