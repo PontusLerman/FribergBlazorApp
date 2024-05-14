@@ -60,9 +60,9 @@ namespace FribergBlazorApp.Services
 			await _localStorage.RemoveItemAsync("authToken");
 		}
 		
-/* 		public async Task<RealtorDto> GetCurrentUser()
+ 		public async Task<RealtorDto> GetCurrentUser()
 		{
             return await _localStorage.GetItemAsync<RealtorDto>("authToken");
-		} */
+		} 
 	}
 }

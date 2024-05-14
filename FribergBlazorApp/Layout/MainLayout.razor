@@ -17,7 +17,7 @@
             }
             else
             {
-                //<p>@currentUser.Email</p>
+                <p>@currentUser.FirstName</p>
             }
         </div>
 
@@ -33,11 +33,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-    @*     isAuthenticated = await authService.IsAuthenticated();
+        isAuthenticated = await authService.IsAuthenticated();
         if (isAuthenticated)
         {
             currentUser = await authService.GetCurrentUser();
-        } *@
+        } 
 
         CheckAuthentication();
     }
