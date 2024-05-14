@@ -1,0 +1,96 @@
+﻿@page "/register/realtor"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using FribergWebAPI.DTOs
+
+
+<h3>RegisterRealtor</h3>
+
+<EditForm Model="realtor" OnSubmit="HandleSubmit">
+    <div>
+        <label for="FirstName">Förnamn:</label>
+        <InputText id="FirstName" @bind-Value="realtor.FirstName" class="form-control" />
+    </div>
+    <div>
+        <label for="lastName">Efternamn:</label>
+        <InputText id="lastName" @bind-Value="realtor.LastName" class="form-control" />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="realtor.Email" class="form-control" />
+    </div>
+    <div>
+        <label for="phone">Telefonnummer:</label>
+        <InputText id="phone" @bind-Value="realtor.PhoneNumber" class="form-control" />
+    </div>
+    <div>
+        <label for="picture">Bild:</label>
+        <InputText id="picture" @bind-Value="realtor.Picture" class="form-control" />
+    </div>
+    <div>
+        <label for="agencyName">Mäklarbyrå:</label>
+        <InputSelect id="agencyName" @bind-Value="SelectedAgency" >
+            @foreach (var agency in agencies)
+            {
+                <option value="@agency.AgencyId">@agency.AgencyName</option>
+            }
+        </InputSelect>    
+    </div>
+    <button type="submit" class="btn btn-primary">Spara</button>
+</EditForm>
+
+<p>@errorString</p>
+
+
+
+@code {
+    public RealtorDto realtor { get; set; } = new RealtorDto();
+    public int SelectedAgency { get; set; }
+    List<AgencyDto> agencies = new List<AgencyDto>();
+    AgencyDto agency = new AgencyDto();
+
+    string errorString;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            agencies = await Http.GetFromJsonAsync<List<AgencyDto>>("api/Agencies");
+
+        }
+        catch (Exception ex)
+        {
+            errorString = ex.Message;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            if (realtor.Agency == null && SelectedAgency != 0)
+            {
+                agency = agencies.FirstOrDefault(a => a.AgencyId == SelectedAgency);
+                realtor.Agency.AgencyId = agency.AgencyId;
+                realtor.Agency.AgencyName = agency.AgencyName;
+            }
+            var response = await Http.PostAsJsonAsync("api/Realtors", realtor);
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/gr");
+            }
+            else
+            {
+                errorString = "Lyckades inte lägga till mäklaren.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorString = ex.Message;
+        }
+
+
+    }
+}
