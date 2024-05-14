@@ -11,8 +11,8 @@ namespace FribergBlazorApp.Models
         public string email { get; set; }
         public string phone { get; set; }
         public string picture { get; set; }
-        public Agency agency { get; set; }*/
     }
+        public Agency agency { get; set; }*/
 	public class Realtor
 	{
 		public string id { get; set; }
