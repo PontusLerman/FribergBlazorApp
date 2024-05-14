@@ -137,7 +137,8 @@ else
         Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
         Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
         Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
-
+        Residence.Realtor.Password = "";
+        
         if (Id != null)
         {
             var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
