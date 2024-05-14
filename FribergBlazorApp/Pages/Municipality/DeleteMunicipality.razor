@@ -1,9 +1,10 @@
 ﻿@* author: Johan Krångh *@
 @page "/remove-municipality/{id:int}"
+@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
-<h3>Ta Bort @(Municipality.municipalityName)?</h3>
+<h3>Ta Bort @(Municipality.MunicipalityName)?</h3>
 
 
  <button class="btn btn-danger" @onclick="@(() => RemoveMunicipality(Id))">Ta Bort</button>
@@ -15,14 +16,14 @@
 @code {
     [Parameter]
     public int? Id { get; set; }
-    public Municipality Municipality { get; set; } = new Municipality();
+    public MunicipalityDto Municipality { get; set; } = new MunicipalityDto();
     private string? errorString;
 
     protected override async Task OnParametersSetAsync()
     {
         if (Id != null)
         {
-            var result = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{Id}");
+            var result = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{Id}");
             if (result != null)
             {
                 Municipality = result;
