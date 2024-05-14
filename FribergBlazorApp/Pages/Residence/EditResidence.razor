@@ -1,7 +1,6 @@
 ﻿@* author: Johan Krångh *@
 @page "/edit-residence"
 @page "/edit-residence/{id:int}"
-@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -11,13 +10,13 @@
 }
 else
 {
-    <h3>Ändra @Residence.Address</h3>
+    <h3>Ändra @Residence.Category.Name @Residence.Address</h3>
 }
 
 <EditForm Model="Residence" OnSubmit="HandleSubmit">
     <div>
-        <label for="category">Kategori</label>
-        <InputSelect id="category" @bind-Value="selectedCategory" class="form-control">
+        <label for="Category">Kategori</label>
+        <InputSelect id="Category" @bind-Value="selectedCategory" class="form-control">
             <option value="">Välj kategori</option>
             @foreach (var c in categories)
             {
@@ -40,45 +39,45 @@ else
         </InputSelect>
     </div>
     <div>
-        <label for="startingPrice">Utgångspris</label>
-        <InputNumber id="startingPrice" @bind-Value="Residence.StartingPrice" class="form-control" />
+        <label for="StartingPrice">Utgångspris</label>
+        <InputNumber id="StartingPrice" @bind-Value="Residence.StartingPrice" class="form-control" />
     </div>
     <div>
-        <label for="livingArea">Boyta</label>
-        <InputNumber id="livingArea" @bind-Value="Residence.LivingArea" class="form-control" />
+        <label for="LivingArea">Boyta</label>
+        <InputNumber id="LivingArea" @bind-Value="Residence.LivingArea" class="form-control" />
     </div>
     <div>
-        <label for="biArea">Biyta</label>
-        <InputNumber id="biArea" @bind-Value="Residence.BiArea" class="form-control" />
+        <label for="BiArea">Biyta</label>
+        <InputNumber id="BiArea" @bind-Value="Residence.BiArea" class="form-control" />
     </div>
     <div>
-        <label for="plotArea">Tomtstorlek</label>
-        <InputNumber id="plotArea" @bind-Value="Residence.PlotArea" class="form-control" />
+        <label for="PlotArea">Tomtstorlek</label>
+        <InputNumber id="PlotArea" @bind-Value="Residence.PlotArea" class="form-control" />
     </div>
     <div>
-        <label for="objectDescription">Beskrivning</label>
-        <InputText id="objectDescription" @bind-Value="Residence.ObjectDescription" class="form-control" />
+        <label for="ObjectDescription">Beskrivning</label>
+        <InputText id="ObjectDescription" @bind-Value="Residence.ObjectDescription" class="form-control" />
     </div>
     <div>
-        <label for="numberOfRooms">Rum</label>
-        <InputNumber id="numberOfRooms" @bind-Value="Residence.NumberOfRooms" class="form-control" />
+        <label for="NumberOfRooms">Rum</label>
+        <InputNumber id="NumberOfRooms" @bind-Value="Residence.NumberOfRooms" class="form-control" />
     </div>
     <div>
-        <label for="monthlyFee">Månadskostnad</label>
-        <InputNumber id="monthlyFee" @bind-Value="Residence.MonthlyFee" class="form-control" />
+        <label for="MonthlyFee">Månadskostnad</label>
+        <InputNumber id="MonthlyFee" @bind-Value="Residence.MonthlyFee" class="form-control" />
     </div>
     <div>
-        <label for="operatingCostPerYear">Driftkostnad</label>
-        <InputNumber id="operatingCostPerYear" @bind-Value="Residence.OperatingCostPerYear" class="form-control" />
+        <label for="OperatingCostPerYear">Driftkostnad</label>
+        <InputNumber id="OperatingCostPerYear" @bind-Value="Residence.OperatingCostPerYear" class="form-control" />
     </div>
     <div>
-        <label for="constructionYear">Byggår</label>
-        <InputNumber id="constructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
+        <label for="ConstructionYear">Byggår</label>
+        <InputNumber id="ConstructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
     </div>
-    @* This should be set by user-login, now just for testing purposes *@
+     @* This should be set by user-login on post, now just for testing purposes *@
         <div>
-        <label for="realtor">Mäklare</label>
-    <InputSelect id="realtor" @bind-Value="selectedRealtor" class="form-control">
+        <label for="Realtor">Mäklare</label>
+    <InputSelect id="Realtor" @bind-Value="selectedRealtor" class="form-control">
             <option value="">Välj mäklare</option>
             @foreach (var r in realtors)
             {
@@ -88,7 +87,6 @@ else
     </div>
 
     <button type="submit" class="btn btn-primary">Spara</button>
-    @* <button class="btn btn-danger" @onclick="@(() => DeleteResidence(Residence.id))">Ta Bort</button> *@
     <p>@errorString</p>
 </EditForm>
 
@@ -104,7 +102,7 @@ else
     //Fields for bind-Value 
     private int? selectedMunicipality;
     private int? selectedCategory;
-    private int? selectedRealtor;
+    private string? selectedRealtor;
 
     public string errorString = "";
 
@@ -114,7 +112,7 @@ else
         {
             categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
             municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
-            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtors");
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
         }
         catch (Exception ex)
         {
@@ -138,7 +136,7 @@ else
     {
         Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
         Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
-        Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtors/{selectedRealtor}");
+        Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
 
         if (Id != null)
         {
