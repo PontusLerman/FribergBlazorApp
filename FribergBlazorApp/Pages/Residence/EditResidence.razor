@@ -142,13 +142,15 @@ else
         if (Id != null)
         {
             var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
+            string json = await result.Content.ReadAsStringAsync(); //Delete this!
+            Console.WriteLine(json); //Delete this!
             NavigationManager.NavigateTo("residences");
         }
         else
         {
             var result = await Http.PostAsJsonAsync($"api/residence", Residence);
-            string json = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(json);
+            string json = await result.Content.ReadAsStringAsync(); //Delete this!
+            Console.WriteLine(json); //Delete this!
             Residence = await result.Content.ReadFromJsonAsync<Residence>();
             NavigationManager.NavigateTo("residences");
         }
