@@ -3,6 +3,13 @@ using FribergWebAPI.Data;
 using System.Text.Json.Serialization;
 using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.Data.Interfaces;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using FribergWebAPI.Models;
+
+// Christian Alp, Johan Krångh, Pontus Lerman
 
 var MyAllowSpecificOrigins = "myAllowSpecificOrigins";
 
@@ -21,6 +28,35 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
+
+builder.Services.AddIdentity<Realtor, IdentityRole>(options => 
+{
+	options.Password.RequireDigit = true;
+	options.Password.RequiredLength = 8;
+	options.Password.RequireNonAlphanumeric = true;
+	options.Password.RequireUppercase = true;
+	options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuerSigningKey = true,
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ClockSkew = TimeSpan.Zero,
+		ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+		ValidAudience = builder.Configuration["JwtSettings:Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+	};
+});
 
 // Add services to the container.
 
@@ -59,6 +95,8 @@ app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 

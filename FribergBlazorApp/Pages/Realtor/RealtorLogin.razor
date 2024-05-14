@@ -1,0 +1,73 @@
+﻿@page "/login"
+@using FribergBlazorApp.Models
+@using FribergBlazorApp.Services
+@using FribergWebAPI.DTOs
+@inject AuthService authService
+@inject NavigationManager navigationManager
+
+<h3>Login</h3>
+
+@if (!isAuthenticated)
+{
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="loginModel.Email" />
+
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="loginModel.Password" />
+
+        <button type="submit">Login</button>
+    </EditForm>
+}
+else
+{
+    <p>You are already logged in.</p>
+    <button @onclick="Logout">Logout</button>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
+@code {
+    private LoginRealtorDto loginModel = new LoginRealtorDto();
+    private string errorMessage;
+    private bool isAuthenticated;
+
+    protected override void OnInitialized()
+    {
+        CheckAuthentication();
+    }
+
+    private async Task CheckAuthentication()
+    {
+        isAuthenticated = await authService.IsAuthenticated();
+        StateHasChanged(); 
+    }
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var authResponse = await authService.Login(loginModel);
+            navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Login failed. Please check your credentials and try again.";
+            Console.WriteLine($"Login error: {ex.Message}");
+        }
+    }
+
+    private async Task Logout()
+    {
+        await authService.Logout();
+        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+    }
+}

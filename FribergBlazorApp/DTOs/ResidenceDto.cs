@@ -1,13 +1,13 @@
+﻿using FribergBlazorApp.Models;
 
-//author: Christian Alp
-namespace FribergWebAPI.Models
+//author: Christian Alp, Johan Krångh, Pontus Lerman
+namespace FribergWebAPI.DTOs
 {
-	public class Residence 
+	public class ResidenceDto
 	{
-		public int Id { get; set; }
-		public Category Category { get; set; }
+		public CategoryDto Category { get; set; }
 		public string? Address { get; set; }
-		public Municipality Municipality { get; set; }
+		public MunicipalityDto Municipality { get; set; }
 		public decimal StartingPrice { get; set; }
 		public decimal LivingArea { get; set; }
 		public decimal BiArea { get; set; }
@@ -17,7 +17,7 @@ namespace FribergWebAPI.Models
 		public decimal MonthlyFee { get; set; }
 		public decimal OperatingCostPerYear { get; set; }
 		public int ConstructionYear { get; set; }
-		public virtual List<ResidencePicture> Pictures { get; set; }
-		public Realtor Realtor { get; set; }
+		public virtual List<Picture> Pictures { get; set; }
+		public RealtorDto Realtor { get; set; }
 	}
 }

@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using FribergBlazorApp.Services
+@using FribergWebAPI.DTOs
+@inherits LayoutComponentBase
+@inject AuthService authService
+@inject NavigationManager navigationManager
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,7 +11,14 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            @if (!isAuthenticated)
+            {
+                <button @onclick="GoToLogin">Login</button>
+            }
+            else
+            {
+                <p>@currentUser.FirstName</p>
+            }
         </div>
 
         <article class="content px-4">
@@ -14,3 +26,36 @@
         </article>
     </main>
 </div>
+
+@code {
+   private bool isAuthenticated;
+    private RealtorDto currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthenticated = await authService.IsAuthenticated();
+        if (isAuthenticated)
+        {
+            currentUser = await authService.GetCurrentUser();
+        } 
+
+        CheckAuthentication();
+    }
+
+    private async Task CheckAuthentication()
+    {
+        isAuthenticated = await authService.IsAuthenticated();
+        StateHasChanged(); 
+    }
+
+    private void GoToLogin()
+    {
+        navigationManager.NavigateTo("/login");
+    }
+
+    private async Task HandleLogout()
+    {
+        await authService.Logout();
+        navigationManager.NavigateTo("/");
+    }
+}

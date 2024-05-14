@@ -1,8 +1,10 @@
+using AutoMapper;
 using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-//author: Christian
+//author: Christian Alp
 namespace FribergWebAPI.Controllers
 {
 	[ApiController]
@@ -10,45 +12,51 @@ namespace FribergWebAPI.Controllers
 	public class CategoryController : ControllerBase
 	{
 		private readonly ICategory categoryRepository;
+		private readonly IMapper _mapper;
 
-		public CategoryController(ICategory categoryRepository)
+		public CategoryController(ICategory categoryRepository, IMapper mapper)
 		{
 			this.categoryRepository = categoryRepository;
+			_mapper = mapper;
 		}
 
 		// GET: api/Category
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+		public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
 		{
-			var Categories = await categoryRepository.GetAll();
-			return Ok(Categories);
+			var categories = await categoryRepository.GetAll();
+			var categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
+			return Ok(categoryDtos);
 		}
 
 		// GET: api/Category/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Category>> GetCategory(int id)
+		public async Task<ActionResult<CategoryDto>> GetCategory(int id)
 		{
-			var Category = await categoryRepository.GetById(id);
-			if (Category == null)
+			var categories = await categoryRepository.GetById(id);
+			var categoryDtos = _mapper.Map<CategoryDto>(categories);
+			if (categories == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(Category);
+			return Ok(categoryDtos);
 		}
 
 		// POST: api/Category
 		[HttpPost]
-		public async Task<ActionResult<Category>> PostHousingCategory(Category category)
+		public async Task<ActionResult<Category>> PostCategory(CategoryDto categoryDto)
 		{
-            await categoryRepository.Add(category);
+			var category = _mapper.Map<Category>(categoryDto);
+			await categoryRepository.Add(category);
 			return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
 		}
 
 		// PUT: api/Category/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutCategory(int id, Category category)
+		public async Task<ActionResult<Category>> PutCategory(int id, CategoryDto categoryDto)
 		{
+			var category = _mapper.Map<Category>(categoryDto);
 			if (id != category.Id)
 			{
 				return BadRequest();

@@ -4,43 +4,46 @@ using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-//author: Christian
+//author: Christian Alp
 namespace FribergWebAPI.Controllers
 {
-    [ApiController]
+	[ApiController]
 	[Route("api/[controller]")]
 	public class ResidenceController : ControllerBase
 	{
 		private readonly IResidence residenceRepository;
-        private readonly IMapper mapper;
+		private readonly IMapper mapper;
 
-        public ResidenceController(IResidence residenceRepository, IMapper mapper)
+		public ResidenceController(IResidence residenceRepository, IMapper mapper)
 		{
 			this.residenceRepository = residenceRepository;
-            this.mapper = mapper;
-        }
+			this.mapper = mapper;
+		}
 
 		// GET: api/Residence
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidence()
 		{
 			var residence = await residenceRepository.GetAll();
-			var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
-            return Ok(residenceDtos);
+			//CrudResidenceDto or the one now?
+			var residenceDtos = mapper.Map<List<ResidenceDto>>(residence);
+			return Ok(residenceDtos);
 		}
 
 		// GET: api/Residence/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<CRUDResidenceDto>> GetResidence(int id)
+		//CrudResidenceDto or the one now?
+		public async Task<ActionResult<ResidenceDto>> GetResidence(int id)
 		{
 			var residence = await residenceRepository.GetById(id);
-			var residenceDto = mapper.Map<CRUDResidenceDto>(residence);
+			var residenceDtos = mapper.Map<ResidenceDto>(residence);
+
 			if (residence == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(residenceDto);
+			return Ok(residenceDtos);
 		}
 
 		// POST: api/Residence
@@ -56,12 +59,13 @@ namespace FribergWebAPI.Controllers
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutResidence(int id, CRUDResidenceDto residenceDto)
 		{
-			if (id != residenceDto.Id)
+			var residence = mapper.Map<Residence>(residenceDto);
+			if (id != residence.Id)
 			{
 				return BadRequest();
 			}
 
-			var residence = mapper.Map<Residence>(residenceDto);
+		//This here or up there?	//var residence = mapper.Map<Residence>(residenceDto);
 			await residenceRepository.Update(residence);
 			return NoContent();
 		}

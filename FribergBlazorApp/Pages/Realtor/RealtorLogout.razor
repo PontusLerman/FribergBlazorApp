@@ -1,0 +1,12 @@
+@page "/logout"
+@using FribergBlazorApp.Services
+@inject AuthService authService
+@inject NavigationManager navigationManager
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await authService.Logout();
+        navigationManager.NavigateTo("/");
+    }
+}

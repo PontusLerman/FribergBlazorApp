@@ -1,4 +1,6 @@
-﻿namespace FribergWebAPI.Models
+﻿
+//author: Christian Alp
+namespace FribergWebAPI.Models
 {
 	public class ResidencePicture
 	{

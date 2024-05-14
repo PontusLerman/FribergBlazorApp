@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-//Author: Christian
+//author: Christian
 namespace FribergBlazorApp.Helpers
 {
 	public class SearchFilter<T>
