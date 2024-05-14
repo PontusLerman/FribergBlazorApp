@@ -21,7 +21,7 @@ namespace FribergWebAPI.Data.Repositories
 
 		public async Task<Residence> GetById(int id)
 		{
-			return await applicationDbContext.Residences.FindAsync(id);
+			return await applicationDbContext.Residences.Include(x => x.Municipality).Include(x => x.Category).Include(x => x.Realtor).FirstOrDefaultAsync(x => x.Id == id);
 		}
 
 		public async Task Add(Residence residence)
@@ -36,6 +36,9 @@ namespace FribergWebAPI.Data.Repositories
 
 		public async Task Update(Residence residence)
 		{
+			applicationDbContext.Attach(residence.Category);
+			applicationDbContext.Attach(residence.Municipality);
+			applicationDbContext.Attach(residence.Realtor);
 			applicationDbContext.Entry(residence).State = EntityState.Modified;
 			await applicationDbContext.SaveChangesAsync();
 		}

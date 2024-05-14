@@ -38,6 +38,7 @@ else
                     <td>@residence.startingPrice</td>
                     <td>@residence.realtor.firstName @residence.realtor.lastName</td>
                     <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.id))">Ändra</button></td>
+                    <td><a class="btn btn-danger" href="remove-residence/@residence.id">Ta Bort</a></td>
                 </tr>
             }
         </tbody>
