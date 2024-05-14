@@ -13,7 +13,7 @@ else
     <h3>Ändra @Residence.address</h3>
 }
 
-<EditForm Model="Residence" OnSubmit="HandleSubmit">
+@* <EditForm Model="Residence" OnSubmit="HandleSubmit">
     <div>
         <label for="category">Kategori</label>
         <InputSelect id="category" @bind-Value="selectedCategory" class="form-control">
@@ -74,7 +74,7 @@ else
         <label for="constructionYear">Byggår</label>
         <InputNumber id="constructionYear" @bind-Value="Residence.constructionYear" class="form-control" />
     </div>
-    @* This should be set by user-login, now just for testing purposes *@
+     This should be set by user-login, now just for testing purposes
         <div>
         <label for="realtor">Mäklare</label>
     <InputSelect id="realtor" @bind-Value="selectedRealtor" class="form-control">
@@ -87,9 +87,9 @@ else
     </div>
 
     <button type="submit" class="btn btn-primary">Spara</button>
-    @* <button class="btn btn-danger" @onclick="@(() => DeleteResidence(Residence.id))">Ta Bort</button> *@
+    @* <button class="btn btn-danger" @onclick="@(() => DeleteResidence(Residence.id))">Ta Bort</button>
     <p>@errorString</p>
-</EditForm>
+</EditForm> *@
 
 @code {
     [Parameter]
@@ -99,7 +99,7 @@ else
     // Lists for edit-form dropdowns
     public List<Category> categories = new List<Category>();
     public List<Municipality> municipalities = new List<Municipality>();
-    public List<Realtor> realtors = new List<Realtor>();
+    public List<RealtorDto> realtors = new List<RealtorDto>();
     //Fields for bind-Value 
     private int? selectedMunicipality;
     private int? selectedCategory;
@@ -113,7 +113,7 @@ else
         {
             categories = await Http.GetFromJsonAsync<List<Category>>("api/category");
             municipalities = await Http.GetFromJsonAsync<List<Municipality>>("api/municipalities");
-            realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtors");
+            // realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtors");
         }
         catch (Exception ex)
         {
@@ -137,7 +137,7 @@ else
     {
         Residence.category = await Http.GetFromJsonAsync<Category>($"api/category/{selectedCategory}");
         Residence.municipality = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{selectedMunicipality}");
-        Residence.realtor = await Http.GetFromJsonAsync<Realtor>($"api/realtors/{selectedRealtor}");
+        // Residence.realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtors/{selectedRealtor}");
 
         if (Id != null)
         {

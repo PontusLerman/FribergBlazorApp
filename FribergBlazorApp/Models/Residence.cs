@@ -1,5 +1,6 @@
 ﻿//author: Christian Alp, Johan Krångh, Pontus Lerman 
 
+
 namespace FribergBlazorApp.Models
 {
 	public class Residence
@@ -18,7 +19,7 @@ namespace FribergBlazorApp.Models
 		public decimal operatingCostPerYear { get; set; }
 		public int constructionYear { get; set; }
 		public List<Picture>? pictures { get; set; }
-		public Realtor realtor { get; set; }
+		//public RealtorDto realtor { get; set; }
 	}    
 
 }

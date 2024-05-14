@@ -27,9 +27,9 @@ else
             @foreach (var m in municipalities)
             {
                 <tr>
-                    <td>@m.municipalityName</td>       
-                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditMunicipality(m.id))">Ändra</button></td>
-                    <td><a class="btn btn-danger" href="remove-municipality/@m.id">Ta Bort</a></td>
+                    <td>@m.MunicipalityName</td>       
+                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditMunicipality(m.Id))">Ändra</button></td>
+                    <td><a class="btn btn-danger" href="remove-municipality/@m.Id">Ta Bort</a></td>
                 </tr>
             }
         </tbody>
@@ -39,14 +39,14 @@ else
 
 
 @code {
-    private List<Municipality>? municipalities;
+    private List<MunicipalityDto>? municipalities;
     private string? errorString;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            municipalities = await Http.GetFromJsonAsync<List<Municipality>>("api/municipalities");
+            municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
         }
         catch (Exception ex)
         {

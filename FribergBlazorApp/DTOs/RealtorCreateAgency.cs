@@ -1,6 +1,6 @@
 ﻿
 //author: Christian Alp
-namespace FribergWebAPI.DTOs
+namespace FribergBlazorApp.DTOs
 {
     public class RealtorCreateAgency : AgencyDto
     {

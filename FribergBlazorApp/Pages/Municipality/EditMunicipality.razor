@@ -10,13 +10,13 @@
 }
 else
 {
-    <h3>Ändra @Municipality.municipalityName</h3>
+    <h3>Ändra @Municipality.MunicipalityName</h3>
 }
 
 <EditForm Model="Municipality" OnSubmit="HandleSubmit">
     <div>
-        <label for="municipalityName">Kommunnamn</label>
-        <InputText id="municipalityName" @bind-Value="Municipality.municipalityName" class="form-control" />
+        <label for="MunicipalityName">Kommunnamn</label>
+        <InputText id="MunicipalityName" @bind-Value="Municipality.MunicipalityName" class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary">Spara</button>
     <p>@errorString</p>
@@ -27,14 +27,14 @@ else
 @code {
     [Parameter]
     public int? Id { get; set; }
-    public Municipality Municipality { get; set; } = new Municipality();
+    public MunicipalityDto Municipality { get; set; } = new MunicipalityDto();
     public string errorString = "";
 
     protected override async Task OnParametersSetAsync()
     {
         if (Id != null)
         {
-            var result = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{Id}");
+            var result = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{Id}");
             if (result != null)
             {
                 Municipality = result;
@@ -52,7 +52,7 @@ else
         else
         {
             var result = await Http.PostAsJsonAsync($"api/municipalities", Municipality);
-            Municipality = await result.Content.ReadFromJsonAsync<Municipality>();
+            Municipality = await result.Content.ReadFromJsonAsync<MunicipalityDto>();
             NavigationManager.NavigateTo("municipalities");
         }
     }    

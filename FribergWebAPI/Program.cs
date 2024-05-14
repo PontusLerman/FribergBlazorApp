@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Data;
 using System.Text.Json.Serialization;
 using FribergWebAPI.Data.Repositories;
@@ -28,6 +28,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
+
 
 builder.Services.AddIdentity<Realtor, IdentityRole>(options => 
 {

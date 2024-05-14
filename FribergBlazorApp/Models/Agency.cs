@@ -8,6 +8,6 @@ namespace FribergBlazorApp.Models
 		public string agencyName { get; set; }
 		public string agencyDescription { get; set; }
 		public string agencyLogoURL { get; set; }
-		public  List<Realtor> employees { get; set; }
+		//public  List<Realtor> employees { get; set; }
 	}
 }

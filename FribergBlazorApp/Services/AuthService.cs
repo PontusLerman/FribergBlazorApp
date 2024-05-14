@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using FribergWebAPI.DTOs;
+using FribergBlazorApp.DTOs;
 
 namespace FribergBlazorApp.Services
 {
