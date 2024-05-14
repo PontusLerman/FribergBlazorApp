@@ -1,5 +1,6 @@
 ﻿@*author: Johan Krångh*@
 @page "/residences"
+@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -31,13 +32,13 @@ else
             @foreach (var residence in residences)
             {
                 <tr>
-                    <td>@residence.category.name</td>
-                    <td>@residence.address</td>
-                    <td>@residence.municipality.municipalityName</td>
-                    <td>@residence.livingArea</td>
-                    <td>@residence.startingPrice</td>
-                    <td>@residence.realtor.firstName @residence.realtor.lastName</td>
-                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.id))">Ändra</button></td>
+                    <td>@residence.Category.Name</td>
+                    <td>@residence.Address</td>
+                    <td>@residence.Municipality.MunicipalityName</td>
+                    <td>@residence.LivingArea</td>
+                    <td>@residence.StartingPrice</td>
+                    <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
+                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button></td>
                 </tr>
             }
         </tbody>
@@ -46,14 +47,14 @@ else
 <button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
 
 @code {
-    private List<Residence>? residences;
+    private List<ResidenceDto>? residences;
     private string? errorString;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            residences = await Http.GetFromJsonAsync<List<Residence>>("api/residence");
+            residences = await Http.GetFromJsonAsync<List<ResidenceDto>>("api/residence");
         }
         catch (Exception ex)
         {
