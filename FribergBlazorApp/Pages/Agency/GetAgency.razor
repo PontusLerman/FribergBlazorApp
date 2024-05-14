@@ -1,4 +1,5 @@
 ﻿@page "/ga"
+@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -22,9 +23,9 @@ else
         @foreach(var agency in agencies)
         {
             <tr>
-                <td>@agency.agencyLogoURL</td>
-                <td>@agency.agencyName</td>
-                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cea/{agency.agencyId}"))>Ändra</button></td>
+                <td>@agency.AgencyLogoURL</td>
+                <td>@agency.AgencyName</td>
+                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cea/{agency.AgencyId}"))>Ändra</button></td>
             </tr>    
         }       
     </tbody>   
@@ -33,7 +34,7 @@ else
 }  
 
 @code {
-    List<Agency> agencies = new List<Agency>();
+    List<AgencyDto> agencies = new List<AgencyDto>();
     string errorString;
 
 
@@ -41,7 +42,7 @@ else
     {
         try
         {
-            agencies = await Http.GetFromJsonAsync<List<Agency>>("api/agencies");
+            agencies = await Http.GetFromJsonAsync<List<AgencyDto>>("api/agencies");
         }
         catch (Exception ex)
         {

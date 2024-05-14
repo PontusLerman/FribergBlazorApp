@@ -1,5 +1,4 @@
-﻿using FribergBlazorApp.Models;
-
+﻿
 //author: Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergWebAPI.DTOs
 {
@@ -9,5 +8,6 @@ namespace FribergWebAPI.DTOs
 		public string AgencyName { get; set; }
 		public string AgencyDescription { get; set; }
 		public string? AgencyLogoURL { get; set; } = "";
+		public List<RealtorDto>? Employees { get; set; }
 	}
 }

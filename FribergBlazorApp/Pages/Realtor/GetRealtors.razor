@@ -1,4 +1,5 @@
 ﻿@page "/gr"
+@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -25,12 +26,12 @@ else
             @foreach (var realtor in realtors)
             {
                 <tr>
-                    <td>@realtor.picture</td>
-                    <td>@realtor.firstName</td>
-                    <td>@realtor.lastName</td>
-                    <td>@realtor.phone</td>
-                    <td>@realtor.agency.agencyName</td>
-                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer/{realtor.id}"))>Ändra</button></td>
+                    <td>@realtor.Picture</td>
+                    <td>@realtor.FirstName</td>
+                    <td>@realtor.LastName</td>
+                    <td>@realtor.PhoneNumber</td>
+                    <td>@realtor.Agency.AgencyName</td>
+                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer/{realtor.Id}"))>Ändra</button></td>
                 </tr>
             }
         </tbody>
@@ -39,7 +40,7 @@ else
 }
 
 @code {
-    List<Realtor> realtors = new List<Realtor>();
+    List<RealtorDto> realtors = new List<RealtorDto>();
     string errorString;
 
 
@@ -47,7 +48,7 @@ else
     {
         try
         {
-            realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtor");
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
         }
         catch (Exception ex)
         {

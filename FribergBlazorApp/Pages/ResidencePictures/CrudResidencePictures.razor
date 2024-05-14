@@ -1,4 +1,5 @@
 ﻿@page "/residencepictures"
+@using FribergBlazorApp.DTOs
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
@@ -37,12 +38,12 @@
                 @foreach (var picture in FilteredItems)
                 {
                     <tr>
-                        <td>@picture.id</td>
-                        <td><img src="@picture.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
+                        <td>@picture.Id</td>
+                        <td><img src="@picture.Picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
                         <td>@picture.ResidenceId</td>
                         <td>
                             <button @onclick="() => ShowForm(PictureAction.Edit, picture)">Ändra</button>
-                            <button @onclick="() => ShowConfirmationDialog(picture.id)">Radera</button>
+                            <button @onclick="() => ShowConfirmationDialog(picture.Id)">Radera</button>
                         </td>
                     </tr>
                 }
@@ -57,7 +58,7 @@
     {
         <div>
             <h3>@(pictureAction == PictureAction.Create ? "Skapa en ny bild" : "Redigera bild")</h3>
-            <input type="text" @bind="picture.picture" />
+            <input type="text" @bind="picture.Picture" />
             <input type="text" @bind="picture.ResidenceId" />
             <button @onclick="SavePicture">@(pictureAction == PictureAction.Create ? "Skapa" : "Spara")</button>
             <button @onclick="Cancel">Avbryt</button>
@@ -77,11 +78,11 @@
 
 @code {
     private string baseUrl = "https://localhost:7280/api/residencepictures";
-    private List<Picture>? pictures;
+    private List<PictureDto>? pictures;
     private string? errorString;
     private string? searchTerm;
     private PictureAction pictureAction = PictureAction.None;
-    private Picture picture = new Picture();
+    private PictureDto picture = new PictureDto();
     private bool showForm = false;
     private bool showConfirmation = false;
     private int selectedPictureId;
@@ -102,7 +103,7 @@
     {
         try
         {
-            pictures = await Http.GetFromJsonAsync<List<Picture>>(baseUrl);
+            pictures = await Http.GetFromJsonAsync<List<PictureDto>>(baseUrl);
         }
         catch (Exception ex)
         {
@@ -110,19 +111,19 @@
         }
     }
 
-    private IEnumerable<Picture> FilteredItems
+    private IEnumerable<PictureDto> FilteredItems
     {
         get
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return pictures ?? Enumerable.Empty<Picture>();
+                return pictures ?? Enumerable.Empty<PictureDto>();
             }
-            return pictures?.Where(p => p.ResidenceId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || p.id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<Picture>();
+            return pictures?.Where(p => p.ResidenceId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || p.Id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<PictureDto>();
         }
     }
 
-    private void ShowForm(PictureAction action, Picture picture = null)
+    private void ShowForm(PictureAction action, PictureDto picture = null)
     {
         pictureAction = action;
         if (picture != null)
@@ -158,7 +159,7 @@
         {
             HttpResponseMessage response = await Http.PostAsJsonAsync(baseUrl, picture);
             response.EnsureSuccessStatusCode();
-            pictures.Add(await response.Content.ReadFromJsonAsync<Picture>());
+            pictures.Add(await response.Content.ReadFromJsonAsync<PictureDto>());
         }
         catch (Exception ex)
         {
@@ -170,9 +171,9 @@
     {
         try
         {
-            HttpResponseMessage response = await Http.PutAsJsonAsync($"{baseUrl}/{picture.id}", picture);
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"{baseUrl}/{picture.Id}", picture);
             response.EnsureSuccessStatusCode();
-            var index = pictures.FindIndex(p => p.id == picture.id);
+            var index = pictures.FindIndex(p => p.Id == picture.Id);
             pictures[index] = picture;
         }
         catch (Exception ex)
@@ -187,7 +188,7 @@
         {
             HttpResponseMessage response = await Http.DeleteAsync($"{baseUrl}/{pictureId}");
             response.EnsureSuccessStatusCode();
-            pictures.RemoveAll(p => p.id == pictureId);
+            pictures.RemoveAll(p => p.Id == pictureId);
         }
         catch (Exception ex)
         {
@@ -205,7 +206,7 @@
 
     private void ResetState()
     {
-        picture = new Picture();
+        picture = new PictureDto();
         pictureAction = PictureAction.None;
         showForm = false;
         showConfirmation = false;
