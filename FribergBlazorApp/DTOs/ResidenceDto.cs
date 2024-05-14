@@ -5,6 +5,7 @@ namespace FribergWebAPI.DTOs
 {
 	public class ResidenceDto
 	{
+		public int Id { get; set; }
 		public CategoryDto Category { get; set; }
 		public string? Address { get; set; }
 		public MunicipalityDto Municipality { get; set; }
