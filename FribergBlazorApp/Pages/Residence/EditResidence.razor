@@ -10,23 +10,23 @@
 }
 else
 {
-    <h3>Ändra @Residence.address</h3>
+    <h3>Ändra @Residence.Category.Name @Residence.Address</h3>
 }
 
 <EditForm Model="Residence" OnSubmit="HandleSubmit">
     <div>
-        <label for="category">Kategori</label>
-        <InputSelect id="category" @bind-Value="selectedCategory" class="form-control">
+        <label for="Category">Kategori</label>
+        <InputSelect id="Category" @bind-Value="selectedCategory" class="form-control">
             <option value="">Välj kategori</option>
             @foreach (var c in categories)
             {
-                <option value="@c.id">@c.name</option>
+                <option value="@c.Id">@c.Name</option>
             }
         </InputSelect>
     </div>
     <div>
         <label for="address">Adress</label>
-        <InputText id="address" @bind-Value="Residence.address" class="form-control" />
+        <InputText id="address" @bind-Value="Residence.Address" class="form-control" />
     </div>
     <div>
         <label for="municipality">Kommun</label>
@@ -34,76 +34,75 @@ else
             <option value="">Välj kommun</option>
             @foreach (var m in municipalities)
             {
-                <option value="@m.id">@m.municipalityName</option>
+                <option value="@m.Id">@m.MunicipalityName</option>
             }
         </InputSelect>
     </div>
     <div>
-        <label for="startingPrice">Utgångspris</label>
-        <InputNumber id="startingPrice" @bind-Value="Residence.startingPrice" class="form-control" />
+        <label for="StartingPrice">Utgångspris</label>
+        <InputNumber id="StartingPrice" @bind-Value="Residence.StartingPrice" class="form-control" />
     </div>
     <div>
-        <label for="livingArea">Boyta</label>
-        <InputNumber id="livingArea" @bind-Value="Residence.livingArea" class="form-control" />
+        <label for="LivingArea">Boyta</label>
+        <InputNumber id="LivingArea" @bind-Value="Residence.LivingArea" class="form-control" />
     </div>
     <div>
-        <label for="biArea">Biyta</label>
-        <InputNumber id="biArea" @bind-Value="Residence.biArea" class="form-control" />
+        <label for="BiArea">Biyta</label>
+        <InputNumber id="BiArea" @bind-Value="Residence.BiArea" class="form-control" />
     </div>
     <div>
-        <label for="plotArea">Tomtstorlek</label>
-        <InputNumber id="plotArea" @bind-Value="Residence.plotArea" class="form-control" />
+        <label for="PlotArea">Tomtstorlek</label>
+        <InputNumber id="PlotArea" @bind-Value="Residence.PlotArea" class="form-control" />
     </div>
     <div>
-        <label for="objectDescription">Beskrivning</label>
-        <InputText id="objectDescription" @bind-Value="Residence.objectDescription" class="form-control" />
+        <label for="ObjectDescription">Beskrivning</label>
+        <InputText id="ObjectDescription" @bind-Value="Residence.ObjectDescription" class="form-control" />
     </div>
     <div>
-        <label for="numberOfRooms">Rum</label>
-        <InputNumber id="numberOfRooms" @bind-Value="Residence.numberOfRooms" class="form-control" />
+        <label for="NumberOfRooms">Rum</label>
+        <InputNumber id="NumberOfRooms" @bind-Value="Residence.NumberOfRooms" class="form-control" />
     </div>
     <div>
-        <label for="monthlyFee">Månadskostnad</label>
-        <InputNumber id="monthlyFee" @bind-Value="Residence.monthlyFee" class="form-control" />
+        <label for="MonthlyFee">Månadskostnad</label>
+        <InputNumber id="MonthlyFee" @bind-Value="Residence.MonthlyFee" class="form-control" />
     </div>
     <div>
-        <label for="operatingCostPerYear">Driftkostnad</label>
-        <InputNumber id="operatingCostPerYear" @bind-Value="Residence.operatingCostPerYear" class="form-control" />
+        <label for="OperatingCostPerYear">Driftkostnad</label>
+        <InputNumber id="OperatingCostPerYear" @bind-Value="Residence.OperatingCostPerYear" class="form-control" />
     </div>
     <div>
-        <label for="constructionYear">Byggår</label>
-        <InputNumber id="constructionYear" @bind-Value="Residence.constructionYear" class="form-control" />
+        <label for="ConstructionYear">Byggår</label>
+        <InputNumber id="ConstructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
     </div>
-    @* This should be set by user-login, now just for testing purposes *@
+     @* This should be set by user-login on post, now just for testing purposes *@
         <div>
-        <label for="realtor">Mäklare</label>
-    <InputSelect id="realtor" @bind-Value="selectedRealtor" class="form-control">
+        <label for="Realtor">Mäklare</label>
+    <InputSelect id="Realtor" @bind-Value="selectedRealtor" class="form-control">
             <option value="">Välj mäklare</option>
             @foreach (var r in realtors)
             {
-                <option value="@r.id">@r.firstName @r.lastName</option>
+                <option value="@r.Id">@r.FirstName @r.LastName</option>
             }
         </InputSelect>
     </div>
 
     <button type="submit" class="btn btn-primary">Spara</button>
-    @* <button class="btn btn-danger" @onclick="@(() => DeleteResidence(Residence.id))">Ta Bort</button> *@
     <p>@errorString</p>
 </EditForm>
 
 @code {
     [Parameter]
     public int? Id { get; set; }
-    public Residence Residence { get; set; } = new Residence();
+    public ResidenceDto Residence { get; set; } = new ResidenceDto();
 
     // Lists for edit-form dropdowns
-    public List<Category> categories = new List<Category>();
-    public List<Municipality> municipalities = new List<Municipality>();
-    public List<Realtor> realtors = new List<Realtor>();
+    public List<CategoryDto> categories = new List<CategoryDto>();
+    public List<MunicipalityDto> municipalities = new List<MunicipalityDto>();
+    public List<RealtorDto> realtors = new List<RealtorDto>();
     //Fields for bind-Value 
     private int? selectedMunicipality;
     private int? selectedCategory;
-    private int? selectedRealtor;
+    private string? selectedRealtor;
 
     public string errorString = "";
 
@@ -111,9 +110,9 @@ else
     {
         try
         {
-            categories = await Http.GetFromJsonAsync<List<Category>>("api/category");
-            municipalities = await Http.GetFromJsonAsync<List<Municipality>>("api/municipalities");
-            realtors = await Http.GetFromJsonAsync<List<Realtor>>("api/realtors");
+            categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
+            municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
         }
         catch (Exception ex)
         {
@@ -125,7 +124,7 @@ else
     {
         if (Id != null)
         {
-            var result = await Http.GetFromJsonAsync<Residence>($"api/residence/{Id}");
+            var result = await Http.GetFromJsonAsync<ResidenceDto>($"api/residence/{Id}");
             if (result != null)
             {
                 Residence = result;
@@ -135,10 +134,11 @@ else
 
     async Task HandleSubmit()
     {
-        Residence.category = await Http.GetFromJsonAsync<Category>($"api/category/{selectedCategory}");
-        Residence.municipality = await Http.GetFromJsonAsync<Municipality>($"api/municipalities/{selectedMunicipality}");
-        Residence.realtor = await Http.GetFromJsonAsync<Realtor>($"api/realtors/{selectedRealtor}");
-
+        Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
+        Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
+        Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
+        Residence.Realtor.Password = "s";
+        
         if (Id != null)
         {
             var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
@@ -151,7 +151,7 @@ else
             var result = await Http.PostAsJsonAsync($"api/residence", Residence);
             string json = await result.Content.ReadAsStringAsync(); //Delete this!
             Console.WriteLine(json); //Delete this!
-            Residence = await result.Content.ReadFromJsonAsync<Residence>();
+            Residence = await result.Content.ReadFromJsonAsync<ResidenceDto>();
             NavigationManager.NavigateTo("residences");
         }
     }

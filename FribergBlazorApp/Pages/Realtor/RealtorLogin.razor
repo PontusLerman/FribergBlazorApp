@@ -1,5 +1,4 @@
 ﻿@page "/login"
-@using FribergBlazorApp.Models
 @using FribergBlazorApp.Services
 @using FribergWebAPI.DTOs
 @inject AuthService authService
@@ -17,7 +16,7 @@
         <InputText id="email" @bind-Value="loginModel.Email" />
 
         <label for="password">Password</label>
-        <InputText id="password" @bind-Value="loginModel.Password" />
+        <InputText id="password" @bind-Value="loginModel.Password" type="password" />
 
         <button type="submit">Login</button>
     </EditForm>
@@ -40,9 +39,9 @@ else
     private string errorMessage;
     private bool isAuthenticated;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        CheckAuthentication();
+        await CheckAuthentication();
     }
 
     private async Task CheckAuthentication()
@@ -56,7 +55,7 @@ else
         try
         {
             var authResponse = await authService.Login(loginModel);
-            navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+            navigationManager.NavigateTo("/", forceLoad: true);
         }
         catch (Exception ex)
         {
@@ -68,6 +67,6 @@ else
     private async Task Logout()
     {
         await authService.Logout();
-        navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
+        navigationManager.NavigateTo("/", forceLoad: true);
     }
 }

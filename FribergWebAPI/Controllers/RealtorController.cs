@@ -3,6 +3,7 @@ using FribergWebAPI.Constants;
 using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -259,6 +260,38 @@ namespace FribergWebAPI.Controllers
 				return Problem($"An error occurred: {nameof(LoginRealtor)}", statusCode: 500);
 			}
 		}
+		
+		/* [Authorize]
+		[HttpGet("current")]
+		public async Task<ActionResult<RealtorDto>> GetCurrentUser()
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+
+				var realtor = await _userManager.Users
+					.Include(u => u.Agency)
+					.Include(r => r.ResidenceList)
+					.FirstOrDefaultAsync(i => i.Id == userId);
+
+				if (realtor == null)
+				{
+					return NotFound();
+				}
+
+				var realtorDto = _mapper.Map<RealtorDto>(realtor);
+				return Ok(realtorDto);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error fetching current user: {ex.Message}");
+				return StatusCode(500, "Error fetching current user: Failed to retrieve current user data.");
+			}
+		} */
 
 		private async Task<string> GenerateToken(Realtor realtor)
 		{
@@ -272,7 +305,8 @@ namespace FribergWebAPI.Controllers
 				new Claim(JwtRegisteredClaimNames.Sub, realtor.UserName),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
-				new Claim(ApiClaims.Rid, realtor.Id)
+				new Claim(ApiClaims.Rid, realtor.Id),
+				new Claim(ClaimTypes.NameIdentifier, realtor.Id) 
 			}.Union(realtorClaims);
 
 			var token = new JwtSecurityToken(

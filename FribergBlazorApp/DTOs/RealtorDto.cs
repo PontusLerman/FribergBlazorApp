@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
-
+﻿
 //author: Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergWebAPI.DTOs
 {

@@ -1,4 +1,4 @@
-﻿using FribergBlazorApp.Models;
+﻿using FribergBlazorApp.DTOs;
 
 //author: Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergWebAPI.DTOs
@@ -18,7 +18,7 @@ namespace FribergWebAPI.DTOs
 		public decimal MonthlyFee { get; set; }
 		public decimal OperatingCostPerYear { get; set; }
 		public int ConstructionYear { get; set; }
-		public virtual List<Picture> Pictures { get; set; }
+		public virtual List<PictureDto> Pictures { get; set; }
 		public RealtorDto Realtor { get; set; }
 	}
 }

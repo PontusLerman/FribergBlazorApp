@@ -1,4 +1,5 @@
 ﻿@page "/categories"
+@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
@@ -36,11 +37,11 @@
                 @foreach (var category in FilteredItems)
                 {
                     <tr>
-                        <td>@category.id</td>
-                        <td>@category.name</td>
+                        <td>@category.Id</td>
+                        <td>@category.Name</td>
                         <td>
                             <button @onclick="() => ShowForm(CategoryAction.Edit, category)">Ändra</button>
-                            <button @onclick="() => ShowConfirmationDialog(category.id)">Radera </button>
+                            <button @onclick="() => ShowConfirmationDialog(category.Id)">Radera </button>
                         </td>
                     </tr>
                 }
@@ -55,7 +56,7 @@
     {
         <div>
             <h3>@(categoryAction == CategoryAction.Create ? "Skapa en ny kategori" : "Redigera kategori")</h3>
-            <input type="text" @bind="category.name" />
+            <input type="text" @bind="category.Name" />
             <button @onclick="SaveCategory">@(categoryAction == CategoryAction.Create ? "Skapa" : "Spara")</button>
             <button @onclick="Cancel">Avbryt</button>
         </div>
@@ -75,11 +76,11 @@
 @code {
 
     private string baseUrl = "https://localhost:7280/api/category";
-    private List<Category>? categories;
+    private List<CategoryDto>? categories;
     private string? errorString;
     private string? searchTerm;
     private CategoryAction categoryAction = CategoryAction.None;
-    private Category category = new Category();
+    private CategoryDto category = new CategoryDto();
     private bool showForm = false;
     private bool showConfirmation = false;
     private int selectedCategoryId;
@@ -100,7 +101,7 @@
     {
         try
         {
-            categories = await Http.GetFromJsonAsync<List<Category>>(baseUrl);
+            categories = await Http.GetFromJsonAsync<List<CategoryDto>>(baseUrl);
         }
         catch (Exception ex)
         {
@@ -108,19 +109,19 @@
         }
     }
 
-    private IEnumerable<Category> FilteredItems
+    private IEnumerable<CategoryDto> FilteredItems
     {
         get
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return categories ?? Enumerable.Empty<Category>();
+                return categories ?? Enumerable.Empty<CategoryDto>();
             }
-            return categories?.Where(c => c.name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || c.id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<Category>();
+            return categories?.Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || c.Id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<CategoryDto>();
         }
     }
 
-    private void ShowForm(CategoryAction action, Category category = null)
+    private void ShowForm(CategoryAction action, CategoryDto category = null)
     {
         categoryAction = action;
         if (category != null)
@@ -155,7 +156,7 @@
         {
             HttpResponseMessage response = await Http.PostAsJsonAsync(baseUrl, category);
             response.EnsureSuccessStatusCode();
-            categories.Add(await response.Content.ReadFromJsonAsync<Category>());
+            categories.Add(await response.Content.ReadFromJsonAsync<CategoryDto>());
         }
         catch (Exception ex)
         {
@@ -167,9 +168,9 @@
     {
         try
         {
-            HttpResponseMessage response = await Http.PutAsJsonAsync($"{baseUrl}/{category.id}", category);
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"{baseUrl}/{category.Id}", category);
             response.EnsureSuccessStatusCode();
-            var index = categories.FindIndex(c => c.id == category.id);
+            var index = categories.FindIndex(c => c.Id == category.Id);
             categories[index] = category;
         }
         catch (Exception ex)
@@ -184,7 +185,7 @@
         {
             HttpResponseMessage response = await Http.DeleteAsync($"{baseUrl}/{categoryId}");
             response.EnsureSuccessStatusCode();
-            categories.RemoveAll(c => c.id == categoryId);
+            categories.RemoveAll(c => c.Id == categoryId);
         }
         catch (Exception ex)
         {
@@ -200,7 +201,7 @@
 
     private void ResetState()
     {
-        category = new Category();
+        category = new CategoryDto();
         categoryAction = CategoryAction.None;
         showForm = false;
         showConfirmation = false;
