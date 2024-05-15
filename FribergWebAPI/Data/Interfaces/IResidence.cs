@@ -1,6 +1,6 @@
 using FribergWebAPI.Models;
 
-//author: Christian
+//author: Christian Alp
 namespace FribergWebAPI.Data.Interfaces
 {
     public interface IResidence

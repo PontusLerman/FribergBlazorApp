@@ -1,8 +1,9 @@
 ﻿using FribergWebAPI.Models;
 
+//author: Johan Krångh
 namespace FribergWebAPI.Data.Interfaces
 {
-    public interface IAgency //author: Johan Krångh
+    public interface IAgency 
     {
         Task AddAsync(Agency agency);
         Task DeleteAsync(Agency agency);

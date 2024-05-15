@@ -2,45 +2,47 @@
 using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
+//author: Christian Alp, Pontus Lerman
 namespace FribergWebAPI.Data.Repositories
 {
-    //Pontus
-    public class RealtorRepository : IRealtor
-    {
-        private readonly ApplicationDbContext applicationDbContext;
+	public class RealtorRepository : IRealtor
+	{
+		private readonly ApplicationDbContext dbContext;
 
-        public RealtorRepository(ApplicationDbContext applicationDbContext)
-        {
-            this.applicationDbContext = applicationDbContext;
-        }
-        public async Task AddAsync(Realtor realtor)
-        {
-            await applicationDbContext.AddAsync(realtor);
-            applicationDbContext.Entry(realtor.Agency).State = EntityState.Unchanged;
-            await applicationDbContext.SaveChangesAsync();
-        }
+		public RealtorRepository(ApplicationDbContext dbContext)
+		{
+			this.dbContext = dbContext;
+		}
 
-        public async Task DeleteAsync(Realtor realtor)
-        {
-            applicationDbContext.Remove(realtor);
-            await applicationDbContext.SaveChangesAsync();
-        }
+		public async Task AddAsync(Realtor realtor)
+		{
+			dbContext.Realtors.Add(realtor);
+			dbContext.Entry(realtor.Agency).State = EntityState.Unchanged;
+			await dbContext.SaveChangesAsync();
+		}
 
-        public async Task<IEnumerable<Realtor>> GetAllAsync()
-        {
-            return await applicationDbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r => r.FirstName).ToListAsync();
-            //return await applicationDbContext.Set<Realtor>().ToListAsync();
-        }
+		public async Task DeleteAsync(Realtor realtor)
+		{
+			dbContext.Realtors.Remove(realtor);
+			await dbContext.SaveChangesAsync();
+		}
 
-        public async Task<Realtor> GetByIdAsync(int id)
-        {
-            return await applicationDbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).FirstOrDefaultAsync(x => x.Id == id);
-        }
+		public async Task<IEnumerable<Realtor>> GetAllAsync()
+		{
+			return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).OrderBy(r => r.FirstName).ToListAsync();
 
-        public async Task UpdateAsync(Realtor realtor)
-        {
-            applicationDbContext.Update(realtor);
-            await applicationDbContext.SaveChangesAsync();
-        }
-    }
+		}
+
+		public async Task<Realtor> GetByIdAsync(int id)
+		{
+			return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).FirstOrDefaultAsync(x => x.Id == id.ToString());
+		}
+
+		public async Task UpdateAsync(Realtor realtor)
+		{
+			dbContext.Update(realtor);
+			dbContext.Attach(realtor.Agency);
+			await dbContext.SaveChangesAsync();
+		}
+	}
 }

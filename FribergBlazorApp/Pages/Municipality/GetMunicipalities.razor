@@ -1,0 +1,66 @@
+﻿@* author: Johan Krångh *@
+@page "/municipalities"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3>Kommuner</h3>
+
+@if (municipalities == null)
+{
+    <p><em>Laddar...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Kommunnamn</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in municipalities)
+            {
+                <tr>
+                    <td>@m.MunicipalityName</td>       
+                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditMunicipality(m.Id))">Ändra</button></td>
+                    <td><a class="btn btn-danger" href="remove-municipality/@m.Id">Ta Bort</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<button class="btn btn-primary" @onclick="AddMunicipality">Lägg till kommun</button>
+
+
+@code {
+    private List<MunicipalityDto>? municipalities;
+    private string? errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+
+    void AddMunicipality()
+    {
+        NavManager.NavigateTo("edit-municipality");
+    }
+
+    void EditMunicipality(int id)
+    {
+        NavManager.NavigateTo($"edit-municipality/{id}");        
+    }
+}

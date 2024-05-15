@@ -1,0 +1,219 @@
+﻿@page "/residencepictures"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@if (!showForm && !showConfirmation)
+{
+    <h3>Bilder</h3>
+
+    <div style="position: absolute; right: 50px;">
+        <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+    </div>
+
+    <div>
+        <button @onclick="() => ShowForm(PictureAction.Create)">Skapa en ny bild</button>
+    </div>
+
+    @if (pictures == null)
+    {
+        <p><em>Laddar...</em></p>
+    }
+    else if (errorString != null)
+    {
+        <p>An error occurred: @errorString</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bild</th>
+                    <th>Bostads ID</th>
+                    <th>Val</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var picture in FilteredItems)
+                {
+                    <tr>
+                        <td>@picture.id</td>
+                        <td><img src="@picture.picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
+                        <td>@picture.ResidenceId</td>
+                        <td>
+                            <button @onclick="() => ShowForm(PictureAction.Edit, picture)">Ändra</button>
+                            <button @onclick="() => ShowConfirmationDialog(picture.id)">Radera</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (showForm)
+{
+    @if (pictureAction == PictureAction.Create || pictureAction == PictureAction.Edit)
+    {
+        <div>
+            <h3>@(pictureAction == PictureAction.Create ? "Skapa en ny bild" : "Redigera bild")</h3>
+            <input type="text" @bind="picture.picture" />
+            <input type="text" @bind="picture.ResidenceId" />
+            <button @onclick="SavePicture">@(pictureAction == PictureAction.Create ? "Skapa" : "Spara")</button>
+            <button @onclick="Cancel">Avbryt</button>
+        </div>      
+    }
+}
+
+@if (showConfirmation)
+{
+    <div>
+        <h3>Radera bild</h3>
+        <p>Är du säker på att du vill radera denna bild?</p>
+        <button @onclick="() => DeletePicture(selectedPictureId)">Ja, Radera</button>
+        <button @onclick="Cancel">Avbryt</button>
+    </div>
+}
+
+@code {
+    private string baseUrl = "https://localhost:7280/api/residencepictures";
+    private List<Picture>? pictures;
+    private string? errorString;
+    private string? searchTerm;
+    private PictureAction pictureAction = PictureAction.None;
+    private Picture picture = new Picture();
+    private bool showForm = false;
+    private bool showConfirmation = false;
+    private int selectedPictureId;
+
+    private enum PictureAction
+    {
+        None,
+        Create,
+        Edit
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPictures();
+    }
+
+    private async Task LoadPictures()
+    {
+        try
+        {
+            pictures = await Http.GetFromJsonAsync<List<Picture>>(baseUrl);
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Felmeddelande: {ex.Message}";
+        }
+    }
+
+    private IEnumerable<Picture> FilteredItems
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return pictures ?? Enumerable.Empty<Picture>();
+            }
+            return pictures?.Where(p => p.ResidenceId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || p.id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<Picture>();
+        }
+    }
+
+    private void ShowForm(PictureAction action, Picture picture = null)
+    {
+        pictureAction = action;
+        if (picture != null)
+        {
+            this.picture = picture;
+        }
+        showForm = true;
+    }
+
+    private void ShowConfirmationDialog(int pictureId)
+    {
+        selectedPictureId = pictureId;
+        showConfirmation = true;
+    }
+
+    private async Task SavePicture()
+    {
+        if (pictureAction == PictureAction.Create)
+        {
+            await CreatePicture();
+        }
+        else if (pictureAction == PictureAction.Edit)
+        {
+            await UpdatePicture();
+        }
+        ResetState();
+        ShowRead();
+    }
+
+    private async Task CreatePicture()
+    {
+        try
+        {
+            HttpResponseMessage response = await Http.PostAsJsonAsync(baseUrl, picture);
+            response.EnsureSuccessStatusCode();
+            pictures.Add(await response.Content.ReadFromJsonAsync<Picture>());
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Fel: {ex.Message}";
+        }
+    }
+
+    private async Task UpdatePicture()
+    {
+        try
+        {
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"{baseUrl}/{picture.id}", picture);
+            response.EnsureSuccessStatusCode();
+            var index = pictures.FindIndex(p => p.id == picture.id);
+            pictures[index] = picture;
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Fel: {ex.Message}";
+        }
+    }
+
+    private async Task DeletePicture(int pictureId)
+    {
+        try
+        {
+            HttpResponseMessage response = await Http.DeleteAsync($"{baseUrl}/{pictureId}");
+            response.EnsureSuccessStatusCode();
+            pictures.RemoveAll(p => p.id == pictureId);
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Fel: {ex.Message}";
+        }
+        showConfirmation = false;
+        ShowRead();
+    }
+
+    private void Cancel()
+    {
+        ResetState();
+        ShowRead();
+    }
+
+    private void ResetState()
+    {
+        picture = new Picture();
+        pictureAction = PictureAction.None;
+        showForm = false;
+        showConfirmation = false;
+        selectedPictureId = 0;
+    }
+
+    private void ShowRead()
+    {
+        ResetState();
+    }
+}

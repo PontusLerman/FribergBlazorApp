@@ -1,0 +1,73 @@
+﻿@*author: Johan Krångh*@
+@page "/residences"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Bostäder</h3>
+
+@if (residences == null)
+{
+    <p><em>Laddar...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Kategori</th>
+                <th>Adress</th>
+                <th>Kommun</th>
+                <th>Boyta</th>
+                <th>Pris</th>
+                <th>Mäklare</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var residence in residences)
+            {
+                <tr>
+                    <td>@residence.Category.Name</td>
+                    <td>@residence.Address</td>
+                    <td>@residence.Municipality.MunicipalityName</td>
+                    <td>@residence.LivingArea</td>
+                    <td>@residence.StartingPrice</td>
+                    <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
+                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
+
+@code {
+    private List<ResidenceDto>? residences;
+    private string? errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            residences = await Http.GetFromJsonAsync<List<ResidenceDto>>("api/residence");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+
+    void AddResidence()
+    {
+        NavigationManager.NavigateTo("edit-residence");
+    }
+
+    void EditResidence(int id)
+    {
+        NavigationManager.NavigateTo($"edit-residence/{id}");
+    }
+}

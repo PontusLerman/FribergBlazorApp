@@ -1,0 +1,45 @@
+﻿@* author: Johan Krångh *@
+@page "/remove-residence/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3>Ta Bort @(Residence.Category.Name) @(Residence.Address)?</h3>
+
+
+<button class="btn btn-danger" @onclick="@(() => RemoveResidence(Id))">Ta Bort</button>
+<a class="btn btn-outline-primary" href="residences">Tillbaka</a>
+
+
+<p>@errorString</p>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    public ResidenceDto Residence { get; set; } = new ResidenceDto();
+    private string? errorString;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<ResidenceDto>($"api/residence/{Id}");
+            if (result != null)
+            {
+                Residence = result;
+            }
+        }
+    }
+
+    async Task RemoveResidence(int? id)
+    {
+        var response = await Http.DeleteAsync($"api/residence/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavManager.NavigateTo("residences");
+        }
+        else
+        {
+            errorString = response.ReasonPhrase;
+        }
+    }
+}

@@ -1,9 +1,11 @@
-﻿namespace FribergWebAPI.Models
+﻿
+//author: Christian Alp
+namespace FribergWebAPI.Models
 {
-    public class ResidencePicture
-    {
-        public int Id { get; set; }
-        public string Picture { get; set; }
-        public int ResidenceId { get; set; }
-    }
+	public class ResidencePicture
+	{
+		public int Id { get; set; }
+		public string Picture { get; set; }
+		public int ResidenceId { get; set; }
+	}
 }

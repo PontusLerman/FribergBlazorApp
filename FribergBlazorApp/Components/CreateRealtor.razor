@@ -1,0 +1,74 @@
+﻿@* @* @inject HttpClient Http
+
+<h3>Skapa Mäklare</h3>
+@* <EditForm Model="@realtor" >
+    <div>
+        <label for="FirstName">Förnamn:</label>
+        <InputText id="FirstName" @bind-Value="realtor.FirstName" class="form-control" />
+    </div>   
+    <div>
+        <label for="LastName">Efternamn:</label>
+        <InputText id="LastName" @bind-Value="realtor.LastName" class="form-control" />
+    </div>   
+    <div>
+        <label for="Email">Email:</label>
+        <InputText id="Email" @bind-Value="realtor.Email" class="form-control" />
+    </div>   
+    <div>
+        <label for="PhoneNumber">Telefonnummer:</label>
+        <InputText id="PhoneNumber" @bind-Value="realtor.PhoneNumber" class="form-control" />
+    </div>   
+    <div>
+        <label for="Picture">Bild:</label>
+        <InputText id="Picture" @bind-Value="realtor.Picture" class="form-control" />
+    </div>   
+    <div>
+        <label for="Agency">Mäklarbyrå:</label>
+        @if (Id != null)
+        {
+            <InputText id="Agency" readonly @bind-Value="realtor.Agency.AgencyName" class="form-control" />
+        }
+        else
+        {
+            <InputSelect id="Agency" @bind-Value="SelectedAgency" @onchange="HandleAgency">
+                @foreach (var agency in agencies)
+            {
+                <option value="@agency.agencyId">@agency.agencyName</option>
+            }
+            </InputSelect>
+        }
+    </div>
+</EditForm> *@
+
+
+@code {
+//     [Parameter]
+//     public int? Id { get; set; }
+//     [Parameter]
+//     public RealtorDto realtor { get; set; } = new RealtorDto();
+//     public List<Agency>? agencies = new List<Agency>();
+//     public int? SelectedAgency;
+
+
+//     protected override async Task OnInitializedAsync()
+//     {
+//         agencies = await Http.GetFromJsonAsync<List<Agency>>("api/agencies");
+//         //Missing error handling for null
+//     }
+
+//     // protected override async Task OnParametersSetAsync()
+//     // {
+//     //     if (Id != null)
+//     //     {
+//     //         var result = await Http.GetFromJsonAsync<Agency>($"api/agencies/{Id}");
+//     //         if (result != null)
+//     //         {
+//     //             realtor.Agency = result;
+//     //         }
+//     //     }
+//     // }
+//     // async Task HandleAgency()
+//     // {
+//     //     realtor.agency = await Http.GetFromJsonAsync<Agency>($"api/agencies/{SelectedAgency}");
+//     // }
+}
