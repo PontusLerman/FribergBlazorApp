@@ -29,24 +29,7 @@ namespace FribergBlazorApp.Services
 				var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
 
 				await _localStorage.SetItemAsync("authToken", authResponse.Token);
-				return authResponse;
-			}
-			catch (Exception ex)
-			{
-				throw new Exception($"An error occurred: {ex.Message}");
-			}
-		}
-
-		public async Task<AuthResponseDto> Register(RealtorDto model)
-		{
-			try
-			{
-				var response = await _httpClient.PostAsJsonAsync("api/Realtor/register", model);
-				response.EnsureSuccessStatusCode();
-				var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
 				
-				await _localStorage.SetItemAsync("authToken", authResponse.Token);
-
 				return authResponse;
 			}
 			catch (Exception ex)
@@ -54,7 +37,25 @@ namespace FribergBlazorApp.Services
 				throw new Exception($"An error occurred: {ex.Message}");
 			}
 		}
-		
+
+		//public async Task<AuthResponseDto> Register(RealtorDto model)
+		//{
+		//	try
+		//	{
+		//		var response = await _httpClient.PostAsJsonAsync("api/Realtor/register", model);
+		//		response.EnsureSuccessStatusCode();
+		//		var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+
+		//		await _localStorage.SetItemAsync("authToken", authResponse.Token);
+
+		//		return authResponse;
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		throw new Exception($"An error occurred: {ex.Message}");
+		//	}
+		//}
+
 		public async Task Logout()
 		{
 			await _localStorage.RemoveItemAsync("authToken");

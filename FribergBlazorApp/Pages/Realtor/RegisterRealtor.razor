@@ -1,7 +1,8 @@
 ﻿@page "/register/realtor"
+@using FribergBlazorApp.Services
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-@using FribergWebAPI.DTOs
+@inject AuthService authService
 
 
 <h3>RegisterRealtor</h3>
@@ -16,10 +17,6 @@
         <InputText id="lastName" @bind-Value="realtor.LastName" class="form-control" />
     </div>
     <div>
-        <label for="email">Email:</label>
-        <InputText id="email" @bind-Value="realtor.Email" class="form-control" />
-    </div>
-    <div>
         <label for="phone">Telefonnummer:</label>
         <InputText id="phone" @bind-Value="realtor.PhoneNumber" class="form-control" />
     </div>
@@ -28,12 +25,22 @@
         <InputText id="picture" @bind-Value="realtor.Picture" class="form-control" />
     </div>
     <div>
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="realtor.Email" class="form-control" />
+    </div>
+    <div>
+        <label for="password">Lösenord:</label>
+        <InputText id="password" @bind-Value="realtor.Password" class="form-control" />
+    </div>
+    <div>
         <label for="agencyName">Mäklarbyrå:</label>
         <InputSelect id="agencyName" @bind-Value="SelectedAgency" >
+            <option value="">Välj mäklarbyrå</option>
             @foreach (var agency in agencies)
             {
                 <option value="@agency.AgencyId">@agency.AgencyName</option>
             }
+            <option value="0">Skapa ny mäklarbyrå</option>
         </InputSelect>    
     </div>
     <button type="submit" class="btn btn-primary">Spara</button>
@@ -48,9 +55,8 @@
     public int SelectedAgency { get; set; }
     List<AgencyDto> agencies = new List<AgencyDto>();
     AgencyDto agency = new AgencyDto();
-
+    RealtorAgencyDto realtorAgencyDto = new RealtorAgencyDto();
     string errorString;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,12 +79,16 @@
             if (realtor.Agency == null && SelectedAgency != 0)
             {
                 agency = agencies.FirstOrDefault(a => a.AgencyId == SelectedAgency);
-                realtor.Agency.AgencyId = agency.AgencyId;
-                realtor.Agency.AgencyName = agency.AgencyName;
+                realtorAgencyDto.AgencyId = agency.AgencyId;
+                realtorAgencyDto.AgencyName = agency.AgencyName;
+                realtor.Agency = realtorAgencyDto;
+                realtor.Roles = new List<string>();
             }
-            var response = await Http.PostAsJsonAsync("api/Realtors", realtor);
+            // await authService.Register(realtor);
+            var response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-existing-agency", realtor);
             if (response.IsSuccessStatusCode)
             {
+
                 NavigationManager.NavigateTo("/gr");
             }
             else
