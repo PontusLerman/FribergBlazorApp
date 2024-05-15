@@ -1,7 +1,7 @@
 ﻿using FribergBlazorApp.DTOs;
 
 //author: Christian Alp, Johan Krångh, Pontus Lerman
-namespace FribergWebAPI.DTOs
+namespace FribergBlazorApp.DTOs
 {
 	public class CRUDResidenceDto
 	{

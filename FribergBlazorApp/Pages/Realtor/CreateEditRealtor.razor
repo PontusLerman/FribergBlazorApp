@@ -1,4 +1,4 @@
-﻿@page "/cer"
+﻿@* @page "/cer"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -6,17 +6,17 @@
 <EditForm Model="realtor" OnSubmit="HandleSubmit">
     <CreateRealtor realtor="realtor"/>
     <button type="submit" class="btn btn-primary">Spara</button>
-</EditForm>
+</EditForm> *@
 
 
 @code {
-    [Parameter]
-    public RealtorDto realtor { get; set; } = new RealtorDto();
+    // [Parameter]
+    // public Realtor realtor { get; set; } = new Realtor();
 
-    async Task HandleSubmit()
-    {
-        var result = await Http.PostAsJsonAsync($"api/realtors", realtor);
+    // async Task HandleSubmit()
+    // {
+    //     var result = await Http.PostAsJsonAsync($"api/realtors", realtor);
        
-        NavigationManager.NavigateTo("gr");
-    }
+    //     NavigationManager.NavigateTo("gr");
+    // }
 }

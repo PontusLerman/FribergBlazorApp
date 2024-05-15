@@ -1,12 +1,12 @@
 ﻿using FribergBlazorApp.DTOs;
 
 //author: Christian Alp, Johan Krångh, Pontus Lerman
-namespace FribergWebAPI.DTOs
+namespace FribergBlazorApp.DTOs
 {
 	public class ResidenceDto
 	{
-		public int Id { get; set; }
-		public CategoryDto Category { get; set; }
+        public int Id { get; set; }
+        public CategoryDto Category { get; set; }
 		public string? Address { get; set; }
 		public MunicipalityDto Municipality { get; set; }
 		public decimal StartingPrice { get; set; }

@@ -1,7 +1,6 @@
 ﻿@* author: Johan Krångh *@
 @page "/edit-municipality"
 @page "/edit-municipality/{id:int}"
-@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -16,8 +15,8 @@ else
 
 <EditForm Model="Municipality" OnSubmit="HandleSubmit">
     <div>
-        <label for="municipalityName">Kommunnamn</label>
-        <InputText id="municipalityName" @bind-Value="Municipality.MunicipalityName" class="form-control" />
+        <label for="MunicipalityName">Kommunnamn</label>
+        <InputText id="MunicipalityName" @bind-Value="Municipality.MunicipalityName" class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary">Spara</button>
     <p>@errorString</p>

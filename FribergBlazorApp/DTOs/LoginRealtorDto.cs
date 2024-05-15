@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 //author: Christian Alp
-namespace FribergWebAPI.DTOs
+namespace FribergBlazorApp.DTOs
 {
     public class LoginRealtorDto
     {

@@ -1,11 +1,9 @@
 ﻿@* author: Johan Krångh *@
 @page "/remove-residence/{id:int}"
-@using FribergWebAPI.DTOs
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
-<h3>Ta Bort @(Residence.Address)?</h3>
-
+<h3>Ta Bort @(Residence.Category.Name) @(Residence.Address)?</h3>
 
 <button class="btn btn-danger" @onclick="@(() => RemoveResidence(Id))">Ta Bort</button>
 <a class="btn btn-outline-primary" href="residences">Tillbaka</a>
