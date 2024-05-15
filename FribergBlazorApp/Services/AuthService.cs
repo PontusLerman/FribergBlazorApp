@@ -31,7 +31,20 @@ namespace FribergBlazorApp.Services
 			if (response.IsSuccessStatusCode)
 			{
 				var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-
+				await _localStorage.SetItemAsync("authToken", authResponse.Token);
+				await _localStorage.SetItemAsync("currentUser", authResponse.Email);
+				((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(authResponse.Token);
+				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
+				return authResponse;
+			}
+			else
+			{
+				var errorContent = await response.Content.ReadAsStringAsync();
+				throw new Exception($"Login failed: {errorContent}");
+			}
+		}
+		
+		
 		//public async Task<AuthResponseDto> Register(RealtorDto model)
 		//{
 		//	try
@@ -49,19 +62,7 @@ namespace FribergBlazorApp.Services
 		//		throw new Exception($"An error occurred: {ex.Message}");
 		//	}
 		//}
-
-				await _localStorage.SetItemAsync("authToken", authResponse.Token);
-				await _localStorage.SetItemAsync("currentUser", authResponse.Email);
-				((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(authResponse.Token);
-				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
-				return authResponse;
-			}
-			else
-			{
-				var errorContent = await response.Content.ReadAsStringAsync();
-				throw new Exception($"Login failed: {errorContent}");
-			}
-		}
+		
 		public async Task Logout()
 		{
 			await _localStorage.RemoveItemAsync("authToken");
