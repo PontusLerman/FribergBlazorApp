@@ -1,24 +1,26 @@
 ﻿@using FribergBlazorApp.Services
 @using FribergWebAPI.DTOs
+@using Blazored.LocalStorage
 @inherits LayoutComponentBase
 @inject AuthService authService
 @inject NavigationManager navigationManager
+@inject ILocalStorageService localStorage
 
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
-
     <main>
         <div class="top-row px-4">
-            @if (!isAuthenticated)
-            {
-                <button @onclick="GoToLogin">Login</button>
-            }
-            else
-            {
-                @* <p>@currentUser.FirstName</p> *@
-            }
+            <AuthorizeView>
+                <Authorized>
+                    <p>@currentUser.Email</p>
+                    <button @onclick="HandleLogout">Logout</button>
+                </Authorized>
+                <NotAuthorized>
+                    <button @onclick="GoToLogin">Login</button>
+                </NotAuthorized>
+            </AuthorizeView>   
         </div>
 
         <article class="content px-4">
@@ -28,15 +30,20 @@
 </div>
 
 @code {
-   private bool isAuthenticated;
+    private bool isAuthenticated;
+    private AuthResponseDto currentUser;
 
     protected override async Task OnInitializedAsync()
     {
-@*        isAuthenticated = await authService.IsAuthenticated();
-         if (isAuthenticated)
+        try
         {
-            currentUser = await authService.GetCurrentUser();
-        }  *@
+            currentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching current user: {ex.Message}");
+            currentUser = null;
+        }
 
         CheckAuthentication();
     }
