@@ -114,8 +114,7 @@
                 realtor.Roles = new List<string>();
                 response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-existing-agency", realtor);
             }
-            // await authService.Register(realtor);
-            
+            //No info in response 
             if (response.IsSuccessStatusCode)
             {
 
@@ -123,7 +122,7 @@
             }
             else
             {
-                errorString = "Lyckades inte lägga till mäklaren.";
+                errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
             }
         }
         catch (Exception ex)
