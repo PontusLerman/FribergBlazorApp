@@ -1,5 +1,6 @@
 ﻿@using Blazored.LocalStorage
 @using FribergBlazorApp.Services
+@using System.Security.Claims
 @inherits LayoutComponentBase
 @inject AuthService authService
 @inject NavigationManager navigationManager
@@ -13,13 +14,24 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <p>@currentUser.Email</p>
+                    <div><p>@currentUser.Email</p></div> 
+                    <div><p>@currentUser.Roles</p></div>
                     <button @onclick="HandleLogout">Logout</button>
                 </Authorized>
                 <NotAuthorized>
                     <button @onclick="GoToLogin">Login</button>
                 </NotAuthorized>
-            </AuthorizeView>   
+            </AuthorizeView>
+            <AuthorizeView Roles="DefaultRealtor">
+                <Authorized>
+                    <p>TEST</p>
+                </Authorized>
+            </AuthorizeView>
+            <AuthorizeView Roles="SuperRealtor">
+                <Authorized>
+                    <p>Hej</p>
+                </Authorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -30,18 +42,19 @@
 
 @code {
     private bool isAuthenticated;
-    private AuthResponseDto currentUser;
+    private AuthResponseDto currentUser = new AuthResponseDto();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             currentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+            // currentUser = await ClaimsPrincipal.Current.
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching current user: {ex.Message}");
-            currentUser = null;
+            // currentUser = null;
         }
 
         CheckAuthentication();

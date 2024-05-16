@@ -32,7 +32,7 @@ namespace FribergBlazorApp.Services
 			{
 				var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
 				await _localStorage.SetItemAsync("authToken", authResponse.Token);
-				await _localStorage.SetItemAsync("currentUser", authResponse.Email);
+				await _localStorage.SetItemAsync("currentUser", authResponse);
 				((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(authResponse.Token);
 				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
 				return authResponse;
