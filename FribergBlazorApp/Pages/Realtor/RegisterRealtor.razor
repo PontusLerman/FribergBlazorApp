@@ -98,12 +98,12 @@
             errorString = ex.Message;
         }
 
-        var uri = new Uri(NavigationManager.Uri);
-        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
-        if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
-        {
-            errorString = "Lyckades inte lägga till mäklaren.";
-        }
+        // var uri = new Uri(NavigationManager.Uri);
+        // var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        // if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
+        // {
+        //     errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
+        // }
     }
 
     private async Task HandleSubmit()
@@ -136,14 +136,11 @@
             }
             else
             {    
-                if (!response.IsSuccessStatusCode)
+                /*if (!response.IsSuccessStatusCode)
                 {
                     NavigationManager.NavigateTo("/register/realtor?error=true", forceLoad: true);
-                }
-                else
-                {
-                    errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
-                }
+                }*/
+                errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
             }
         }
         catch (Exception ex)
