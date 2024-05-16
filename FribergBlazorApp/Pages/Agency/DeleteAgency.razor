@@ -1,5 +1,37 @@
-﻿<h3>DeleteAgency</h3>
+﻿@* Author: Pontus Lerman *@
+@page "/remove-agency/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Ta bort @agencyDto.AgencyName?</h3>
+
+<button class="btn btn-danger" @onclick="@(() => RemoveAgency(Id))">Ta Bort</button>
+<a class="btn btn-outline-primary" href="municipalities">Tillbaka</a>
+
+
+<p>@errorString</p>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+    public AgencyDto agencyDto { get; set; } = new AgencyDto();
+    string errorString;
 
+    protected override async Task OnParametersSetAsync()
+    {         
+            agencyDto = await Http.GetFromJsonAsync<AgencyDto>($"api/Agencies/{Id}");
+    }
+
+    private async Task RemoveAgency(int id)
+    {
+        var response = await Http.DeleteAsync($"api/Agencies/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/ga");
+        }
+        else
+        {
+            errorString = response.ReasonPhrase;
+        }
+    }
 }

@@ -1,7 +1,4 @@
-﻿@* @page "/cea"
-@page "/cea/{id:int}"
-@using FribergWebAPI.DTOs
-
+﻿@page "/cea/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -27,45 +24,38 @@ else
         <label for="agencyDescription">Mäklarbyrå beskrivning:</label>
         <InputText id="agencyDescription" @bind-Value="agency.AgencyDescription" class="form-control" />
     </div>
-    <div>
-    @if (Id==null)
-    {
-        <CreateRealtor Id=agency.AgencyId realtor="realtor"/>
-    }
-    </div>
     <button class="btn btn-primary" type="submit">Spara</button>
-</EditForm> *@
+</EditForm>
 
 @code {
-    // [Parameter]
-    // public int? Id { get; set; }
-    // public Agency agency { get; set; } = new Agency();
-    // public RealtorDto realtor { get; set; }
+    [Parameter]
+    public int? Id { get; set; }
+    public AgencyDto agency { get; set; } = new AgencyDto();
+    public RealtorDto realtor { get; set; }
+    string errorString;
 
-    // protected override async Task OnParametersSetAsync()
-    // {
-    //     if (Id != null)
-    //     {
-    //         var result = await Http.GetFromJsonAsync<Agency>($"api/agencies/{Id}");
-    //         if (result != null)
-    //         {
-    //             agency = result;
-    //         }
-    //     }
-    // }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<AgencyDto>($"api/agencies/{Id}");
+            if (result != null)
+            {
+                agency = result;
+            }
+        }
+    }
 
-    // async Task HandleSubmit()
-    // {
-    //     if (Id != null)
-    //     {
-    //         var result = await Http.PutAsJsonAsync($"api/agencies/{Id}", agency);
-    //         NavigationManager.NavigateTo("/ga");
-    //     }
-    //     else
-    //     {
-    //         agency.employees.Add(realtor);
-    //         var result = await Http.PostAsJsonAsync($"api/agencies/{Id}", agency);
-    //         NavigationManager.NavigateTo("/ga");
-    //     }
-    // }
+    async Task HandleSubmit()
+    {
+        try
+        {
+            var result = await Http.PutAsJsonAsync($"api/agencies/{Id}", agency);
+            NavigationManager.NavigateTo("/ga");
+        }
+        catch (Exception ex)
+        {
+            errorString = ex.Message;          
+        }
+    }
 }

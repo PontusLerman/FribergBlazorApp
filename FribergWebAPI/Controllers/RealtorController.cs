@@ -123,56 +123,58 @@ namespace FribergWebAPI.Controllers
 		public async Task<ActionResult<Realtor>> RegisterRealtor(RealtorDto model)
 		{
 			try
-			{
-				var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
-				if (agency == null)
-				{
-					return BadRequest("Agency not found, Try create a new agency first");
+            {
+                var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+                if (agency == null)
+                {
+                    return BadRequest("Agency not found, Try create a new agency first");
+                }
+
+                Realtor realtor = new Realtor()
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Picture = model.Picture,
+                    Agency = agency,
+                    Roles = new List<string> { "DefaultRealtor" }
+                };
+
+                // Hash the password
+                var passwordHasher = new PasswordHasher<Realtor>();
+                realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
+
+                var result = await _userManager.CreateAsync(realtor, model.Password);
+                var concatenatedErrors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+
+                if (result.Succeeded)
+                {
+                    var role = await _roleManager.FindByNameAsync("DefaultRealtor");
+                    if (role != null)
+                    {
+                        await _userManager.AddToRoleAsync(realtor, role.Name);
+                        await _userManager.AddClaimAsync(realtor, new Claim(ClaimTypes.Role, role.Name));
+                    }
+
+                    return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
+                }
+                else
+                {
+					return BadRequest(concatenatedErrors);
+					//return BadRequest(ModelState);
+
 				}
 
-				Realtor realtor = new Realtor()
-				{
-					UserName = model.Email,
-					Email = model.Email,
-					FirstName = model.FirstName,
-					LastName = model.LastName,
-					PhoneNumber = model.PhoneNumber,
-					Picture = model.Picture,
-					Agency = agency,
-					Roles = new List<string> { "DefaultRealtor" }
-				};
-
-				// Hash the password
-				var passwordHasher = new PasswordHasher<Realtor>();
-				realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
-
-				var result = await _userManager.CreateAsync(realtor, model.Password);
-
-				if (result.Succeeded)
-				{
-					var role = await _roleManager.FindByNameAsync("DefaultRealtor");
-					if (role != null)
-					{
-						await _userManager.AddToRoleAsync(realtor, role.Name);
-						await _userManager.AddClaimAsync(realtor, new Claim(ClaimTypes.Role, role.Name));
-					}
-
-					return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
-				}
-				else
-				{
-
-					return BadRequest(ModelState);
-				}
-
-			}
-			catch
+            }
+            catch
 			{
 				return Problem($"An error occurred: {nameof(RegisterRealtor)}", statusCode: 500);
 			}
 		}
 
-		[HttpPost]
+        [HttpPost]
 		[Route("register/user-with-new-agency")]
 		public async Task<ActionResult<Realtor>> RegisterUserWithNewAgency(RealtorCreateAgency model)
 		{
@@ -306,8 +308,8 @@ namespace FribergWebAPI.Controllers
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
 				new Claim(ApiClaims.Rid, realtor.Id),
-				new Claim(ClaimTypes.NameIdentifier, realtor.Id) 
-			}.Union(realtorClaims);
+				new Claim(ClaimTypes.NameIdentifier, realtor.Id)
+            }.Union(realtorClaims);
 
 			var token = new JwtSecurityToken(
 				issuer: _configuration["JwtSettings:Issuer"],
@@ -319,5 +321,5 @@ namespace FribergWebAPI.Controllers
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
-	}
+    }
 }

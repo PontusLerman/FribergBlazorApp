@@ -24,7 +24,8 @@ else
             <tr>
                 <td>@agency.AgencyLogoURL</td>
                 <td>@agency.AgencyName</td>
-                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cea/{agency.AgencyId}"))>Ändra</button></td>
+                    <td><button class="btn btn-warning" onclick=@(() =>NavigationManager.NavigateTo($"/cea/{agency.AgencyId}"))>Ändra</button></td>
+                    <td><button class="btn btn-danger" onclick=@(() =>NavigationManager.NavigateTo($"/remove-agency/{agency.AgencyId}"))>Ta bort</button></td>
             </tr>    
         }       
     </tbody>   
