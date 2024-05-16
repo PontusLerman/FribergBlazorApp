@@ -180,7 +180,7 @@ namespace FribergWebAPI.Controllers
 			{
 				var newAgency = new Agency
 				{
-					AgencyId = model.AgencyId,
+					//AgencyId = model.AgencyId,
 					AgencyName = model.AgencyName,
 					AgencyLogoURL = model.AgencyLogoURL,
 					AgencyDescription = model.AgencyDescription

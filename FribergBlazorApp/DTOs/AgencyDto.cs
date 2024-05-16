@@ -8,6 +8,6 @@ namespace FribergBlazorApp.DTOs
 		public string AgencyName { get; set; }
 		public string AgencyDescription { get; set; }
 		public string? AgencyLogoURL { get; set; } = "";
-		public List<RealtorDto>? Employees { get; set; }
+		//public List<RealtorDto>? Employees { get; set; }
 	}
 }

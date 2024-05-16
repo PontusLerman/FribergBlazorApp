@@ -36,13 +36,28 @@
         <label for="agencyName">Mäklarbyrå:</label>
         <InputSelect id="agencyName" @bind-Value="SelectedAgency" >
             <option value="">Välj mäklarbyrå</option>
+            <option value="-1">Skapa ny mäklarbyrå</option>
             @foreach (var agency in agencies)
             {
                 <option value="@agency.AgencyId">@agency.AgencyName</option>
             }
-            <option value="0">Skapa ny mäklarbyrå</option>
         </InputSelect>    
     </div>
+    @if(SelectedAgency == -1)
+    {
+        <div>
+            <label for="agencyLogoURL">Mäklarbyråns logotyp:</label>
+            <InputText id="agencyLogoURL" @bind-Value="realtorCreateAgency.AgencyLogoURL" class="form-control" />
+        </div>
+        <div>
+            <label for="agencyName">Mäklarbyråns namn:</label>
+            <InputText id="agencyName" @bind-Value="realtorCreateAgency.AgencyName" class="form-control" />
+        </div>
+        <div>
+            <label for="agencyDescription">Mäklarbyråns beskrivning:</label>
+            <InputText id="agencyDescription" @bind-Value="realtorCreateAgency.AgencyDescription" class="form-control" />
+        </div>
+    }
     <button type="submit" class="btn btn-primary">Spara</button>
 </EditForm>
 
@@ -56,6 +71,8 @@
     List<AgencyDto> agencies = new List<AgencyDto>();
     AgencyDto agency = new AgencyDto();
     RealtorAgencyDto realtorAgencyDto = new RealtorAgencyDto();
+    RealtorCreateAgency realtorCreateAgency = new RealtorCreateAgency();
+    HttpResponseMessage response = new HttpResponseMessage();
     string errorString;
 
     protected override async Task OnInitializedAsync()
@@ -76,16 +93,28 @@
     {
         try
         {
-            if (realtor.Agency == null && SelectedAgency != 0)
+            if(SelectedAgency == -1)
+            {
+                realtorCreateAgency.FirstName = realtor.FirstName;
+                realtorCreateAgency.LastName = realtor.LastName;
+                realtorCreateAgency.Email = realtor.Email;
+                realtorCreateAgency.Password = realtor.Password;
+                realtorCreateAgency.PhoneNumber = realtor.PhoneNumber;
+                realtorCreateAgency.Picture = realtor.Picture;
+                response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-new-agency", realtorCreateAgency);
+
+            }
+            else if (realtor.Agency == null && SelectedAgency != 0)
             {
                 agency = agencies.FirstOrDefault(a => a.AgencyId == SelectedAgency);
                 realtorAgencyDto.AgencyId = agency.AgencyId;
                 realtorAgencyDto.AgencyName = agency.AgencyName;
                 realtor.Agency = realtorAgencyDto;
                 realtor.Roles = new List<string>();
+                response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-existing-agency", realtor);
             }
             // await authService.Register(realtor);
-            var response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-existing-agency", realtor);
+            
             if (response.IsSuccessStatusCode)
             {
 

@@ -18,6 +18,7 @@ else
             <th>Bild</th>
             <th>Förnamn</th>
             <th>Efternamn</th>
+            <th>Email</th>
             <th>Telefonnummer</th>
             <th>Mäklarbyrå</th>
         </thead>
@@ -28,6 +29,7 @@ else
                     <td>@realtor.Picture</td>
                     <td>@realtor.FirstName</td>
                     <td>@realtor.LastName</td>
+                    <td>@realtor.Email</td>
                     <td>@realtor.PhoneNumber</td>
                     <td>@realtor.Agency.AgencyName</td>
                     <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer/{realtor.Id}"))>Ändra</button></td>
@@ -35,7 +37,7 @@ else
             }
         </tbody>
     </table>
-    <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer"))>Skapa</button>
+    <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
 }
 
 @code {
