@@ -2,7 +2,7 @@ using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-//author: Christian Alp
+//author: Christian Alp, co-author: Johan Krångh
 namespace FribergWebAPI.Data.Repositories
 {
 	public class ResidenceRepository : IResidence
@@ -18,6 +18,10 @@ namespace FribergWebAPI.Data.Repositories
 		{
 			return await applicationDbContext.Residences.Include(x => x.Municipality).Include(x => x.Category).Include(x => x.Pictures).Include(x => x.Realtor).ThenInclude(x => x.Agency).ToListAsync();
 		}
+        public async Task<IEnumerable<Residence>> GetAllByAgencyAsync(int agencyId)
+        {
+            return await applicationDbContext.Residences.Where(x => x.Realtor.Agency.AgencyId == agencyId).Include(x => x.Municipality).Include(x => x.Category).Include(x => x.Pictures).Include(x => x.Realtor).ThenInclude(x => x.Agency).ToListAsync();
+        }
 
 		public async Task<Residence> GetById(int id)
 		{
@@ -52,5 +56,6 @@ namespace FribergWebAPI.Data.Repositories
 				await applicationDbContext.SaveChangesAsync();	
 			}
 		}
-	}
+
+    }
 }

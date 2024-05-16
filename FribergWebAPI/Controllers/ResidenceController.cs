@@ -29,9 +29,18 @@ namespace FribergWebAPI.Controllers
 			var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
 			return Ok(residenceDtos);
 		}
+        
+		// GET: api/Residence
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidenceByAgency(int agencyId)
+        {
+            var residence = await residenceRepository.GetAllByAgencyAsync(agencyId);           
+            var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
+            return Ok(residenceDtos);
+        }
 
-		// GET: api/Residence/5
-		[HttpGet("{id}")]
+        // GET: api/Residence/5
+        [HttpGet("{id}")]
 		//CrudResidenceDto or the one now?
 		public async Task<ActionResult<CRUDResidenceDto>> GetResidence(int id)
 		{
