@@ -306,8 +306,8 @@ namespace FribergWebAPI.Controllers
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
 				new Claim(ApiClaims.Rid, realtor.Id),
-				new Claim(ClaimTypes.NameIdentifier, realtor.Id) 
-			}.Union(realtorClaims);
+				new Claim(ClaimTypes.NameIdentifier, realtor.Id)
+            }.Union(realtorClaims);
 
 			var token = new JwtSecurityToken(
 				issuer: _configuration["JwtSettings:Issuer"],
