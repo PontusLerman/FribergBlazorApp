@@ -4,7 +4,7 @@ using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-//author: Christian Alp
+//author: Christian Alp, co-author: Johan Krångh
 namespace FribergWebAPI.Controllers
 {
 	[ApiController]
@@ -30,9 +30,18 @@ namespace FribergWebAPI.Controllers
 			return Ok(residenceDtos);
 		}
         
-		// GET: api/Residence
+		[HttpGet]
+        [Route("residences-by-realtor")]
+        public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidencesByRealtor(string realtorId)
+        {
+            var residence = await residenceRepository.GetAllByRealtorAsync(realtorId);
+            var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
+            return Ok(residenceDtos);
+        }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidenceByAgency(int agencyId)
+		[Route("residences-by-agency")]
+        public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidencesByAgency(int agencyId)
         {
             var residence = await residenceRepository.GetAllByAgencyAsync(agencyId);           
             var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
@@ -41,7 +50,6 @@ namespace FribergWebAPI.Controllers
 
         // GET: api/Residence/5
         [HttpGet("{id}")]
-		//CrudResidenceDto or the one now?
 		public async Task<ActionResult<CRUDResidenceDto>> GetResidence(int id)
 		{
 			var residence = await residenceRepository.GetById(id);
