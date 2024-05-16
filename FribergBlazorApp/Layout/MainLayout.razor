@@ -15,23 +15,14 @@
             <AuthorizeView>
                 <Authorized>
                     <div><p>@currentUser.Email</p></div> 
-                    <div><p>@currentUser.Roles</p></div>
+                    @* <div><p>@currentUser.Roles.FirstOrDefault()</p></div> *@
                     <button @onclick="HandleLogout">Logout</button>
                 </Authorized>
                 <NotAuthorized>
                     <button @onclick="GoToLogin">Login</button>
                 </NotAuthorized>
             </AuthorizeView>
-            <AuthorizeView Roles="DefaultRealtor">
-                <Authorized>
-                    <p>TEST</p>
-                </Authorized>
-            </AuthorizeView>
-            <AuthorizeView Roles="SuperRealtor">
-                <Authorized>
-                    <p>Hej</p>
-                </Authorized>
-            </AuthorizeView>
+           
         </div>
 
         <article class="content px-4">

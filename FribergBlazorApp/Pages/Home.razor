@@ -3,5 +3,14 @@
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
-
+<AuthorizeView Roles="DefaultRealtor">
+    <Authorized>
+        <p>Default</p>
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
+        <p>Super</p>
+    </Authorized>
+</AuthorizeView>
 Welcome to your new app.
