@@ -22,7 +22,7 @@ else
         <th>Mäklarbyrå</th>
         </thead>
         <tbody>
-            @foreach (var realtor in realtors)
+            @foreach (var realtor in FilteredNewRealtors())
             {
                 <tr>
                     <td>@realtor.Picture</td>
@@ -31,7 +31,7 @@ else
                     <td>@realtor.Email</td>
                     <td>@realtor.PhoneNumber</td>
                     <td>@realtor.Agency.AgencyName</td>
-                    <td><button class="btn btn-primary" onclick=@(() =>realtor.Approved = true)>Godkänn</button></td>
+                    <td><button class="btn btn-primary" @onclick="() => ChangeBool(realtor)">Godkänn</button></td>
                 </tr>
             }
         </tbody>
@@ -42,9 +42,9 @@ else
 @code {
     List<RealtorDto> allRealtors = new List<RealtorDto>();
     IEnumerable<RealtorDto> realtors;
-    [Parameter]
-    public RealtorDto realtor { get; set; } = new RealtorDto();
-    // RealtorDto realtor = new RealtorDto();
+
+    //public RealtorDto realtor { get; set; } = new RealtorDto();
+    RealtorDto realtor = new RealtorDto();
     AgencyDto agencyDto = new AgencyDto();
     AuthResponseDto currentUser = new AuthResponseDto();
 
@@ -54,7 +54,23 @@ else
         currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
         realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
         allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{realtor.Agency.AgencyId}");
-        realtors = allRealtors.Where(r => !r.Approved);
-        
+        FilteredNewRealtors();
+    }
+
+    private IEnumerable<RealtorDto> FilteredNewRealtors()
+    {
+        return realtors = allRealtors.Where(r => !r.Approved); 
+    }
+
+    private void ChangeBool(RealtorDto realtorFromList)
+    {
+        realtorFromList.Approved = true;
+        realtorFromList.Password = "s";
+        SaveRealtorToDatabase(realtorFromList);
+    }
+
+    private async void SaveRealtorToDatabase(RealtorDto realtorFromList)
+    {
+        await Http.PutAsJsonAsync<RealtorDto>($"api/realtor/{realtorFromList.Id}", realtorFromList);
     }
 }
