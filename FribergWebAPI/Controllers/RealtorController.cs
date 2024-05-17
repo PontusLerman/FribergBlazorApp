@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FribergWebAPI.Constants;
 using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -64,7 +65,21 @@ namespace FribergWebAPI.Controllers
 			return Ok(realtorDtos);
 		}
 
-		[HttpPut("{id}")]
+        [HttpGet]
+        [Route("realtors-by-agency/{agencyId}")]
+        public async Task<ActionResult<IEnumerable<RealtorDto>>> GetResidencesByAgency(int agencyId)
+        {
+			var realtors = await _userManager.Users
+				.Include(r=>r.Agency)
+				//.Include(r=>r.Roles)
+				.Include(r=>r.ResidenceList)
+				.Where(r => r.Agency.AgencyId == agencyId)
+				.ToListAsync();
+            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
+            return Ok(realtorDtos);
+        }
+
+        [HttpPut("{id}")]
 		public async Task<ActionResult<Realtor>> UpdateUser(string id, RealtorDto model)
 		{
 			var realtor = await _userManager.FindByIdAsync(id);
@@ -130,16 +145,17 @@ namespace FribergWebAPI.Controllers
                     return BadRequest("Agency not found, Try create a new agency first");
                 }
 
-                Realtor realtor = new Realtor()
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
-                    Picture = model.Picture,
-                    Agency = agency,
-                    Roles = new List<string> { "DefaultRealtor" }
+				Realtor realtor = new Realtor()
+				{
+					UserName = model.Email,
+					Email = model.Email,
+					FirstName = model.FirstName,
+					LastName = model.LastName,
+					PhoneNumber = model.PhoneNumber,
+					Picture = model.Picture,
+					Agency = agency,
+					Roles = new List<string> { "DefaultRealtor" },
+					Approved = false
                 };
 
                 // Hash the password
@@ -147,7 +163,7 @@ namespace FribergWebAPI.Controllers
                 realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
                 var result = await _userManager.CreateAsync(realtor, model.Password);
-                var concatenatedErrors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                var concatenatedErrors = string.Join(" ; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
 
                 if (result.Succeeded)
                 {
@@ -199,7 +215,8 @@ namespace FribergWebAPI.Controllers
 					PhoneNumber = model.PhoneNumber,
 					Picture = model.Picture,
 					Agency = newAgency,
-					Roles = new List<string> { "SuperRealtor" }
+					Roles = new List<string> { "SuperRealtor" },
+					Approved = true
 				};
 
 				// Hash the password
@@ -221,7 +238,7 @@ namespace FribergWebAPI.Controllers
 				}
 				else
 				{
-					return BadRequest(result.Errors);
+					return BadRequest(ModelState);
 				}
 			}
 			catch (Exception ex)

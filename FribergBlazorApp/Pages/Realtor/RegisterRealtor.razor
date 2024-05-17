@@ -86,6 +86,7 @@
     RealtorCreateAgency realtorCreateAgency = new RealtorCreateAgency();
     HttpResponseMessage response = new HttpResponseMessage();
     string errorString;
+    public string errorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,7 +103,7 @@
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
         {
-            errorString = "Lyckades inte lägga till mäklaren.";
+            errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
         }
     }
 
@@ -138,11 +139,12 @@
             {    
                 if (!response.IsSuccessStatusCode)
                 {
+                    errorMessage = response.Content.ReadAsStringAsync().Result;
                     NavigationManager.NavigateTo("/register/realtor?error=true", forceLoad: true);
                 }
                 else
                 {
-                    errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
+                    errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
                 }
             }
         }

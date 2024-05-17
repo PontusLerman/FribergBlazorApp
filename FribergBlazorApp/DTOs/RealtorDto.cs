@@ -18,10 +18,11 @@ namespace FribergBlazorApp.DTOs
         [RegularExpression(@"^\d+$", ErrorMessage = "Telefonnummer får endast innehålla siffror.")]
         public string PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Bild är obligatoriskt.")]
+        [Required(ErrorMessage = "Bild är obligatoriskt.")]//Skall vara en standardbild ifall man inte skickar in någon
         public string Picture { get; set; }
 
 		public List<string> Roles { get; set; }
-		public RealtorAgencyDto Agency { get; set; }   
-	}
+		public RealtorAgencyDto Agency { get; set; }
+        public bool Approved { get; set; }
+    }
 }

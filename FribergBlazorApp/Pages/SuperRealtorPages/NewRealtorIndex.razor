@@ -31,7 +31,7 @@ else
                     <td>@realtor.Email</td>
                     <td>@realtor.PhoneNumber</td>
                     <td>@realtor.Agency.AgencyName</td>
-                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/cer/{realtor.Id}"))>Ändra</button></td>
+                    <td><button class="btn btn-primary" onclick=@(() =>realtor.Approved = true)>Godkänn</button></td>
                 </tr>
             }
         </tbody>
@@ -42,15 +42,19 @@ else
 @code {
     List<RealtorDto> allRealtors = new List<RealtorDto>();
     IEnumerable<RealtorDto> realtors;
-    RealtorDto realtor = new RealtorDto();
+    [Parameter]
+    public RealtorDto realtor { get; set; } = new RealtorDto();
+    // RealtorDto realtor = new RealtorDto();
     AgencyDto agencyDto = new AgencyDto();
     AuthResponseDto currentUser = new AuthResponseDto();
 
     protected override async Task OnInitializedAsync()
     {
-        allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
+        //allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
         currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
         realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
-        realtors = allRealtors.Where(r => r.Agency.AgencyId == realtor.Agency.AgencyId);        
+        allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{realtor.Agency.AgencyId}");
+        realtors = allRealtors.Where(r => !r.Approved);
+        
     }
 }
