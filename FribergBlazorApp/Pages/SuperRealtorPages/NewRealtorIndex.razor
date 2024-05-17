@@ -42,18 +42,16 @@ else
 @code {
     List<RealtorDto> allRealtors = new List<RealtorDto>();
     IEnumerable<RealtorDto> realtors;
-
-    //public RealtorDto realtor { get; set; } = new RealtorDto();
     RealtorDto realtor = new RealtorDto();
     AgencyDto agencyDto = new AgencyDto();
     AuthResponseDto currentUser = new AuthResponseDto();
 
     protected override async Task OnInitializedAsync()
     {
-        //allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
         currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
         realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
         allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{realtor.Agency.AgencyId}");
+
         FilteredNewRealtors();
     }
 
