@@ -31,7 +31,7 @@ namespace FribergWebAPI.Controllers
 		}
         
 		[HttpGet]
-        [Route("residences-by-realtor")]
+        [Route("residences-by-realtor/{realtorId}")]
         public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidencesByRealtor(string realtorId)
         {
             var residence = await residenceRepository.GetAllByRealtorAsync(realtorId);
@@ -40,7 +40,7 @@ namespace FribergWebAPI.Controllers
         }
 
         [HttpGet]
-		[Route("residences-by-agency")]
+		[Route("residences-by-agency/{agencyId}")]
         public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidencesByAgency(int agencyId)
         {
             var residence = await residenceRepository.GetAllByAgencyAsync(agencyId);           

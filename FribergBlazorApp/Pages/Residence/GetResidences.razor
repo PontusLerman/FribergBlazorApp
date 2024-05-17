@@ -69,7 +69,7 @@ else
                 Console.WriteLine($"Error fetching current user: {ex.Message}");
             }
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
-            residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residences-by-realtor/{Realtor.Id}");
+            residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}");
         }
         catch (Exception ex)
         {
