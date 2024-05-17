@@ -1,0 +1,60 @@
+﻿@* Author: Pontus Lerman *@
+@page "/superrealtor/newrealtorindex"
+@using System.Security.Claims
+@inject HttpClient Http
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+
+<h3>NewRealtorIndex</h3>
+@if (realtors == null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <table>
+        <thead>
+        <th>Bild</th>
+        <th>Förnamn</th>
+        <th>Efternamn</th>
+        <th>Email</th>
+        <th>Telefonnummer</th>
+        <th>Mäklarbyrå</th>
+        </thead>
+        <tbody>
+            @foreach (var realtor in realtors)
+            {
+                <tr>
+                    <td>@realtor.Picture</td>
+                    <td>@realtor.FirstName</td>
+                    <td>@realtor.LastName</td>
+                    <td>@realtor.Email</td>
+                    <td>@realtor.PhoneNumber</td>
+                    <td>@realtor.Agency.AgencyName</td>
+                    <td><button class="btn btn-primary" onclick=@(() =>realtor.Approved = true)>Godkänn</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
+}
+
+@code {
+    List<RealtorDto> allRealtors = new List<RealtorDto>();
+    IEnumerable<RealtorDto> realtors;
+    [Parameter]
+    public RealtorDto realtor { get; set; } = new RealtorDto();
+    // RealtorDto realtor = new RealtorDto();
+    AgencyDto agencyDto = new AgencyDto();
+    AuthResponseDto currentUser = new AuthResponseDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
+        currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
+        realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
+        allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{realtor.Agency.AgencyId}");
+        realtors = allRealtors.Where(r => !r.Approved);
+        
+    }
+}

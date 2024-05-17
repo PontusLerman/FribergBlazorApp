@@ -1,54 +1,80 @@
 ﻿@page "/register/realtor"
 @using FribergBlazorApp.Services
+@using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject AuthService authService
 
-
 <h3>RegisterRealtor</h3>
 
-<EditForm Model="realtor" OnSubmit="HandleSubmit">
+<EditForm Model="realtor" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
     <div>
         <label for="FirstName">Förnamn:</label>
         <InputText id="FirstName" @bind-Value="realtor.FirstName" class="form-control" />
+        <ValidationMessage For="@(() => realtor.FirstName)" />
     </div>
     <div>
         <label for="lastName">Efternamn:</label>
         <InputText id="lastName" @bind-Value="realtor.LastName" class="form-control" />
+        <ValidationMessage For="@(() => realtor.LastName)" />
     </div>
     <div>
         <label for="phone">Telefonnummer:</label>
         <InputText id="phone" @bind-Value="realtor.PhoneNumber" class="form-control" />
+        <ValidationMessage For="@(() => realtor.PhoneNumber)" />
     </div>
     <div>
         <label for="picture">Bild:</label>
         <InputText id="picture" @bind-Value="realtor.Picture" class="form-control" />
+        <ValidationMessage For="@(() => realtor.Picture)" />
     </div>
     <div>
         <label for="email">Email:</label>
         <InputText id="email" @bind-Value="realtor.Email" class="form-control" />
+        <ValidationMessage For="@(() => realtor.Email)" />
     </div>
     <div>
         <label for="password">Lösenord:</label>
         <InputText id="password" @bind-Value="realtor.Password" class="form-control" />
+        <ValidationMessage For="@(() => realtor.Password)" />
     </div>
     <div>
         <label for="agencyName">Mäklarbyrå:</label>
-        <InputSelect id="agencyName" @bind-Value="SelectedAgency" >
+        <InputSelect id="agencyName" @bind-Value="SelectedAgency" class="form-control">
             <option value="">Välj mäklarbyrå</option>
+            <option value="-1">Skapa ny mäklarbyrå</option>
             @foreach (var agency in agencies)
             {
                 <option value="@agency.AgencyId">@agency.AgencyName</option>
             }
-            <option value="0">Skapa ny mäklarbyrå</option>
-        </InputSelect>    
+        </InputSelect>
+        <ValidationMessage For="@(() => SelectedAgency)" />
     </div>
+    @if (SelectedAgency == -1)
+    {
+        <div>
+            <label for="agencyLogoURL">Mäklarbyråns logotyp:</label>
+            <InputText id="agencyLogoURL" @bind-Value="realtorCreateAgency.AgencyLogoURL" class="form-control" />
+            <ValidationMessage For="@(() => realtorCreateAgency.AgencyLogoURL)" />
+        </div>
+        <div>
+            <label for="agencyName">Mäklarbyråns namn:</label>
+            <InputText id="agencyName" @bind-Value="realtorCreateAgency.AgencyName" class="form-control" />
+            <ValidationMessage For="@(() => realtorCreateAgency.AgencyName)" />
+        </div>
+        <div>
+            <label for="agencyDescription">Mäklarbyråns beskrivning:</label>
+            <InputText id="agencyDescription" @bind-Value="realtorCreateAgency.AgencyDescription" class="form-control" />
+            <ValidationMessage For="@(() => realtorCreateAgency.AgencyDescription)" />
+        </div>
+    }
     <button type="submit" class="btn btn-primary">Spara</button>
 </EditForm>
 
 <p>@errorString</p>
-
-
 
 @code {
     public RealtorDto realtor { get; set; } = new RealtorDto();
@@ -56,19 +82,37 @@
     List<AgencyDto> agencies = new List<AgencyDto>();
     AgencyDto agency = new AgencyDto();
     RealtorAgencyDto realtorAgencyDto = new RealtorAgencyDto();
+    RealtorCreateAgency realtorCreateAgency = new RealtorCreateAgency();
+    HttpResponseMessage response = new HttpResponseMessage();
     string errorString;
+    public string errorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-
         try
         {
             agencies = await Http.GetFromJsonAsync<List<AgencyDto>>("api/Agencies");
-
         }
         catch (Exception ex)
         {
             errorString = ex.Message;
+        }
+
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
+        {
+            @* Unsure at merge conflict
+            errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
+            *@
+        if (queryParams.TryGetValue("message", out var message))
+        {
+            errorString = $"Lyckades inte lägga till mäklaren. {message}";
+        }
+        else
+        {
+            errorString = "Lyckades inte lägga till mäklaren.";
+        }
         }
     }
 
@@ -76,31 +120,52 @@
     {
         try
         {
-            if (realtor.Agency == null && SelectedAgency != 0)
+            if (SelectedAgency == -1)
+            {
+                realtorCreateAgency.FirstName = realtor.FirstName;
+                realtorCreateAgency.LastName = realtor.LastName;
+                realtorCreateAgency.Email = realtor.Email;
+                realtorCreateAgency.Password = realtor.Password;
+                realtorCreateAgency.PhoneNumber = realtor.PhoneNumber;
+                realtorCreateAgency.Picture = realtor.Picture;
+                response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-new-agency", realtorCreateAgency);
+            }
+            else if (realtor.Agency == null && SelectedAgency != 0)
             {
                 agency = agencies.FirstOrDefault(a => a.AgencyId == SelectedAgency);
                 realtorAgencyDto.AgencyId = agency.AgencyId;
                 realtorAgencyDto.AgencyName = agency.AgencyName;
                 realtor.Agency = realtorAgencyDto;
                 realtor.Roles = new List<string>();
+                response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-existing-agency", realtor);
             }
-            // await authService.Register(realtor);
-            var response = await Http.PostAsJsonAsync("api/Realtor/register/user-with-existing-agency", realtor);
+
             if (response.IsSuccessStatusCode)
             {
-
                 NavigationManager.NavigateTo("/gr");
             }
             else
+
+            /*{    Unsure at merge-conflict
+                if (!response.IsSuccessStatusCode)
+                {
+                    errorMessage = response.Content.ReadAsStringAsync().Result;
+                    NavigationManager.NavigateTo("/register/realtor?error=true", forceLoad: true);
+                }
+                else
+                {
+                    errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
+                }*/
+
             {
-                errorString = "Lyckades inte lägga till mäklaren.";
+                var errorContent = await response.Content.ReadAsStringAsync();
+                NavigationManager.NavigateTo($"/register/realtor?error=true&message={Uri.EscapeDataString(errorContent)}", forceLoad: true);
+
             }
         }
         catch (Exception ex)
         {
             errorString = ex.Message;
         }
-
-
     }
 }

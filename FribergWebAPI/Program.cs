@@ -37,6 +37,7 @@ builder.Services.AddIdentity<Realtor, IdentityRole>(options =>
 	options.Password.RequireNonAlphanumeric = true;
 	options.Password.RequireUppercase = true;
 	options.User.RequireUniqueEmail = true;
+
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 

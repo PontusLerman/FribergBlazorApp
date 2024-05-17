@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FribergWebAPI.Constants;
 using FribergWebAPI.Data.Interfaces;
+using FribergWebAPI.Data.Repositories;
 using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -64,7 +65,21 @@ namespace FribergWebAPI.Controllers
 			return Ok(realtorDtos);
 		}
 
-		[HttpPut("{id}")]
+        [HttpGet]
+        [Route("realtors-by-agency/{agencyId}")]
+        public async Task<ActionResult<IEnumerable<RealtorDto>>> GetResidencesByAgency(int agencyId)
+        {
+			var realtors = await _userManager.Users
+				.Include(r=>r.Agency)
+				//.Include(r=>r.Roles)
+				.Include(r=>r.ResidenceList)
+				.Where(r => r.Agency.AgencyId == agencyId)
+				.ToListAsync();
+            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
+            return Ok(realtorDtos);
+        }
+
+        [HttpPut("{id}")]
 		public async Task<ActionResult<Realtor>> UpdateUser(string id, RealtorDto model)
 		{
 			var realtor = await _userManager.FindByIdAsync(id);
@@ -129,6 +144,11 @@ namespace FribergWebAPI.Controllers
 				{
 					return BadRequest("Agency not found, Try create a new agency first");
 				}
+				
+				if (await _userManager.Users.AnyAsync(r => r.PhoneNumber == model.PhoneNumber))
+				{
+					return BadRequest("Phone number already exists.");
+				}			
 
 				Realtor realtor = new Realtor()
 				{
@@ -139,14 +159,23 @@ namespace FribergWebAPI.Controllers
 					PhoneNumber = model.PhoneNumber,
 					Picture = model.Picture,
 					Agency = agency,
-					Roles = new List<string> { "DefaultRealtor" }
-				};
+					Roles = new List<string> { "DefaultRealtor" },
+					Approved = false
+        };
+
 
 				// Hash the password
 				var passwordHasher = new PasswordHasher<Realtor>();
 				realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
+                /* Unsure at merge conflict
+                var result = await _userManager.CreateAsync(realtor, model.Password);
+                var concatenatedErrors = string.Join(" ; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                */
+
 				var result = await _userManager.CreateAsync(realtor, model.Password);
+				var concatenatedErrors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+
 
 				if (result.Succeeded)
 				{
@@ -161,8 +190,7 @@ namespace FribergWebAPI.Controllers
 				}
 				else
 				{
-
-					return BadRequest(ModelState);
+					return BadRequest(concatenatedErrors);
 				}
 
 			}
@@ -177,10 +205,15 @@ namespace FribergWebAPI.Controllers
 		public async Task<ActionResult<Realtor>> RegisterUserWithNewAgency(RealtorCreateAgency model)
 		{
 			try
-			{
-				var newAgency = new Agency
+			{			
+				if (await _userManager.Users.AnyAsync(r => r.PhoneNumber == model.PhoneNumber))
 				{
-					AgencyId = model.AgencyId,
+					return BadRequest("Phone number already exists.");
+				}
+				
+				var newAgency = new Agency	
+				{
+					//AgencyId = model.AgencyId,
 					AgencyName = model.AgencyName,
 					AgencyLogoURL = model.AgencyLogoURL,
 					AgencyDescription = model.AgencyDescription
@@ -197,7 +230,8 @@ namespace FribergWebAPI.Controllers
 					PhoneNumber = model.PhoneNumber,
 					Picture = model.Picture,
 					Agency = newAgency,
-					Roles = new List<string> { "SuperRealtor" }
+					Roles = new List<string> { "SuperRealtor" },
+					Approved = true
 				};
 
 				// Hash the password
@@ -219,7 +253,7 @@ namespace FribergWebAPI.Controllers
 				}
 				else
 				{
-					return BadRequest(result.Errors);
+					return BadRequest(ModelState);
 				}
 			}
 			catch (Exception ex)
@@ -260,38 +294,6 @@ namespace FribergWebAPI.Controllers
 				return Problem($"An error occurred: {nameof(LoginRealtor)}", statusCode: 500);
 			}
 		}
-		
-		/* [Authorize]
-		[HttpGet("current")]
-		public async Task<ActionResult<RealtorDto>> GetCurrentUser()
-		{
-			try
-			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null)
-				{
-					return Unauthorized();
-				}
-
-				var realtor = await _userManager.Users
-					.Include(u => u.Agency)
-					.Include(r => r.ResidenceList)
-					.FirstOrDefaultAsync(i => i.Id == userId);
-
-				if (realtor == null)
-				{
-					return NotFound();
-				}
-
-				var realtorDto = _mapper.Map<RealtorDto>(realtor);
-				return Ok(realtorDto);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Error fetching current user: {ex.Message}");
-				return StatusCode(500, "Error fetching current user: Failed to retrieve current user data.");
-			}
-		} */
 
 		private async Task<string> GenerateToken(Realtor realtor)
 		{
@@ -306,7 +308,7 @@ namespace FribergWebAPI.Controllers
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
 				new Claim(ApiClaims.Rid, realtor.Id),
-				new Claim(ClaimTypes.NameIdentifier, realtor.Id) 
+				new Claim(ClaimTypes.NameIdentifier, realtor.Id)
 			}.Union(realtorClaims);
 
 			var token = new JwtSecurityToken(

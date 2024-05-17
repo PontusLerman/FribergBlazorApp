@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace FribergBlazorApp.DTOs
 {
-    public class PictureDto
-    {
+  public class PictureDto
+  {
 		public int Id { get; set; }
 		public string Picture { get; set; }
 		public int ResidenceId { get; set; }
-    }
+  }
 }

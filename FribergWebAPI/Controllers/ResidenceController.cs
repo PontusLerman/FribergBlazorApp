@@ -82,7 +82,6 @@ namespace FribergWebAPI.Controllers
 				return BadRequest();
 			}
 
-		//This here or up there?	//var residence = mapper.Map<Residence>(residenceDto);
 			await residenceRepository.Update(residence);
 			return NoContent();
 		}
