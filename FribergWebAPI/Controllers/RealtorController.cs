@@ -67,7 +67,7 @@ namespace FribergWebAPI.Controllers
 
         [HttpGet]
         [Route("realtors-by-agency/{agencyId}")]
-        public async Task<ActionResult<IEnumerable<RealtorDto>>> GetResidencesByAgency(int agencyId)
+        public async Task<ActionResult<IEnumerable<RealtorDto>>> GetRealtorsByAgency(int agencyId)
         {
 			var realtors = await _userManager.Users
 				.Include(r=>r.Agency)
