@@ -138,12 +138,17 @@ namespace FribergWebAPI.Controllers
 		public async Task<ActionResult<Realtor>> RegisterRealtor(RealtorDto model)
 		{
 			try
-            {
-                var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
-                if (agency == null)
-                {
-                    return BadRequest("Agency not found, Try create a new agency first");
-                }
+			{
+				var agency = await _agency.GetByIdAsync(model.Agency.AgencyId);
+				if (agency == null)
+				{
+					return BadRequest("Agency not found, Try create a new agency first");
+				}
+				
+				if (await _userManager.Users.AnyAsync(r => r.PhoneNumber == model.PhoneNumber))
+				{
+					return BadRequest("Phone number already exists.");
+				}			
 
 				Realtor realtor = new Realtor()
 				{
@@ -156,47 +161,57 @@ namespace FribergWebAPI.Controllers
 					Agency = agency,
 					Roles = new List<string> { "DefaultRealtor" },
 					Approved = false
-                };
+        };
 
-                // Hash the password
-                var passwordHasher = new PasswordHasher<Realtor>();
-                realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
+				// Hash the password
+				var passwordHasher = new PasswordHasher<Realtor>();
+				realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
+
+                /* Unsure at merge conflict
                 var result = await _userManager.CreateAsync(realtor, model.Password);
                 var concatenatedErrors = string.Join(" ; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                */
 
-                if (result.Succeeded)
-                {
-                    var role = await _roleManager.FindByNameAsync("DefaultRealtor");
-                    if (role != null)
-                    {
-                        await _userManager.AddToRoleAsync(realtor, role.Name);
-                        await _userManager.AddClaimAsync(realtor, new Claim(ClaimTypes.Role, role.Name));
-                    }
+				var result = await _userManager.CreateAsync(realtor, model.Password);
+				var concatenatedErrors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
 
-                    return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
-                }
-                else
-                {
+
+				if (result.Succeeded)
+				{
+					var role = await _roleManager.FindByNameAsync("DefaultRealtor");
+					if (role != null)
+					{
+						await _userManager.AddToRoleAsync(realtor, role.Name);
+						await _userManager.AddClaimAsync(realtor, new Claim(ClaimTypes.Role, role.Name));
+					}
+
+					return CreatedAtAction("GetUsers", new { id = realtor.Id, realtor.Email }, realtor);
+				}
+				else
+				{
 					return BadRequest(concatenatedErrors);
-					//return BadRequest(ModelState);
-
 				}
 
-            }
-            catch
+			}
+			catch
 			{
 				return Problem($"An error occurred: {nameof(RegisterRealtor)}", statusCode: 500);
 			}
 		}
 
-        [HttpPost]
+		[HttpPost]
 		[Route("register/user-with-new-agency")]
 		public async Task<ActionResult<Realtor>> RegisterUserWithNewAgency(RealtorCreateAgency model)
 		{
 			try
-			{
-				var newAgency = new Agency
+			{			
+				if (await _userManager.Users.AnyAsync(r => r.PhoneNumber == model.PhoneNumber))
+				{
+					return BadRequest("Phone number already exists.");
+				}
+				
+				var newAgency = new Agency	
 				{
 					//AgencyId = model.AgencyId,
 					AgencyName = model.AgencyName,
@@ -279,38 +294,6 @@ namespace FribergWebAPI.Controllers
 				return Problem($"An error occurred: {nameof(LoginRealtor)}", statusCode: 500);
 			}
 		}
-		
-		/* [Authorize]
-		[HttpGet("current")]
-		public async Task<ActionResult<RealtorDto>> GetCurrentUser()
-		{
-			try
-			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null)
-				{
-					return Unauthorized();
-				}
-
-				var realtor = await _userManager.Users
-					.Include(u => u.Agency)
-					.Include(r => r.ResidenceList)
-					.FirstOrDefaultAsync(i => i.Id == userId);
-
-				if (realtor == null)
-				{
-					return NotFound();
-				}
-
-				var realtorDto = _mapper.Map<RealtorDto>(realtor);
-				return Ok(realtorDto);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Error fetching current user: {ex.Message}");
-				return StatusCode(500, "Error fetching current user: Failed to retrieve current user data.");
-			}
-		} */
 
 		private async Task<string> GenerateToken(Realtor realtor)
 		{
@@ -326,7 +309,7 @@ namespace FribergWebAPI.Controllers
 				new Claim(JwtRegisteredClaimNames.Email, realtor.Email),
 				new Claim(ApiClaims.Rid, realtor.Id),
 				new Claim(ClaimTypes.NameIdentifier, realtor.Id)
-            }.Union(realtorClaims);
+			}.Union(realtorClaims);
 
 			var token = new JwtSecurityToken(
 				issuer: _configuration["JwtSettings:Issuer"],
@@ -338,5 +321,5 @@ namespace FribergWebAPI.Controllers
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
-    }
+	}
 }

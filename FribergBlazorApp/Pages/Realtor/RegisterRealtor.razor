@@ -1,5 +1,4 @@
-﻿@* Author: Pontus Lerman *@
-@page "/register/realtor"
+﻿@page "/register/realtor"
 @using FribergBlazorApp.Services
 @using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
@@ -103,7 +102,17 @@
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
         {
+            @* Unsure at merge conflict
             errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
+            *@
+        if (queryParams.TryGetValue("message", out var message))
+        {
+            errorString = $"Lyckades inte lägga till mäklaren. {message}";
+        }
+        else
+        {
+            errorString = "Lyckades inte lägga till mäklaren.";
+        }
         }
     }
 
@@ -136,7 +145,8 @@
                 NavigationManager.NavigateTo("/gr");
             }
             else
-            {    
+
+            /*{    Unsure at merge-conflict
                 if (!response.IsSuccessStatusCode)
                 {
                     errorMessage = response.Content.ReadAsStringAsync().Result;
@@ -145,7 +155,12 @@
                 else
                 {
                     errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
-                }
+                }*/
+
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                NavigationManager.NavigateTo($"/register/realtor?error=true&message={Uri.EscapeDataString(errorContent)}", forceLoad: true);
+
             }
         }
         catch (Exception ex)
