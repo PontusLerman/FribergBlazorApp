@@ -1,16 +1,21 @@
 ﻿@* author: Johan Krångh *@
 @page "/edit-residence"
-@page "/edit-residence/{id:int}"
+@page "/edit-residence/{Id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService localStorage
 
 @if (Id == null)
 {
     <h3>Lägg till bostad</h3>
 }
+else if (Residence.Category.Name == null) //Tried to avoid null-reference on line 18, no change
+{
+    <h3>Laddar...</h3>
+}
 else
 {
-    <h3>Ändra @Residence.Category.Name @Residence.Address</h3>
+    <h3>Ändra @Residence.Category.Name @Residence.Address</h3> //This line gets null-reference error in browser, still works
 }
 
 <EditForm Model="Residence" OnSubmit="HandleSubmit">
@@ -86,8 +91,10 @@ else
         <InputNumber id="ConstructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
         <ValidationMessage For="@(() => Residence.ConstructionYear)" />
     </div>
-    @* This should be set by user-login on post, now just for testing purposes *@
-    <div>
+     @* Lets SuperRealtor set Realtor from own Agency *@
+     <AuthorizeView Roles="SuperRealtor">
+    <Authorized Context="authContext">
+       <div>
         <label for="Realtor">Mäklare</label>
         <InputSelect id="Realtor" @bind-Value="selectedRealtor" class="form-control">
             <option value="">Välj mäklare</option>
@@ -96,8 +103,12 @@ else
                 <option value="@r.Id">@r.FirstName @r.LastName</option>
             }
         </InputSelect>
+    </div> 
+    </Authorized>
+</AuthorizeView>   
         <ValidationMessage For="@(() => Residence.Realtor)" />
     </div>
+
 
     <button type="submit" class="btn btn-primary">Spara</button>
     <p>@errorString</p>
@@ -107,7 +118,9 @@ else
     [Parameter]
     public int? Id { get; set; }
     public ResidenceDto Residence { get; set; } = new ResidenceDto();
-
+    // Used for auto-assigning in form
+    public AuthResponseDto CurrentUser = new AuthResponseDto();
+    public RealtorDto Realtor = new RealtorDto();
     // Lists for edit-form dropdowns
     public List<CategoryDto> categories = new List<CategoryDto>();
     public List<MunicipalityDto> municipalities = new List<MunicipalityDto>();
@@ -117,20 +130,6 @@ else
     private int? selectedCategory;
     private string? selectedRealtor;
     public string errorString = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
-            municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
-            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
-        }
-        catch (Exception ex)
-        {
-            errorString = ex.Message;
-        }
-    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -144,16 +143,47 @@ else
         }
     }
 
-    async Task HandleSubmit()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
-            Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
-            Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
+            try
+            {
+                CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching current user: {ex.Message}");
+            }
+            Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
+            categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
+            municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
+        }
+        catch (Exception ex)
+        {
+            errorString = ex.Message;
+        }
+    }
+
+
+    async Task HandleSubmit()
+    {
+try
+      {
+        Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
+        Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
+        
+        //Sets Residence.Realtor differently depending on user role
+        if (Realtor.Roles.Contains("SuperRealtor"))
+        {
             Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
-            Residence.Realtor.Password = "s";
-            
-            if (Id != null)
+        }
+        else { Residence.Realtor = Realtor; }
+
+        Residence.Realtor.Password = "s"; //Needed to post form, does not change password on Realtor TODO: Find better work-around
+
+        if (Id != null)
             {
                 var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
                 string json = await result.Content.ReadAsStringAsync(); //Delete this!

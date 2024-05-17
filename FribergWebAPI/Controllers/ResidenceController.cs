@@ -4,7 +4,7 @@ using FribergWebAPI.DTOs;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-//author: Christian Alp
+//author: Christian Alp, co-author: Johan Krångh
 namespace FribergWebAPI.Controllers
 {
 	[ApiController]
@@ -26,17 +26,34 @@ namespace FribergWebAPI.Controllers
 		{
 			var residence = await residenceRepository.GetAll();
 			//CrudResidenceDto or the one now?
-			var residenceDtos = mapper.Map<List<ResidenceDto>>(residence);
+			var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
 			return Ok(residenceDtos);
 		}
+        
+		[HttpGet]
+        [Route("residences-by-realtor/{realtorId}")]
+        public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidencesByRealtor(string realtorId)
+        {
+            var residence = await residenceRepository.GetAllByRealtorAsync(realtorId);
+            var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
+            return Ok(residenceDtos);
+        }
 
-		// GET: api/Residence/5
-		[HttpGet("{id}")]
-		//CrudResidenceDto or the one now?
-		public async Task<ActionResult<ResidenceDto>> GetResidence(int id)
+        [HttpGet]
+		[Route("residences-by-agency/{agencyId}")]
+        public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidencesByAgency(int agencyId)
+        {
+            var residence = await residenceRepository.GetAllByAgencyAsync(agencyId);           
+            var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
+            return Ok(residenceDtos);
+        }
+
+        // GET: api/Residence/5
+        [HttpGet("{id}")]
+		public async Task<ActionResult<CRUDResidenceDto>> GetResidence(int id)
 		{
 			var residence = await residenceRepository.GetById(id);
-			var residenceDtos = mapper.Map<ResidenceDto>(residence);
+			var residenceDtos = mapper.Map<CRUDResidenceDto>(residence);
 
 			if (residence == null)
 			{
