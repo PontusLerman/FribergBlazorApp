@@ -16,31 +16,20 @@ else if (errorString != null)
 }
 else    @*TODO: Fix front end*@
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kategori</th>
-                <th>Adress</th>
-                <th>Kommun</th>
-                <th>Boyta</th>
-                <th>Pris</th>
-                <th>Mäklare</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="main">
+        <ul class="house-cards">
             @foreach (var residence in residences)
             {
-                <tr>
-                    <td>@residence.Category.Name</td>
-                    <td>@residence.Address</td>
-                    <td>@residence.Municipality.MunicipalityName</td>
-                    <td>@residence.LivingArea</td>
-                    <td>@residence.StartingPrice</td>
-                    <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
-                </tr>
+                <li style="background-image: url('@residence.Pictures[0]')">    @*@onclick="@(DetailsPage)"*@
+                    <div class="house-info">
+                        <span class="title">@residence.Category.Name @residence.Municipality.MunicipalityName</span>
+                        @residence.ObjectDescription
+                        <span class="price">@residence.StartingPrice</span>
+                    </div>
+                </li>
             }
-        </tbody>
-    </table>
+        </ul>
+    </div>
 }
 
 @code {
@@ -60,4 +49,4 @@ else    @*TODO: Fix front end*@
     }
 
 }
-}
+
