@@ -80,7 +80,9 @@ else
         <InputNumber id="ConstructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
     </div>
      @* This should be set by user-login on post, now just for testing purposes *@
-        @* <div>
+     <AuthorizeView Roles="SuperRealtor">
+    <Authorized Context="authContext">
+       <div>
         <label for="Realtor">Mäklare</label>
     <InputSelect id="Realtor" @bind-Value="selectedRealtor" class="form-control">
             <option value="">Välj mäklare</option>
@@ -89,7 +91,10 @@ else
                 <option value="@r.Id">@r.FirstName @r.LastName</option>
             }
         </InputSelect>
-    </div> *@
+    </div> 
+    </Authorized>
+</AuthorizeView>   
+     
 
     <button type="submit" class="btn btn-primary">Spara</button>
     <p>@errorString</p>
@@ -105,11 +110,11 @@ else
     // Lists for edit-form dropdowns
     public List<CategoryDto> categories = new List<CategoryDto>();
     public List<MunicipalityDto> municipalities = new List<MunicipalityDto>();
-    // public List<RealtorDto> realtors = new List<RealtorDto>();
+    public List<RealtorDto> realtors = new List<RealtorDto>();
     //Fields for bind-Value 
     private int? selectedMunicipality;
     private int? selectedCategory;
-    // private string? selectedRealtor;
+    private string? selectedRealtor;
 
     public string errorString = "";
 
@@ -140,7 +145,7 @@ else
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
             categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
             municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
-            // realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
         }
         catch (Exception ex)
         {
@@ -153,9 +158,15 @@ else
     {
         Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
         Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
-        // Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
-        Residence.Realtor = Realtor;
-        Residence.Realtor.Password = "s";
+        
+        //Sets Residence.Realtor differently depending on user role
+        if (Realtor.Roles.Contains("SuperRealtor"))
+        {
+            Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
+        }
+        else { Residence.Realtor = Realtor; }
+
+        Residence.Realtor.Password = "s"; //Needed to post form, does not change password on Realtor TODO: Find better work-around
 
         if (Id != null)
         {

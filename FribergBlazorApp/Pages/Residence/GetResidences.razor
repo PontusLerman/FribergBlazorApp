@@ -49,7 +49,7 @@ else
 
 @code {
     private List<ResidenceDto>? residences;
-    //
+    //Used for 
     public AuthResponseDto CurrentUser = new AuthResponseDto();
     public RealtorDto Realtor = new RealtorDto();
 
@@ -70,11 +70,12 @@ else
             }
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
 
+            //Gets different residence-list based on user role
             if (Realtor.Roles.Contains("SuperRealtor"))
             {
                 residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-agency/{Realtor.Agency.AgencyId}");
             }
-            else { residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}"); };
+            else { residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}"); }
         }
         catch (Exception ex)
         {
