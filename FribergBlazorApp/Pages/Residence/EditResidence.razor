@@ -155,7 +155,7 @@ else
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
             categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
             municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
-            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{Realtor.Agency.AgencyId}");
         }
         catch (Exception ex)
         {
