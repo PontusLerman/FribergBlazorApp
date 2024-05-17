@@ -160,10 +160,11 @@
             HttpResponseMessage response = await Http.PostAsJsonAsync(baseUrl, picture);
             response.EnsureSuccessStatusCode();
             pictures.Add(await response.Content.ReadFromJsonAsync<PictureDto>());
+            Navigation.NavigateTo("residencepictures", forceLoad: true);
         }
         catch (Exception ex)
         {
-            errorString = $"Fel: {ex.Message}";
+            errorString = $"Bilden kunde inte skapas: {ex.Message}";
         }
     }
 
@@ -178,7 +179,7 @@
         }
         catch (Exception ex)
         {
-            errorString = $"Fel: {ex.Message}";
+            errorString = $"Bilden kunde inte redigeras: {ex.Message}";
         }
     }
 
@@ -192,7 +193,7 @@
         }
         catch (Exception ex)
         {
-            errorString = $"Fel: {ex.Message}";
+            errorString = $"Bilden kunde inte raderas: {ex.Message}";
         }
         showConfirmation = false;
         ShowRead();

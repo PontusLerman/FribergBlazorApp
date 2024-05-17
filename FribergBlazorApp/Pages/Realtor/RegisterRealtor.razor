@@ -1,5 +1,4 @@
-﻿@* Author: Pontus Lerman *@
-@page "/register/realtor"
+﻿@page "/register/realtor"
 @using FribergBlazorApp.Services
 @using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
@@ -98,12 +97,19 @@
             errorString = ex.Message;
         }
 
-        // var uri = new Uri(NavigationManager.Uri);
-        // var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
-        // if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
-        // {
-        //     errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
-        // }
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
+        {
+            if (queryParams.TryGetValue("message", out var message))
+            {
+                errorString = $"Lyckades inte lägga till mäklaren. {message}";
+            }
+            else
+            {
+                errorString = "Lyckades inte lägga till mäklaren.";
+            }
+        }
     }
 
     private async Task HandleSubmit()
@@ -135,12 +141,9 @@
                 NavigationManager.NavigateTo("/gr");
             }
             else
-            {    
-                /*if (!response.IsSuccessStatusCode)
-                {
-                    NavigationManager.NavigateTo("/register/realtor?error=true", forceLoad: true);
-                }*/
-                errorString = $"Lyckades inte lägga till mäklaren. {response.Content.ReadAsStringAsync().Result}";
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                NavigationManager.NavigateTo($"/register/realtor?error=true&message={Uri.EscapeDataString(errorContent)}", forceLoad: true);
             }
         }
         catch (Exception ex)
