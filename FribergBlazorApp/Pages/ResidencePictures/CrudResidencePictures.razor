@@ -164,7 +164,7 @@
         }
         catch (Exception ex)
         {
-            errorString = $"Bilden kunde inte skapas: {ex.Message}";
+            errorString = $"Bilden kunde inte skapas: Är du säker på att bostaden existerar?";
         }
     }
 
@@ -179,7 +179,7 @@
         }
         catch (Exception ex)
         {
-            errorString = $"Bilden kunde inte redigeras: {ex.Message}";
+            errorString = $"Bilden kunde inte redigeras";
         }
     }
 
@@ -193,7 +193,7 @@
         }
         catch (Exception ex)
         {
-            errorString = $"Bilden kunde inte raderas: {ex.Message}";
+            errorString = $"Bilden kunde inte raderas";
         }
         showConfirmation = false;
         ShowRead();
