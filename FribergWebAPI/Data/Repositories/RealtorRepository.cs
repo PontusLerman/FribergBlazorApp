@@ -38,7 +38,12 @@ namespace FribergWebAPI.Data.Repositories
 			return await dbContext.Realtors.Include(x => x.Agency).Include(x => x.ResidenceList).FirstOrDefaultAsync(x => x.Id == id.ToString());
 		}
 
-		public async Task UpdateAsync(Realtor realtor)
+        //public async Task<IEnumerable<Realtor>> GetAllByAgencyAsync(int agencyId)
+        //{
+        //    return await dbContext.Realtors.Where(x => x.Agency.AgencyId == agencyId).Include(x => x.Agency).Include(x=> x.ResidenceList).Include(x=>x.Roles).ToListAsync();
+        //}
+
+        public async Task UpdateAsync(Realtor realtor)
 		{
 			dbContext.Update(realtor);
 			dbContext.Attach(realtor.Agency);

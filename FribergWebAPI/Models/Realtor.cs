@@ -12,5 +12,6 @@ namespace FribergWebAPI.Models
 		public string? Picture { get; set; }
 		public IList<string> Roles { get; set; } = new List<string>();
 		public virtual List<Residence> ResidenceList { get; set; }
-	}
+        public bool Approved { get; set; }
+    }
 }

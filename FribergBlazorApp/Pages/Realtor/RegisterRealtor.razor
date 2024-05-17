@@ -85,6 +85,7 @@
     RealtorCreateAgency realtorCreateAgency = new RealtorCreateAgency();
     HttpResponseMessage response = new HttpResponseMessage();
     string errorString;
+    public string errorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,14 +102,17 @@
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         if (queryParams.ContainsKey("error") && queryParams["error"] == "true")
         {
-            if (queryParams.TryGetValue("message", out var message))
-            {
-                errorString = $"Lyckades inte lägga till mäklaren. {message}";
-            }
-            else
-            {
-                errorString = "Lyckades inte lägga till mäklaren.";
-            }
+            @* Unsure at merge conflict
+            errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
+            *@
+        if (queryParams.TryGetValue("message", out var message))
+        {
+            errorString = $"Lyckades inte lägga till mäklaren. {message}";
+        }
+        else
+        {
+            errorString = "Lyckades inte lägga till mäklaren.";
+        }
         }
     }
 
@@ -141,9 +145,22 @@
                 NavigationManager.NavigateTo("/gr");
             }
             else
+
+            /*{    Unsure at merge-conflict
+                if (!response.IsSuccessStatusCode)
+                {
+                    errorMessage = response.Content.ReadAsStringAsync().Result;
+                    NavigationManager.NavigateTo("/register/realtor?error=true", forceLoad: true);
+                }
+                else
+                {
+                    errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
+                }*/
+
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 NavigationManager.NavigateTo($"/register/realtor?error=true&message={Uri.EscapeDataString(errorContent)}", forceLoad: true);
+
             }
         }
         catch (Exception ex)

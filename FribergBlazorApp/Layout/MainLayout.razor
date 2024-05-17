@@ -15,7 +15,6 @@
             <AuthorizeView>
                 <Authorized>
                     <div><p>@currentUser.Email</p></div> 
-                    <div><p>@currentUser.Roles</p></div>
                     <button @onclick="HandleLogout">Logout</button>
                 </Authorized>
                 <NotAuthorized>
