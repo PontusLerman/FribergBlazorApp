@@ -4,6 +4,8 @@
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
 
 <h3>NewRealtorIndex</h3>
 @if (realtors == null)
@@ -38,6 +40,8 @@ else
     </table>
     <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
 }
+    </Authorized>
+</AuthorizeView>
 
 @code {
     List<RealtorDto> allRealtors = new List<RealtorDto>();
