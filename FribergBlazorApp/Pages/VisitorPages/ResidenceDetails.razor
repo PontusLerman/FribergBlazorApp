@@ -1,4 +1,5 @@
-﻿@page "/recidencedetails/{id:int}"
+﻿@* Author: Pontus Lerman *@
+@page "/recidencedetails/{id:int}"
 @inject HttpClient HttpClient
 
 @if (residence.Category == null)
@@ -15,7 +16,7 @@ else
     <h3>@residence.Category.Name @residence.Municipality.MunicipalityName</h3>
     <div class="main">
         <div style="display:flex; flex-direction:row">
-            <div style="display:flex; flex-direction:column; padding: 3rem;">
+            <div style="display:flex; flex-direction:column; padding: 3rem;"> @* Lift out to classes in app.css *@
                 <p>Pris</p>
                 <p>Kategori</p>
                 <p>Adress</p>

@@ -1,0 +1,53 @@
+﻿@* Author: Pontus Lerman *@
+@page "/agencydetails/{id:int}"
+@inject HttpClient HttpClient
+
+@if (agency == null)
+{
+    <p><em>Laddar...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <h3>@agency.AgencyName</h3>
+    <h4>@agency.AgencyDescription</h4>
+    <div class="main">
+        <ul class="house-cards">
+            @foreach (var realtor in realtors)
+            {
+                <li style="background-image: url('@(realtor.Picture)')" />
+                <div style="display:flex; flex-direction:row;">
+                    <div style="display:flex; flex-direction:column; padding-right:1.5rem">
+                        <p>Namn:</p>
+                        <p>Email:</p>
+                        <p>Telefonnr:</p>
+                    </div>
+                    <div style="display:flex; flex-direction:column">
+                        <p>@realtor.FirstName @realtor.LastName</p>
+                        <p>@realtor.Email</p>
+                        <p>@realtor.PhoneNumber</p>
+                    </div>
+                </div>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    string errorString;
+    AgencyDto agency = new AgencyDto();
+    List<RealtorDto> realtors = new List<RealtorDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        agency = await HttpClient.GetFromJsonAsync<AgencyDto>($"api/agencies/{Id}");
+        realtors = await HttpClient.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{Id}");
+    }
+}
+
