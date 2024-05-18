@@ -20,7 +20,7 @@ else    @*TODO: Fix front end*@
         <ul class="house-cards">
             @foreach (var residence in residences)
             {
-                <li style="background-image: url('@residence.Pictures[0]')">    @*@onclick="@(DetailsPage)"*@
+                <li style="background-image: url('@residence.Pictures[0].Picture')">    @*@onclick="@(DetailsPage)"*@
                     <div class="house-info">
                         <span class="title">@residence.Category.Name @residence.Municipality.MunicipalityName</span>
                         @residence.ObjectDescription
