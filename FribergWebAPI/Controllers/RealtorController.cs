@@ -71,9 +71,9 @@ namespace FribergWebAPI.Controllers
         {
 			var realtors = await _userManager.Users
 				.Include(r=>r.Agency)
-				//.Include(r=>r.Roles)
 				.Include(r=>r.ResidenceList)
 				.Where(r => r.Agency.AgencyId == agencyId)
+				.Where(r=>r.Approved == true)
 				.ToListAsync();
             var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
             return Ok(realtorDtos);
