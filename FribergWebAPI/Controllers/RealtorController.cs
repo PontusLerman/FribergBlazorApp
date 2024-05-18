@@ -100,6 +100,7 @@ namespace FribergWebAPI.Controllers
 			realtor.Email = model.Email;
 			realtor.PhoneNumber = model.PhoneNumber;
 			realtor.Picture = model.Picture;
+			realtor.Approved = model.Approved;
 			realtor.Agency = agency;
 
 			var result = await _userManager.UpdateAsync(realtor);
