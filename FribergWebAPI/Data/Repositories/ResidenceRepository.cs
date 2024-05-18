@@ -31,7 +31,7 @@ namespace FribergWebAPI.Data.Repositories
 
 		public async Task<Residence> GetById(int id)
 		{
-			return await applicationDbContext.Residences.Include(x => x.Municipality).Include(x => x.Category).Include(x => x.Realtor).FirstOrDefaultAsync(x => x.Id == id);
+			return await applicationDbContext.Residences.Include(x => x.Municipality).Include(x => x.Category).Include(x => x.Realtor).Include(x=>x.Pictures).FirstOrDefaultAsync(x => x.Id == id);
 		}
 
 		public async Task Add(Residence residence)
