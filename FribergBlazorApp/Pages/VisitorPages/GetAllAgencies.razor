@@ -1,0 +1,52 @@
+﻿@*author: Johan Krångh*@
+@page "/agencies"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Alla Mäklarbyråer</h3>
+
+@if (agencies == null)
+{
+    <p><em>Laddar...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <div class="main">
+        <ul class="house-cards">
+            @foreach (var agency in agencies)
+            {
+                <li style="background-image: url('@agency.AgencyLogoURL')">
+                    @*@onclick="@(DetailsPage)"*@
+                    <div class="house-info">
+                        <span class="title">@agency.AgencyName</span>
+                        @agency.AgencyDescription
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private List<AgencyDto>? agencies;
+    private string? errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            agencies = await Http.GetFromJsonAsync<List<AgencyDto>>("api/agencies");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+}
+
+
