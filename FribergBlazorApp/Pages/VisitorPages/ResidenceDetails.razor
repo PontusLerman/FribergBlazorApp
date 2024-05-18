@@ -1,0 +1,54 @@
+﻿@page "/recidencedetails/{id:int}"
+@inject HttpClient HttpClient
+
+@if (residence.Category == null)
+{
+    <p><em>Laddar...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <h3>@residence.Category.Name @residence.Municipality.MunicipalityName</h3>
+    <div class="main">
+        <div style="display:flex; flex-direction:row">
+            <div style="display:flex; flex-direction:column; padding: 3rem;">
+                <p>Pris</p>
+                <p>Kategori</p>
+                <p>Adress</p>
+                <p>Kommun</p>
+                <p>Boyta</p>
+                <p>Mäklare</p>
+            </div>
+            <div style="display:flex; flex-direction:column; padding: 3rem;">
+                <p>@residence.StartingPrice</p>
+                <p>@residence.Category.Name</p>
+                <p>@residence.Address</p>
+                <p>@residence.Municipality.MunicipalityName</p>
+                <p>@residence.LivingArea</p>
+                <p>@residence.Realtor.FirstName @residence.Realtor.LastName</p>
+            </div>
+        </div>
+        <ul class="house-cards">
+            @foreach (var p in residence.Pictures)
+            {
+                <li style="background-image: url('@(p.Picture) ')" />
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    string errorString;
+    ResidenceDto residence = new ResidenceDto() {};
+
+    protected override async Task OnInitializedAsync()
+    {
+        residence = await HttpClient.GetFromJsonAsync<ResidenceDto>($"api/Residence/{Id}");
+    }
+}

@@ -20,7 +20,7 @@ else
         <ul class="house-cards">
             @foreach (var residence in residences)
             {
-                <li style="background-image: url('@(HouseCardBackground(residence.Id)) ')"> @*@onclick="@(DetailsPage)"*@
+                <li style="background-image: url('@(HouseCardBackground(residence.Id)) ')" @onclick="@(()=>NavigationManager.NavigateTo($"/recidencedetails/{residence.Id}"))">
                     <div class="house-info">
                         <span class="title">@residence.Category.Name @residence.Municipality.MunicipalityName</span>
                         @residence.ObjectDescription
