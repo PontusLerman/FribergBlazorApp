@@ -1,5 +1,5 @@
-﻿@*author: Johan Krångh*@
-@page "/allresidences"
+﻿@*author: Johan Krångh, co-author: Pontus Lerman*@
+@page "/"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -14,7 +14,7 @@ else if (errorString != null)
 {
     <p>An error occurred: @errorString</p>
 }
-else    @*TODO: Fix front end*@
+else
 {
     <div class="main">
         <ul class="house-cards">
