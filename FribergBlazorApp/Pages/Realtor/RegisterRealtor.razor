@@ -38,7 +38,7 @@
     </div>
     <div>
         <label for="password">Lösenord:</label>
-        <InputText id="password" @bind-Value="realtor.Password" class="form-control" />
+        <InputText type="password" placeholder="Lösenord" id="password" @bind-Value="realtor.Password" class="form-control" />
         <ValidationMessage For="@(() => realtor.Password)" />
     </div>
     <div>

@@ -4,6 +4,7 @@
 @inherits LayoutComponentBase
 @inject AuthService authService
 @inject NavigationManager navigationManager
+@inject HttpClient Http
 @inject ILocalStorageService localStorage
 
 <div class="page">
@@ -14,11 +15,11 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <div><p>@currentUser.Email</p></div> 
-                    <button @onclick="HandleLogout">Logout</button>
+                    <button class="btn btn-outline-primary" alt="Ändra dina uppgifter" onclick=@(() => navigationManager.NavigateTo($"/edit-realtor/{Realtor.Id}"))>@Realtor.FirstName @Realtor.LastName</button>
+                    <button class="btn btn-outline-danger"  @onclick="HandleLogout">Logga ut</button>
                 </Authorized>
                 <NotAuthorized>
-                    <button @onclick="GoToLogin">Login</button>
+                    <button class="btn btn-primary" @onclick="GoToLogin">Logga in</button>
                 </NotAuthorized>
             </AuthorizeView>
            
@@ -33,12 +34,14 @@
 @code {
     private bool isAuthenticated;
     private AuthResponseDto currentUser = new AuthResponseDto();
+    private RealtorDto Realtor = new RealtorDto();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             currentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+            Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
             // currentUser = await ClaimsPrincipal.Current.
         }
         catch (Exception ex)

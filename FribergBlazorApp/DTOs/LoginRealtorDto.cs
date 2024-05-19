@@ -10,6 +10,7 @@ namespace FribergBlazorApp.DTOs
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Lösenord är obligatoriskt.")]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }

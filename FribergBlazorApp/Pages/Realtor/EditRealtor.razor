@@ -1,0 +1,94 @@
+﻿@*author: Johan Krångh*@
+@page "/edit-realtor/{Id}"
+@using FribergBlazorApp.Services
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AuthService authService
+
+@if (Realtor == null)
+{
+    <h3>Laddar...</h3>
+}  
+else
+{
+
+<h3>Ändra @Realtor.FirstName @Realtor.LastName</h3>
+
+
+<EditForm Model="Realtor" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="FirstName">Förnamn:</label>
+        <InputText id="FirstName" @bind-Value="Realtor.FirstName" class="form-control" />
+        <ValidationMessage For="@(() => Realtor.FirstName)" />
+    </div>
+    <div>
+        <label for="LastName">Efternamn:</label>
+        <InputText id="LastName" @bind-Value="Realtor.LastName" class="form-control" />
+        <ValidationMessage For="@(() => Realtor.LastName)" />
+    </div>
+    <div>
+        <label for="phone">Telefonnummer:</label>
+        <InputText id="phone" @bind-Value="Realtor.PhoneNumber" class="form-control" />
+        <ValidationMessage For="@(() => Realtor.PhoneNumber)" />
+    </div>
+    <div>
+        <label for="picture">Bild:</label>
+        <InputText id="picture" @bind-Value="Realtor.Picture" class="form-control" />
+        <ValidationMessage For="@(() => Realtor.Picture)" />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="Realtor.Email" class="form-control" />
+        <ValidationMessage For="@(() => Realtor.Email)" />
+    </div>
+    <div>
+        <label for="password">Lösenord:</label>
+            <InputText type="password" placeholder="Lösenord" id="password" @bind-Value="Realtor.Password" class="form-control" />
+        <ValidationMessage For="@(() => Realtor.Password)" />
+    </div>
+      
+    <button type="submit" class="btn btn-primary">Spara</button>
+</EditForm>
+
+<p>@errorMessage</p>
+}
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+    public RealtorDto Realtor { get; set; } = new RealtorDto();
+    public string errorMessage { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{Id}");
+            if (result != null)
+            {
+                Realtor = result;
+            }
+            else { errorMessage = "Kunde inte hämta mäklar-objekt"; }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await Http.PutAsJsonAsync($"api/realtor/{Id}", Realtor);
+            NavigationManager.NavigateTo("/gr");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}
