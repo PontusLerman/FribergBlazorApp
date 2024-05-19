@@ -29,12 +29,12 @@ else
         </InputSelect>
     </div>
     <div style ="display:flex">
-            <label style="padding: .375rem .75rem;" for="agencyName">Mäklarbyrå:</label>
-        <InputSelect id="agencyName" @bind-Value="selectedAgency" class="form-control">
+            <label style="padding: .375rem .75rem;" for="municipalityName">Mäklarbyrå:</label>
+            <InputSelect id="municipalityName" @bind-Value="selectedMunicipality" class="form-control">
             <option value="-1">Alla</option>
-            @foreach (var agency in agencies)
+                @foreach (var municipality in municipalities)
             {
-                <option value="@agency.AgencyId">@agency.AgencyName</option>
+                    <option value="@municipality.Id">@municipality.MunicipalityName</option>
             }
         </InputSelect>
     </div>
@@ -60,8 +60,8 @@ else
     private IEnumerable<ResidenceDto>? filteredRecidences;
     private List<CategoryDto>? categories;
     private int selectedCategory = -1;
-    private List<AgencyDto>? agencies;
-    private int selectedAgency = -1;
+    private List<MunicipalityDto>? municipalities;
+    private int selectedMunicipality = -1;
     private string? errorString;
     private string DefaultPicture = "https://saterdesign.com/cdn/shop/products/property-placeholder_a9ec7710-1f1e-4654-9893-28c34e3b6399_600x.jpg?v=1500393334";
 
@@ -71,7 +71,7 @@ else
         {
             residences = await Http.GetFromJsonAsync<List<ResidenceDto>>("api/residence");
             categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
-            agencies = await Http.GetFromJsonAsync<List<AgencyDto>>("api/agencies");
+            municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
 
             FilteredResidences();
         }
@@ -93,19 +93,19 @@ else
 
     protected IEnumerable<ResidenceDto> FilteredResidences()
     {
-        if (selectedCategory > -1 || selectedAgency > -1)
+        if (selectedCategory > -1 || selectedMunicipality > -1)
         {
-            if (selectedCategory > -1 && selectedAgency == -1)
+            if (selectedCategory > -1 && selectedMunicipality == -1)
             {
                 return filteredRecidences.Where(x => x.Category.Id == selectedCategory);
             }
-            else if (selectedAgency > -1 && selectedCategory == -1)
+            else if (selectedMunicipality > -1 && selectedCategory == -1)
             {
-                return filteredRecidences.Where(x => x.Realtor.Agency.AgencyId == selectedAgency);
+                return filteredRecidences.Where(x => x.Municipality.Id == selectedMunicipality);
             }
             else
             {
-                return filteredRecidences.Where(x => x.Category.Id == selectedCategory).Where(x => x.Realtor.Agency.AgencyId == selectedAgency);
+                return filteredRecidences.Where(x => x.Category.Id == selectedCategory).Where(x => x.Municipality.Id == selectedMunicipality);
             }
         }
         else
