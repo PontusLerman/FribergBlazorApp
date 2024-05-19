@@ -1,4 +1,5 @@
-﻿@page "/register/realtor"
+﻿@* Author: Pontus Lerman Co-Author: Christian Alp *@
+@page "/register/realtor"
 @using FribergBlazorApp.Services
 @using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
@@ -105,14 +106,14 @@
             @* Unsure at merge conflict
             errorString = $"Lyckades inte lägga till mäklaren. {errorMessage}";
             *@
-        if (queryParams.TryGetValue("message", out var message))
-        {
-            errorString = $"Lyckades inte lägga till mäklaren. {message}";
-        }
-        else
-        {
-            errorString = "Lyckades inte lägga till mäklaren.";
-        }
+            if (queryParams.TryGetValue("message", out var message))
+            {
+                errorString = $"Lyckades inte lägga till mäklaren. {message}";
+            }
+            else
+            {
+                errorString = "Lyckades inte lägga till mäklaren.";
+            }
         }
     }
 
@@ -120,6 +121,10 @@
     {
         try
         {
+            if (realtor.Picture == null)
+            {
+                realtor.Picture = "https://t4.ftcdn.net/jpg/05/42/36/11/360_F_542361185_VFRJWpR2FH5OiAEVveWO7oZnfSccZfD3.jpg";
+            }
             if (SelectedAgency == -1)
             {
                 realtorCreateAgency.FirstName = realtor.FirstName;

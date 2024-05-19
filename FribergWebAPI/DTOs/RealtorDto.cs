@@ -11,7 +11,7 @@ namespace FribergWebAPI.DTOs
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
         public string PhoneNumber { get; set; }
-		public string Picture { get; set; }
+		public string? Picture { get; set; }
         public List<string> Roles { get; set; }
         public RealtorAgencyDto Agency { get; set; }
         public bool Approved { get; set; }

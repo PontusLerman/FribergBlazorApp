@@ -176,20 +176,15 @@ namespace FribergWebAPI.Controllers
 					Agency = agency,
 					Roles = new List<string> { "DefaultRealtor" },
 					Approved = false
-        };
+				};
 
 
 				// Hash the password
 				var passwordHasher = new PasswordHasher<Realtor>();
 				realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
 
-                /* Unsure at merge conflict
-                var result = await _userManager.CreateAsync(realtor, model.Password);
-                var concatenatedErrors = string.Join(" ; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
-                */
-
 				var result = await _userManager.CreateAsync(realtor, model.Password);
-				var concatenatedErrors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+				var concatenatedErrors = string.Join(" ; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
 
 
 				if (result.Succeeded)
