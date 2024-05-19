@@ -79,6 +79,20 @@ namespace FribergWebAPI.Controllers
             return Ok(realtorDtos);
         }
 
+        [HttpGet]
+        [Route("unapproved-realtors-by-agency/{agencyId}")]
+        public async Task<ActionResult<IEnumerable<RealtorDto>>> GetUnapprovedRealtorsByAgency(int agencyId)
+        {
+            var realtors = await _userManager.Users
+                .Include(r => r.Agency)
+                .Include(r => r.ResidenceList)
+                .Where(r => r.Agency.AgencyId == agencyId)
+                .Where(r => r.Approved == false)
+                .ToListAsync();
+            var realtorDtos = _mapper.Map<List<RealtorDto>>(realtors);
+            return Ok(realtorDtos);
+        }
+
         [HttpPut("{id}")]
 		public async Task<ActionResult<Realtor>> UpdateUser(string id, RealtorDto model)
 		{

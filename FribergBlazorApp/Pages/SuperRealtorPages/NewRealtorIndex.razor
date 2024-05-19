@@ -27,7 +27,7 @@ else
             @foreach (var realtor in FilteredNewRealtors())
             {
                 <tr>
-                    <td>@realtor.Picture</td>
+                    <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px "/></td>
                     <td>@realtor.FirstName</td>
                     <td>@realtor.LastName</td>
                     <td>@realtor.Email</td>
@@ -54,7 +54,7 @@ else
     {
         currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
         realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
-        allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{realtor.Agency.AgencyId}");
+        allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/unapproved-realtors-by-agency/{realtor.Agency.AgencyId}");
 
         FilteredNewRealtors();
     }

@@ -26,7 +26,7 @@ else
             @foreach (var realtor in realtors)
             {
                 <tr>
-                    <td>@realtor.Picture</td>
+                    <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px " /></td>
                     <td>@realtor.FirstName</td>
                     <td>@realtor.LastName</td>
                     <td>@realtor.Email</td>
