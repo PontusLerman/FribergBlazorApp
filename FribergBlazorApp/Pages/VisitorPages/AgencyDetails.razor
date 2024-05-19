@@ -15,24 +15,27 @@ else
 {
     <h3>@agency.AgencyName</h3>
     <h4>@agency.AgencyDescription</h4>
-    <div class="main">
-        <ul class="house-cards">
+    <div class="person-main">
+        <ul class="person-cards">
+            
             @foreach (var realtor in realtors)
             {
-                <li style="background-image: url('@(realtor.Picture)')" />
-                <div style="display:flex; flex-direction:row;">
-                    <div style="display:flex; flex-direction:column; padding-right:1.5rem">
-                        <p>Namn:</p>
-                        <p>Email:</p>
-                        <p>Telefonnr:</p>
-                    </div>
-                    <div style="display:flex; flex-direction:column">
-                        <p>@realtor.FirstName @realtor.LastName</p>
-                        <p>@realtor.Email</p>
-                        <p>@realtor.PhoneNumber</p>
-                    </div>
-                </div>
-            }
+                <div class="realtor-container">
+                    <li style="background-image: url('@(realtor.Picture)')" ></li>
+                        <div class="realtor-info">
+                            <div class="info-column">
+                            <p>Namn:</p>
+                            <p>Email:</p>
+                            <p>Telefonnr:</p>
+                        </div>
+                        <div class="info-column">
+                            <p>@realtor.FirstName @realtor.LastName</p>
+                            <p>@realtor.Email</p>
+                            <p>@realtor.PhoneNumber</p>
+                        </div>
+                 </div>
+            </div>
+            }            
         </ul>
     </div>
 }
