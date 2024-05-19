@@ -2,6 +2,8 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
 @if (!showForm && !showConfirmation)
 {
     <h3>Kategorier</h3>
@@ -48,6 +50,8 @@
         </table>
     }
 }
+</Authorized>
+</AuthorizeView>
 
 @if (showForm)
 {
