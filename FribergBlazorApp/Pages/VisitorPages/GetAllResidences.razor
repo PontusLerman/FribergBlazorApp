@@ -3,7 +3,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<h3>Alla Bostäder</h3>
+<h3 style ="padding: .375rem .75rem;">Alla Bostäder</h3>
 
 @if (residences == null)
 {
@@ -16,9 +16,10 @@ else if (errorString != null)
 }
 else
 {
-    <h4>Filtrering:</h4>
-    <div>
-        <label for="categoryName">Kategori:</label>
+    <h5 style="padding: .375rem .75rem;">Filtrering:</h5>
+    <div style="display:flex">
+    <div style="display:flex">
+            <label style="padding: .375rem .75rem;" for="categoryName">Kategori:</label>
         <InputSelect id="categoryName" @bind-Value="selectedCategory" class="form-control">
             <option value="-1">Välj kategori</option>
             @foreach (var category in categories)
@@ -27,8 +28,8 @@ else
             }
         </InputSelect>
     </div>
-    <div>
-        <label for="agencyName">Mäklarbyrå:</label>
+    <div style ="display:flex">
+            <label style="padding: .375rem .75rem;" for="agencyName">Mäklarbyrå:</label>
         <InputSelect id="agencyName" @bind-Value="selectedAgency" class="form-control">
             <option value="-1">Välj mäklarbyrå</option>
             @foreach (var agency in agencies)
@@ -36,6 +37,7 @@ else
                 <option value="@agency.AgencyId">@agency.AgencyName</option>
             }
         </InputSelect>
+    </div>
     </div>
     <div class="main">
         <ul class="house-cards">
