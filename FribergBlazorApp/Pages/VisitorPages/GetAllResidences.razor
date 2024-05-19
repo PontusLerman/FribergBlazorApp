@@ -16,9 +16,30 @@ else if (errorString != null)
 }
 else
 {
+    <h4>Filtrering:</h4>
+    <div>
+        <label for="categoryName">Kategori:</label>
+        <InputSelect id="categoryName" @bind-Value="selectedCategory" class="form-control">
+            <option value="-1">Välj kategori</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <label for="agencyName">Mäklarbyrå:</label>
+        <InputSelect id="agencyName" @bind-Value="selectedAgency" class="form-control">
+            <option value="-1">Välj mäklarbyrå</option>
+            @foreach (var agency in agencies)
+            {
+                <option value="@agency.AgencyId">@agency.AgencyName</option>
+            }
+        </InputSelect>
+    </div>
     <div class="main">
         <ul class="house-cards">
-            @foreach (var residence in residences)
+            @foreach (var residence in FilteredResidences())
             {
                 <li style="background-image: url('@(HouseCardBackground(residence.Id)) ')" @onclick="@(()=>NavigationManager.NavigateTo($"/recidencedetails/{residence.Id}"))">
                     <div class="house-info">
@@ -34,6 +55,11 @@ else
 
 @code {
     private List<ResidenceDto>? residences;
+    private IEnumerable<ResidenceDto>? filteredRecidences;
+    private List<CategoryDto>? categories;
+    private int selectedCategory = -1;
+    private List<AgencyDto>? agencies;
+    private int selectedAgency = -1;
     private string? errorString;
     private string DefaultPicture = "https://saterdesign.com/cdn/shop/products/property-placeholder_a9ec7710-1f1e-4654-9893-28c34e3b6399_600x.jpg?v=1500393334";
 
@@ -42,6 +68,10 @@ else
         try
         {
             residences = await Http.GetFromJsonAsync<List<ResidenceDto>>("api/residence");
+            categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
+            agencies = await Http.GetFromJsonAsync<List<AgencyDto>>("api/agencies");
+
+            FilteredResidences();
         }
         catch (Exception ex)
         {
@@ -54,9 +84,32 @@ else
         ResidenceDto residence = residences.FirstOrDefault(x => x.Id == id);
         if (residence.Pictures.Count() != 0)
         {
-            return residence.Pictures[0].Picture; 
-        } 
+            return residence.Pictures[0].Picture;
+        }
         else { return DefaultPicture; }
+    }
+
+    protected IEnumerable<ResidenceDto> FilteredResidences()
+    {
+        if (selectedCategory > -1 || selectedAgency > -1)
+        {
+            if (selectedCategory > -1 && selectedAgency == -1)
+            {
+                return filteredRecidences.Where(x => x.Category.Id == selectedCategory);
+            }
+            else if (selectedAgency > -1 && selectedCategory == -1)
+            {
+                return filteredRecidences.Where(x => x.Realtor.Agency.AgencyId == selectedAgency);
+            }
+            else
+            {
+                return filteredRecidences.Where(x => x.Category.Id == selectedCategory).Where(x => x.Realtor.Agency.AgencyId == selectedAgency);
+            }
+        }
+        else
+        {
+            return filteredRecidences = residences;
+        }
     }
 }
 
