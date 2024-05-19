@@ -9,13 +9,13 @@
 {
     <h3>Lägg till bostad</h3>
 }
-else if (Residence.Category == null) //Tried to avoid null-reference on line 18, no change
+else if (Residence.Category == null)
 {
     <h3>Laddar...</h3>
 }
 else
 {
-    <h3>Ändra @Residence.Category.Name @Residence.Address</h3> //This line gets null-reference error in browser, still works
+    <h3>Ändra @Residence.Category.Name @Residence.Address</h3>
 }
 
 <EditForm Model="Residence" OnSubmit="HandleSubmit">
