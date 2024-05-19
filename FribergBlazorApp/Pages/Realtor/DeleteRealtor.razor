@@ -1,0 +1,61 @@
+﻿@* Author: Pontus Lerman Co-author: Johan Krångh *@
+@page "/remove-realtor/{Id}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@inject ILocalStorageService LocalStorage
+
+<h3>Ta Bort @(realtor.FirstName) @(realtor.LastName)?</h3>
+
+<button class="btn btn-danger" @onclick="@(() => RemoveRealtor(Id))">Ta Bort</button>
+<a class="btn btn-outline-primary" href="residences">Tillbaka</a>
+
+
+<p>@errorString</p>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+    public RealtorDto realtor { get; set; } = new RealtorDto();
+    RealtorDto currentRealtor = new RealtorDto();
+    AuthResponseDto currentUser = new AuthResponseDto();
+    List<CRUDResidenceDto> residences = new List<CRUDResidenceDto>();
+    private string? errorString;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            var result = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{Id}");
+            if (result != null)
+            {
+                realtor = result;
+            }
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
+        currentRealtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
+        residences = await Http.GetFromJsonAsync<List<CRUDResidenceDto>>($"api/residence/residences-by-realtor/{Id}");
+    }
+
+    async Task RemoveRealtor(string? id)
+    {
+        foreach (var residence in residences)
+        {
+            residence.Realtor = currentRealtor;
+            residence.Realtor.Password = "s";
+            await Http.PutAsJsonAsync<CRUDResidenceDto>($"api/Residence/{residence.Id}", residence);
+        }
+
+        var response = await Http.DeleteAsync($"api/realtor/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            NavManager.NavigateTo("/gr");
+        }
+        else
+        {
+            errorString = response.ReasonPhrase;
+        }
+    }
+}

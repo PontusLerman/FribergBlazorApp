@@ -43,11 +43,6 @@ namespace FribergWebAPI.Data
 			});
 			
 			//This function makes it so that it doesn't delete it's childrens or parents.
-			modelBuilder.Entity<Residence>()
-			.HasOne(e => e.Category)
-			.WithMany(f => f.Residences)
-			.OnDelete(DeleteBehavior.Restrict);
-			
 			modelBuilder.Entity<Realtor>()
 			.HasOne(r => r.Agency)
 			.WithMany(a => a.Employees)
@@ -63,6 +58,11 @@ namespace FribergWebAPI.Data
 			.WithOne(r => r.Municipality)
 			.OnDelete(DeleteBehavior.Restrict);
 
+			modelBuilder.Entity<Residence>()
+			.HasOne(e => e.Category)
+			.WithMany(f => f.Residences)
+			.OnDelete(DeleteBehavior.Restrict);
+			
 			modelBuilder.Entity<Residence>()
 			.HasOne(e => e.Municipality)
 			.WithMany(f => f.Residences)

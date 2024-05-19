@@ -1,45 +1,51 @@
-﻿@page "/gr"
+﻿@* Author: Pontus Lerman *@
+@page "/gr"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
 
-<h3>Mäklare</h3>
-@if (realtors == null)
-{
-    <h3>Loading...</h3>
-}
-else if (errorString != null)
-{
-    <h3>@errorString</h3>
-}
-else
-{
-    <table>
-        <thead>
-            <th>Bild</th>
-            <th>Förnamn</th>
-            <th>Efternamn</th>
-            <th>Email</th>
-            <th>Telefonnummer</th>
-            <th>Mäklarbyrå</th>
-        </thead>
-        <tbody>
-            @foreach (var realtor in realtors)
-            {
-                <tr>
-                    <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px " /></td>
-                    <td>@realtor.FirstName</td>
-                    <td>@realtor.LastName</td>
-                    <td>@realtor.Email</td>
-                    <td>@realtor.PhoneNumber</td>
-                    <td>@realtor.Agency.AgencyName</td>
-                    <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/edit-realtor/{realtor.Id}"))>Ändra</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
-}
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
+        <h3>Mäklare</h3>
+        @if (realtors == null)
+        {
+            <h3>Loading...</h3>
+        }
+        else if (errorString != null)
+        {
+            <h3>@errorString</h3>
+        }
+        else
+        {
+            <table>
+                <thead>
+                <th>Bild</th>
+                <th>Förnamn</th>
+                <th>Efternamn</th>
+                <th>Email</th>
+                <th>Telefonnummer</th>
+                <th>Mäklarbyrå</th>
+                </thead>
+                <tbody>
+                    @foreach (var realtor in realtors)
+                    {
+                        <tr>
+                            <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px " /></td>
+                            <td>@realtor.FirstName</td>
+                            <td>@realtor.LastName</td>
+                            <td>@realtor.Email</td>
+                            <td>@realtor.PhoneNumber</td>
+                            <td>@realtor.Agency.AgencyName</td>
+                            <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/edit-realtor/{realtor.Id}"))>Ändra</button></td>
+                            <td><a class="btn btn-danger" href="remove-realtor/@realtor.Id">Ta Bort</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
+        }
+    </Authorized>
+</AuthorizeView>
 
 @code {
     List<RealtorDto> realtors = new List<RealtorDto>();
@@ -60,7 +66,7 @@ else
         {
             Console.WriteLine($"Error fetching current user: {ex.Message}");
         }
-        
+
         try
         {
             realtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{Realtor.Agency.AgencyId}");
