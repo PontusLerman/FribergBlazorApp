@@ -1,6 +1,7 @@
 ﻿@page "/gr"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService localStorage
 
 <h3>Mäklare</h3>
 @if (realtors == null)
@@ -42,14 +43,27 @@ else
 
 @code {
     List<RealtorDto> realtors = new List<RealtorDto>();
+    public AuthResponseDto CurrentUser = new AuthResponseDto();
+    public RealtorDto Realtor = new RealtorDto();
     string errorString;
 
 
     protected override async Task OnInitializedAsync()
     {
+
         try
         {
-            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>("api/realtor");
+            CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+            Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching current user: {ex.Message}");
+        }
+        
+        try
+        {
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{Realtor.Agency.AgencyId}");
         }
         catch (Exception ex)
         {
