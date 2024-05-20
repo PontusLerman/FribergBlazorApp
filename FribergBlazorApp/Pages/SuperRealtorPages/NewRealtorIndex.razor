@@ -4,6 +4,7 @@
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
 
@@ -50,6 +51,7 @@
     RealtorDto realtor = new RealtorDto();
     AgencyDto agencyDto = new AgencyDto();
     AuthResponseDto currentUser = new AuthResponseDto();
+    bool isSuperRealtor;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,6 +59,15 @@
         realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
         allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/unapproved-realtors-by-agency/{realtor.Agency.AgencyId}");
         await LocalStorage.SetItemAsStringAsync("lastPage", "/superrealtor/newrealtorindex");
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isSuperRealtor = user.IsInRole("SuperRealtor");
+          
+        if (!isSuperRealtor)
+        {
+            NavigationManager.NavigateTo("/");
+        }
 
         FilteredNewRealtors();
     }
