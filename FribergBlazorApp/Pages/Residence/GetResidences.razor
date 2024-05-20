@@ -1,5 +1,4 @@
-﻿@*author: Johan Krångh*@
-@page "/residences"
+﻿@page "/residences"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
@@ -26,6 +25,7 @@ else
                 <th>Boyta</th>
                 <th>Pris</th>
                 <th>Mäklare</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -38,8 +38,11 @@ else
                     <td>@residence.LivingArea</td>
                     <td>@residence.StartingPrice</td>
                     <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
-                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button></td>
-                    <td><a class="btn btn-danger" href="remove-residence/@residence.Id">Ta Bort</a></td>
+                    <td>
+                        <button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button>
+                        <a class="btn btn-danger" href="remove-residence/@residence.Id">Ta Bort</a>
+                        <button class="btn btn-info" @onclick="@(() => ManagePictures(residence.Id))">Hantera Bilder</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -49,11 +52,9 @@ else
 
 @code {
     private List<ResidenceDto>? residences;
-    //Used for 
     public AuthResponseDto CurrentUser = new AuthResponseDto();
     public RealtorDto Realtor = new RealtorDto();
     private string? errorString;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,12 +70,14 @@ else
             }
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
 
-            //Gets different residence-list based on user role
             if (Realtor.Roles.Contains("SuperRealtor"))
             {
                 residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-agency/{Realtor.Agency.AgencyId}");
             }
-            else { residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}"); }
+            else
+            {
+                residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}");
+            }
         }
         catch (Exception ex)
         {
@@ -90,5 +93,10 @@ else
     void EditResidence(int id)
     {
         NavigationManager.NavigateTo($"edit-residence/{id}");
+    }
+
+    void ManagePictures(int id)
+    {
+        NavigationManager.NavigateTo($"/residence-pictures/{id}");
     }
 }

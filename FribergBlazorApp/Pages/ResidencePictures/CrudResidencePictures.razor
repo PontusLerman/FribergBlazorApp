@@ -1,4 +1,4 @@
-﻿@page "/residencepictures"
+﻿@page "/residence-pictures/{Id:int}"
 @using FribergBlazorApp.DTOs
 @inject HttpClient Http
 @inject NavigationManager Navigation
@@ -8,7 +8,6 @@
     <h3>Bilder</h3>
 
     <div style="position: absolute; right: 50px;">
-        <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
     </div>
 
     <div>
@@ -35,7 +34,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var picture in FilteredItems)
+                @foreach (var picture in FilteredItems())
                 {
                     <tr>
                         <td>@picture.Id</td>
@@ -59,7 +58,6 @@
         <div>
             <h3>@(pictureAction == PictureAction.Create ? "Skapa en ny bild" : "Redigera bild")</h3>
             <input type="text" @bind="picture.Picture" />
-            <input type="text" @bind="picture.ResidenceId" />
             <button @onclick="SavePicture">@(pictureAction == PictureAction.Create ? "Skapa" : "Spara")</button>
             <button @onclick="Cancel">Avbryt</button>
         </div>      
@@ -77,6 +75,8 @@
 }
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
     private string baseUrl = "https://localhost:7280/api/residencepictures";
     private List<PictureDto>? pictures;
     private string? errorString;
@@ -111,16 +111,10 @@
         }
     }
 
-    private IEnumerable<PictureDto> FilteredItems
+    private IEnumerable<PictureDto> FilteredItems()
     {
-        get
-        {
-            if (string.IsNullOrWhiteSpace(searchTerm))
-            {
-                return pictures ?? Enumerable.Empty<PictureDto>();
-            }
-            return pictures?.Where(p => p.ResidenceId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || p.Id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ?? Enumerable.Empty<PictureDto>();
-        }
+        var filteredList = pictures.Where(x => x.ResidenceId == Id);
+        return filteredList.ToList();
     }
 
     private void ShowForm(PictureAction action, PictureDto picture = null)
@@ -149,6 +143,10 @@
         {
             await UpdatePicture();
         }
+        else
+        {
+            ResetState();
+        }
         ResetState();
         ShowRead();
     }
@@ -157,10 +155,10 @@
     {
         try
         {
+            picture.ResidenceId = Id;
             HttpResponseMessage response = await Http.PostAsJsonAsync(baseUrl, picture);
             response.EnsureSuccessStatusCode();
             pictures.Add(await response.Content.ReadFromJsonAsync<PictureDto>());
-            Navigation.NavigateTo("residencepictures", forceLoad: true);
         }
         catch (Exception ex)
         {
@@ -202,7 +200,6 @@
     private void Cancel()
     {
         ResetState();
-        ShowRead();
     }
 
     private void ResetState()
