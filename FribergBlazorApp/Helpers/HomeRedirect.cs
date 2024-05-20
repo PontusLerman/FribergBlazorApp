@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿//Author: Pontus Lerman
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
@@ -15,6 +16,7 @@ namespace FribergBlazorApp.Helpers
             this.authenticationStateProvider = authenticationStateProvider;
         }
 
+        //Use if you want to check if a SuperRealtor is logged in
         public void CheckIfSuperRealtor(ClaimsPrincipal user)
         {
             if (!user.IsInRole("SuperRealtor"))
@@ -22,6 +24,7 @@ namespace FribergBlazorApp.Helpers
                 navigationManager.NavigateTo("/");
             }
         }
+        //Use if you want to check if either a DefaultRealtor or SuperRealtor is logged in
         public void CheckIfDefaultRealtorOrSuperRealtor(ClaimsPrincipal user)
         {
             if (!user.IsInRole("DefaultRealtor") && !user.IsInRole("SuperRealtor"))
