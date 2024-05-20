@@ -51,7 +51,7 @@ else
         try
         {
             var result = await Http.PutAsJsonAsync($"api/agencies/{Id}", agency);
-            NavigationManager.NavigateTo("/ga");
+            NavigationManager.NavigateTo("/agencymanagement");
         }
         catch (Exception ex)
         {

@@ -52,6 +52,7 @@
     AgencyDto agencyDto = new AgencyDto();
     AuthResponseDto currentUser = new AuthResponseDto();
     bool isSuperRealtor;
+    bool isDefaultRealtor;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,8 +64,8 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         isSuperRealtor = user.IsInRole("SuperRealtor");
-          
-        if (!isSuperRealtor)
+        isDefaultRealtor = user.IsInRole("DefaultRealtor");
+        if (!isDefaultRealtor && !isSuperRealtor)
         {
             NavigationManager.NavigateTo("/");
         }

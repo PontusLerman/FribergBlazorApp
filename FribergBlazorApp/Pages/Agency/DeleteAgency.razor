@@ -27,7 +27,7 @@
         var response = await Http.DeleteAsync($"api/Agencies/{id}");
         if (response.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/ga");
+            NavigationManager.NavigateTo("/agencymanagement");
         }
         else
         {
