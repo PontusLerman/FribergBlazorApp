@@ -1,10 +1,10 @@
 ﻿@* Author: Pontus Lerman *@
 @page "/superrealtor/newrealtorindex"
-@using System.Security.Claims
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
 
@@ -62,13 +62,7 @@
         await LocalStorage.SetItemAsStringAsync("lastPage", "/superrealtor/newrealtorindex");
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        isSuperRealtor = user.IsInRole("SuperRealtor");
-        isDefaultRealtor = user.IsInRole("DefaultRealtor");
-        if (!isDefaultRealtor && !isSuperRealtor)
-        {
-            NavigationManager.NavigateTo("/");
-        }
+        HomeRedirect.CheckIfSuperRealtor(authState.User);
 
         FilteredNewRealtors();
     }

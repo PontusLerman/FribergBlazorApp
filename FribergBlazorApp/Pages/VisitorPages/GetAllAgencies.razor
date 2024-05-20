@@ -24,7 +24,7 @@ else
         <ul class="house-cards">
             @foreach (var agency in FilteredAgencies())
             {
-                <li style="background-image: url('@agency.AgencyLogoURL')" @onclick="@(()=>NavigationManager.NavigateTo($"/agencydetails/{agency.AgencyId}"))">                   
+                <li style="background-image: url('@agency.AgencyLogoURL')" @onclick="@(()=>NavigationManager.NavigateTo($"/agencydetails/{agency.AgencyId}"))">
                     <div class="house-info">
                         <span class="title">@agency.AgencyName</span>
                         @agency.AgencyDescription

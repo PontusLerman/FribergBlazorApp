@@ -2,7 +2,12 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
+<AuthorizeView>
+    <Authorized>
+      
 <h3>Bostäder</h3>
 
 @if (residences == null)
@@ -49,6 +54,8 @@ else
     </table>
 }
 <button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private List<ResidenceDto>? residences;
@@ -60,6 +67,8 @@ else
     {
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             try
             {
                 CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");

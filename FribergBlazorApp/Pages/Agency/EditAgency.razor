@@ -1,31 +1,38 @@
-﻿@page "/cea/{id:int}"
+﻿@* Author: Pontus Lerman Co-author: Christian Alp*@
+@page "/cea/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
-@if (Id == null)
-{
-    <h3>Ny mäklarbyrå</h3>
-}
-else
-{
-    <h3>Ändra @agency.AgencyName</h3>
-}
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized Context="editagency1">
+        @if (Id == null)
+        {
+            <h3>Ny mäklarbyrå</h3>
+        }
+        else
+        {
+            <h3>Ändra @agency.AgencyName</h3>
+        }
 
-<EditForm Model="agency" OnSubmit="HandleSubmit">
-    <div>
-        <label for="agencyLogoURL">Mäklarbyrå logotyp url:</label>
-        <InputText id="agencyLogoURL" @bind-Value="agency.AgencyLogoURL" class="form-control" />
-    </div>
-    <div>
-        <label for="agencyName">Mäklarbyrå namn:</label>
-        <InputText id="agencyName" @bind-Value="agency.AgencyName" class="form-control" />
-    </div>    
-    <div>
-        <label for="agencyDescription">Mäklarbyrå beskrivning:</label>
-        <InputText id="agencyDescription" @bind-Value="agency.AgencyDescription" class="form-control" />
-    </div>
-    <button class="btn btn-primary" type="submit">Spara</button>
-</EditForm>
+        <EditForm Model="agency" OnSubmit="HandleSubmit" Context="editagency2">
+            <div>
+                <label for="agencyLogoURL">Mäklarbyrå logotyp url:</label>
+                <InputText id="agencyLogoURL" @bind-Value="agency.AgencyLogoURL" class="form-control" />
+            </div>
+            <div>
+                <label for="agencyName">Mäklarbyrå namn:</label>
+                <InputText id="agencyName" @bind-Value="agency.AgencyName" class="form-control" />
+            </div>
+            <div>
+                <label for="agencyDescription">Mäklarbyrå beskrivning:</label>
+                <InputText id="agencyDescription" @bind-Value="agency.AgencyDescription" class="form-control" />
+            </div>
+            <button class="btn btn-primary" type="submit">Spara</button>
+        </EditForm>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -33,6 +40,12 @@ else
     public AgencyDto agency { get; set; } = new AgencyDto();
     public RealtorDto realtor { get; set; }
     string errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        HomeRedirect.CheckIfSuperRealtor(authState.User);
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -55,7 +68,7 @@ else
         }
         catch (Exception ex)
         {
-            errorString = ex.Message;          
+            errorString = ex.Message;
         }
     }
 }

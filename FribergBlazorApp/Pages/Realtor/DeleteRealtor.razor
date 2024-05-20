@@ -3,6 +3,9 @@
 @inject HttpClient Http
 @inject NavigationManager NavManager
 @inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
+
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
         <h3>Ta Bort @(realtor.FirstName) @(realtor.LastName)?</h3>
@@ -37,6 +40,8 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        HomeRedirect.CheckIfSuperRealtor(authState.User);
         currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
         currentRealtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
         residences = await Http.GetFromJsonAsync<List<CRUDResidenceDto>>($"api/residence/residences-by-realtor/{Id}");

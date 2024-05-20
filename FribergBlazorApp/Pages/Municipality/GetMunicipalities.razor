@@ -2,50 +2,61 @@
 @page "/municipalities"
 @inject HttpClient Http
 @inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
-<h3>Kommuner</h3>
+<AuthorizeView>
+    <Authorized>
+        <h3>Kommuner</h3>
 
-@if (municipalities == null)
-{
-    <p><em>Laddar...</em></p>
-    <p>@errorString</p>
-}
-else if (errorString != null)
-{
-    <p>An error occurred: @errorString</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kommunnamn</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var m in municipalities)
-            {
-                <tr>
-                    <td>@m.MunicipalityName</td>       
-                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditMunicipality(m.Id))">Ändra</button></td>
-                    <td><a class="btn btn-danger" href="remove-municipality/@m.Id">Ta Bort</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-<button class="btn btn-primary" @onclick="AddMunicipality">Lägg till kommun</button>
-
+        @if (municipalities == null)
+        {
+            <p><em>Laddar...</em></p>
+            <p>@errorString</p>
+        }
+        else if (errorString != null)
+        {
+            <p>An error occurred: @errorString</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Kommunnamn</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in municipalities)
+                    {
+                        <tr>
+                            <td>@m.MunicipalityName</td>
+                            <td><button class="btn btn-outline-primary" @onclick="@(() => EditMunicipality(m.Id))">Ändra</button></td>
+                            <AuthorizeView Roles="SuperRealtor">
+                                <Authorized Context="municipalities">
+                                    <td><a class="btn btn-danger" href="remove-municipality/@m.Id">Ta Bort</a></td>
+                                </Authorized>
+                            </AuthorizeView>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <button class="btn btn-primary" @onclick="AddMunicipality">Lägg till kommun</button>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private List<MunicipalityDto>? municipalities;
     private string? errorString;
 
     protected override async Task OnInitializedAsync()
-    {
+    {     
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
         }
         catch (Exception ex)
@@ -61,6 +72,6 @@ else
 
     void EditMunicipality(int id)
     {
-        NavManager.NavigateTo($"edit-municipality/{id}");        
+        NavManager.NavigateTo($"edit-municipality/{id}");
     }
 }

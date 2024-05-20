@@ -2,18 +2,22 @@
 @using FribergBlazorApp.DTOs
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
+<AuthorizeView>
+    <Authorized>
+        @if (!showForm && !showConfirmation)
+        {
+            <h3>Bilder</h3>
 
-@if (!showForm && !showConfirmation)
-{
-    <h3>Bilder</h3>
+            //<div style="position: absolute; right: 50px;">
+               // <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+           // </div>
 
-    <div style="position: absolute; right: 50px;">
-    </div>
-
-    <div>
-        <button @onclick="() => ShowForm(PictureAction.Create)">Skapa en ny bild</button>
-    </div>
-
+            <div>
+                <button @onclick="() => ShowForm(PictureAction.Create)">Skapa en ny bild</button>
+            </div>
+      
     @if (pictures == null)
     {
         <p><em>Laddar...</em></p>
@@ -61,15 +65,17 @@
     }
 }
 
-@if (showConfirmation)
-{
-    <div>
-        <h3>Radera bild</h3>
-        <p>Är du säker på att du vill radera denna bild?</p>
-        <button @onclick="() => DeletePicture(selectedPictureId)">Ja, Radera</button>
-        <button @onclick="Cancel">Avbryt</button>
-    </div>
-}
+        @if (showConfirmation)
+        {
+            <div>
+                <h3>Radera bild</h3>
+                <p>Är du säker på att du vill radera denna bild?</p>
+                <button @onclick="() => DeletePicture(selectedPictureId)">Ja, Radera</button>
+                <button @onclick="Cancel">Avbryt</button>
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -93,6 +99,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
         await LoadPictures();
     }
 

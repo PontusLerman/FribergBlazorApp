@@ -3,6 +3,8 @@
 @page "/categories"
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
@@ -99,6 +101,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        HomeRedirect.CheckIfSuperRealtor(authState.User);
         await LoadCategories();
     }
 

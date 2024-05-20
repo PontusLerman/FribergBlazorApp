@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using FribergBlazorApp;
+using FribergBlazorApp.Helpers;
 using FribergBlazorApp.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -17,5 +18,6 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IOverlayService, OverlayService>();
+builder.Services.AddScoped<HomeRedirect>();
 
 await builder.Build().RunAsync();
