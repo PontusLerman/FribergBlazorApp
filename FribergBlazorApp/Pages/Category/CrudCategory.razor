@@ -4,77 +4,77 @@
 
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
-@if (!showForm && !showConfirmation)
-{
-    <h3>Kategorier</h3>
+        @if (!showForm && !showConfirmation)
+        {
+            <h3>Kategorier</h3>
 
-    <div style="position: absolute; right: 50px;">
-        <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
-    </div>
+            <div style="position: absolute; right: 50px;">
+                <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+            </div>
 
-    <div>
-        <button @onclick="() => ShowForm(CategoryAction.Create)">Skapa en ny kategori</button>
-    </div>
+            <div>
+                <button @onclick="() => ShowForm(CategoryAction.Create)">Skapa en ny kategori</button>
+            </div>
 
-    @if (categories == null)
-    {
-        <p><em>Laddar...</em></p>
-    }
-    else if (errorString != null)
-    {
-        <p>Ett problem uppstod: @errorString</p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Namn</th>
-                    <th>Val</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var category in FilteredItems)
-                {
-                    <tr>
-                        <td>@category.Id</td>
-                        <td>@category.Name</td>
-                        <td>
-                            <button @onclick="() => ShowForm(CategoryAction.Edit, category)">Ändra</button>
-                            <button @onclick="() => ShowConfirmationDialog(category.Id)">Radera </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-}
-</Authorized>
+            @if (categories == null)
+            {
+                <p><em>Laddar...</em></p>
+            }
+            else if (errorString != null)
+            {
+                <p>Ett problem uppstod: @errorString</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Namn</th>
+                            <th>Val</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in FilteredItems)
+                        {
+                            <tr>
+                                <td>@category.Id</td>
+                                <td>@category.Name</td>
+                                <td>
+                                    <button @onclick="() => ShowForm(CategoryAction.Edit, category)">Ändra</button>
+                                    <button @onclick="() => ShowConfirmationDialog(category.Id)">Radera </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        }
+
+        @if (showForm)
+        {
+            @if (categoryAction == CategoryAction.Create || categoryAction == CategoryAction.Edit)
+            {
+                <div>
+                    <h3>@(categoryAction == CategoryAction.Create ? "Skapa en ny kategori" : "Redigera kategori")</h3>
+                    <input type="text" @bind="category.Name" />
+                    <button @onclick="SaveCategory">@(categoryAction == CategoryAction.Create ? "Skapa" : "Spara")</button>
+                    <button @onclick="Cancel">Avbryt</button>
+                </div>
+            }
+        }
+
+        @if (showConfirmation)
+        {
+            <div>
+                <h3>Radera kategori</h3>
+                <p>Är du säker på att du vill radera denna kategori?</p>
+                <button @onclick="() => DeleteCategory(selectedCategoryId)">Ja, Radera</button>
+                <button @onclick="Cancel">Avbryt</button>
+            </div>
+        }
+    </Authorized>
 </AuthorizeView>
-
-@if (showForm)
-{
-    @if (categoryAction == CategoryAction.Create || categoryAction == CategoryAction.Edit)
-    {
-        <div>
-            <h3>@(categoryAction == CategoryAction.Create ? "Skapa en ny kategori" : "Redigera kategori")</h3>
-            <input type="text" @bind="category.Name" />
-            <button @onclick="SaveCategory">@(categoryAction == CategoryAction.Create ? "Skapa" : "Spara")</button>
-            <button @onclick="Cancel">Avbryt</button>
-        </div>
-    }
-}
-
-@if (showConfirmation)
-{
-    <div>
-        <h3>Radera kategori</h3>
-        <p>Är du säker på att du vill radera denna kategori?</p>
-        <button @onclick="() => DeleteCategory(selectedCategoryId)">Ja, Radera</button>
-        <button @onclick="Cancel">Avbryt</button>
-    </div>
-}
 
 @code {
 
