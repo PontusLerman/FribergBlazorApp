@@ -40,7 +40,7 @@ else
     </div>
     </div>
     <div class="main">
-        <ul class="house-cards">
+        <ul style="padding: .375rem .75rem;" class="house-cards">
             @foreach (var residence in FilteredResidences())
             {
                 <li style="background-image: url('@(HouseCardBackground(residence.Id)) ')" @onclick="@(()=>NavigationManager.NavigateTo($"/recidencedetails/{residence.Id}"))">
