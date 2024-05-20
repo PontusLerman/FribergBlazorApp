@@ -107,15 +107,15 @@ code {
 .main {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 1.5rem !important;
+    padding: 10px !important;
 }
 
 .house-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, 20rem);
     grid-gap: 2rem;
-    justify-content: center;
-    padding-left: 0;
+    justify-content: left;
+    padding-left: 20px;
 }
 
     .house-cards > li {
@@ -192,6 +192,8 @@ code {
     padding-left: 0.5rem;
 }
 
+
+
     .person-cards > .realtor-container {
         display: flex;
         flex-direction: row;
@@ -212,6 +214,9 @@ code {
     border-radius: 0.5rem;
     list-style-type: none;
     flex-shrink: 0; /* Prevent the picture from shrinking */
+}
+.realtor-container:hover {
+    transform: scale(1.02);
 }
 
 
@@ -268,3 +273,63 @@ code {
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+/*Residence-details*/
+.container {
+    width: auto;
+    max-width: 1200px;
+    margin: 20px;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+    .header h1 {
+        margin: 0;
+        font-size: 2em;
+        color: #2c3e50;
+    }
+
+.residence-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.residence-item {
+    flex: 1 1 calc(33.333% - 20px);
+    margin: 10px;
+    background: #ecf0f1;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .residence-item:hover {
+        transform: scale(1.02);
+    }
+
+.residence-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #2980b9;
+}
+
+.residence-detail {
+    font-size: 1em;
+    margin-bottom: 8px;
+}
+
+    .residence-detail span {
+        font-weight: bold;
+        color: #2c3e50;
+    }
