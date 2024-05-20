@@ -61,6 +61,7 @@
         {
             CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
+            await localStorage.SetItemAsStringAsync("lastPage", "/gr");
         }
         catch (Exception ex)
         {

@@ -7,39 +7,40 @@
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
 
-<h3>NewRealtorIndex</h3>
-@if (realtors == null)
-{
-    <h3>Loading...</h3>
-}
-else
-{
-    <table>
-        <thead>
-        <th>Bild</th>
-        <th>Förnamn</th>
-        <th>Efternamn</th>
-        <th>Email</th>
-        <th>Telefonnummer</th>
-        <th>Mäklarbyrå</th>
-        </thead>
-        <tbody>
-            @foreach (var realtor in FilteredNewRealtors())
-            {
-                <tr>
-                    <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px "/></td>
-                    <td>@realtor.FirstName</td>
-                    <td>@realtor.LastName</td>
-                    <td>@realtor.Email</td>
-                    <td>@realtor.PhoneNumber</td>
-                    <td>@realtor.Agency.AgencyName</td>
-                    <td><button class="btn btn-primary" @onclick="() => ChangeBool(realtor)">Godkänn</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
-}
+        <h3>NewRealtorIndex</h3>
+        @if (realtors == null)
+        {
+            <h3>Loading...</h3>
+        }
+        else
+        {
+            <table>
+                <thead>
+                <th>Bild</th>
+                <th>Förnamn</th>
+                <th>Efternamn</th>
+                <th>Email</th>
+                <th>Telefonnummer</th>
+                <th>Mäklarbyrå</th>
+                </thead>
+                <tbody>
+                    @foreach (var realtor in FilteredNewRealtors())
+                    {
+                        <tr>
+                            <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px " /></td>
+                            <td>@realtor.FirstName</td>
+                            <td>@realtor.LastName</td>
+                            <td>@realtor.Email</td>
+                            <td>@realtor.PhoneNumber</td>
+                            <td>@realtor.Agency.AgencyName</td>
+                            <td><button class="btn btn-primary" @onclick="() => ChangeBool(realtor)">Godkänn</button></td>
+                            <td><a class="btn btn-danger" href="remove-realtor/@realtor.Id">Ta Bort</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -55,13 +56,14 @@ else
         currentUser = await LocalStorage.GetItemAsync<AuthResponseDto>("currentUser");
         realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{currentUser.Id}");
         allRealtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/unapproved-realtors-by-agency/{realtor.Agency.AgencyId}");
+        await LocalStorage.SetItemAsStringAsync("lastPage", "/superrealtor/newrealtorindex");
 
         FilteredNewRealtors();
     }
 
     private IEnumerable<RealtorDto> FilteredNewRealtors()
     {
-        return realtors = allRealtors.Where(r => !r.Approved); 
+        return realtors = allRealtors.Where(r => !r.Approved);
     }
 
     private void ChangeBool(RealtorDto realtorFromList)

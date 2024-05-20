@@ -3,14 +3,17 @@
 @inject HttpClient Http
 @inject NavigationManager NavManager
 @inject ILocalStorageService LocalStorage
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
+        <h3>Ta Bort @(realtor.FirstName) @(realtor.LastName)?</h3>
 
-<h3>Ta Bort @(realtor.FirstName) @(realtor.LastName)?</h3>
-
-<button class="btn btn-danger" @onclick="@(() => RemoveRealtor(Id))">Ta Bort</button>
-<a class="btn btn-outline-primary" href="residences">Tillbaka</a>
+        <button class="btn btn-danger" @onclick="@(() => RemoveRealtor(Id))">Ta Bort</button>
+        <a class="btn btn-outline-primary" href="residences">Tillbaka</a>
 
 
-<p>@errorString</p>
+        <p>@errorString</p>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -51,7 +54,7 @@
         var response = await Http.DeleteAsync($"api/realtor/{id}");
         if (response.IsSuccessStatusCode)
         {
-            NavManager.NavigateTo("/gr");
+            NavManager.NavigateTo($"{await LocalStorage.GetItemAsStringAsync("lastPage")}");
         }
         else
         {
