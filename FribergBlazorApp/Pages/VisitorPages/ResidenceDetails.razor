@@ -1,6 +1,7 @@
 ﻿@* Author: Pontus Lerman *@
 @page "/recidencedetails/{id:int}"
 @inject HttpClient HttpClient
+@inject IOverlayService OverlayService
 
 @if (residence.Category == null)
 {
@@ -40,10 +41,19 @@ else
         <ul class="house-cards">
             @foreach (var p in residence.Pictures)
             {
-                <li style="background-image: url('@(p.Picture) ')" />
+                <li style="background-image: url('@(p.Picture) ')" @onclick="() => ShowOverlay(p.Picture)" />               
             }
         </ul>
     </div>
+    
+    @if (OverlayService.IsVisible)
+    {
+        <div class="overlay" @onclick="CloseOverlay">
+            <div class="overlay-content">
+                <img src="@OverlayService.ImageUrl" alt="Stor bild" />
+            </div>
+        </div>
+    }
 }
 
 @code {
@@ -55,5 +65,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         residence = await HttpClient.GetFromJsonAsync<ResidenceDto>($"api/Residence/{Id}");
+    }
+
+    private void ShowOverlay(string imageUrl)
+    {
+        OverlayService.ShowImage(imageUrl);
+    }
+
+    private void CloseOverlay()
+    {
+        OverlayService.HideImage();
     }
 }

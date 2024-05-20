@@ -16,6 +16,6 @@ builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-
+builder.Services.AddScoped<IOverlayService, OverlayService>();
 
 await builder.Build().RunAsync();
