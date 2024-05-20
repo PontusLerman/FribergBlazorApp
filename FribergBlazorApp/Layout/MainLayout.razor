@@ -19,6 +19,7 @@
                     <button class="btn btn-outline-danger"  @onclick="HandleLogout">Logga ut</button>
                 </Authorized>
                 <NotAuthorized>
+                    <button class="btn btn-primary" @onclick="GoToRegister">Registrera</button>
                     <button class="btn btn-primary" @onclick="GoToLogin">Logga in</button>
                 </NotAuthorized>
             </AuthorizeView>
@@ -62,6 +63,10 @@
     private void GoToLogin()
     {
         navigationManager.NavigateTo("/login");
+    }
+    private void GoToRegister()
+    {
+        navigationManager.NavigateTo("/register/realtor");
     }
 
     private async Task HandleLogout()
