@@ -32,9 +32,18 @@ namespace FribergWebAPI.Controllers
 			var residencePictures = await repo.GetAllAsync();
 			return Ok(residencePictures);
 		}
+        
+		[HttpGet]
+        [Route("pictures-by-residence/{residenceId}")]
+        public async Task<ActionResult<IEnumerable<ResidencePicture>>> GetResidencePictureByResidence(int residenceId)
+        {
+            var pictures = await repo.GetAllAsync();
+            var filteredList = pictures.Where(x => x.ResidenceId == residenceId);
+            return Ok(filteredList);
+        }
 
-		// GET: api/ResidencePictures/5
-		[HttpGet("{id}")]
+        // GET: api/ResidencePictures/5
+        [HttpGet("{id}")]
 		public async Task<ActionResult<ResidencePicture>> GetResidencePicture(int id)
 		{
 			var residencePicture = await repo.GetByIdAsync(id);
