@@ -27,19 +27,16 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Bild</th>
-                    <th>Bostads ID</th>
                     <th>Val</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var picture in FilteredItems())
                 {
+                    
                     <tr>
-                        <td>@picture.Id</td>
                         <td><img src="@picture.Picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
-                        <td>@picture.ResidenceId</td>
                         <td>
                             <button @onclick="() => ShowForm(PictureAction.Edit, picture)">Ändra</button>
                             <button @onclick="() => ShowConfirmationDialog(picture.Id)">Radera</button>
@@ -103,7 +100,7 @@
     {
         try
         {
-            pictures = await Http.GetFromJsonAsync<List<PictureDto>>(baseUrl);
+            pictures = await Http.GetFromJsonAsync<List<PictureDto>>($"{baseUrl}/pictures-by-residence/{Id}");
         }
         catch (Exception ex)
         {
