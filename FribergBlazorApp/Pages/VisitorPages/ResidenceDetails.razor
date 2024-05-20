@@ -1,4 +1,4 @@
-﻿@* Author: Pontus Lerman *@
+﻿@* Author: Pontus Lerman, co-author: Johan Krångh *@
 @page "/recidencedetails/{id:int}"
 @inject HttpClient HttpClient
 @inject IOverlayService OverlayService
@@ -14,31 +14,30 @@ else if (errorString != null)
 }
 else
 {
-    <h3>@residence.Category.Name @residence.Municipality.MunicipalityName</h3>
-    <div class="main">
-        <div style="display:flex; flex-direction:row">
-            <div style="display:flex; flex-direction:column; padding: 3rem;">
-                @* Lift out to classes in app.css *@
-                <p>Pris</p>
-                <p>Kategori</p>
-                <p>Adress</p>
-                <p>Kommun</p>
-                <p>Boyta</p>
-                <p>Mäklare</p>
-                <p>Epost</p>
-                <p>Telefonnr</p>
+
+    <div class="main">      
+        <div class="container">
+            <div class="header">
+                <h1>@residence.Category.Name @residence.Municipality.MunicipalityName</h1>
+
             </div>
-            <div style="display:flex; flex-direction:column; padding: 3rem;">
-                <p>@residence.StartingPrice</p>
-                <p>@residence.Category.Name</p>
-                <p>@residence.Address</p>
-                <p>@residence.Municipality.MunicipalityName</p>
-                <p>@residence.LivingArea</p>
-                <p>@residence.Realtor.FirstName @residence.Realtor.LastName</p>
-                <p>@residence.Realtor.Email</p>
-                <p>@residence.Realtor.PhoneNumber</p>
+            <div class="residence-list">
+                <div class="residence-item">
+                    <div class="residence-title">@residence.Address</div>
+                    <div class="residence-detail"><span>Pris:</span> @(residence.StartingPrice):-</div>
+                    <div class="residence-detail"><span>Boyta:</span> @(residence.LivingArea) Kvm</div>
+                    <div class="residence-detail"><span>Antal rum:</span> @(residence.NumberOfRooms)</div>
+                    <div class="residence-detail"><span>Byggår:</span> @(residence.ConstructionYear)</div>
+                    <div class="residence-detail"><span>Biyta:</span> @(residence.BiArea) Kvm</div>
+                    <div class="residence-detail"><span>Tomt:</span> @(residence.PlotArea) Kvm</div>
+                    <div class="residence-detail"><span>Månadskostnad:</span> @(residence.MonthlyFee):-</div>
+                    <div class="residence-detail"><span>Driftkostnad:</span> @(residence.OperatingCostPerYear):-</div>
+                    <div class="residence-detail">@(residence.ObjectDescription)</div>
+                </div>
             </div>
         </div>
+
+
         <ul class="house-cards">
             @foreach (var p in residence.Pictures)
             {
@@ -46,6 +45,28 @@ else
             }
         </ul>
     </div>
+
+    <div class="person-main">
+        <ul class="person-cards">
+
+                <div class="realtor-container">
+                <li style="background-image: url('@(residence.Realtor.Picture)')"></li>
+                <div class="realtor-info">
+                    <div class="info-column">
+                        <p>Namn:</p>
+                        <p>Email:</p>
+                        <p>Telefonnr:</p>
+                    </div>
+                    <div class="info-column">
+                    <p>@residence.Realtor.FirstName @residence.Realtor.LastName</p>
+                    <p>@residence.Realtor.Email</p>
+                    <p>@residence.Realtor.PhoneNumber</p>
+                    </div>
+                </div>
+        </div>
+            
+            </ul>
+        </div>
 
     @if (OverlayService.IsVisible)
     {

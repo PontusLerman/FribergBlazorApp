@@ -1,9 +1,13 @@
-﻿@*author: Johan Krångh, co-author: Pontus Lerman*@
+﻿@*author: Johan Krångh, co-author: Pontus Lerman, Christian Alp*@
 @page "/"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
 <h3 style="padding: .375rem .75rem;">Alla Bostäder</h3>
+
+<div style="position: absolute; right: 50px;">
+    <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." title="Sök efter Adress, Kommun, Årtal, Mäklare eller Mäklar Byrå."  />
+</div>
 
 @if (residences == null)
 {
@@ -40,10 +44,10 @@ else
         </div>
     </div>
     <div class="main">
-        <ul class="house-cards">
+        <ul style="padding: .375rem .75rem;" class="house-cards">
             @foreach (var residence in FilteredResidences())
             {
-                <li style="background-image: url('@(HouseCardBackground(residence.Id)) ')" @onclick="@(()=>NavigationManager.NavigateTo($"/recidencedetails/{residence.Id}"))">
+                <li style="background-image: url('@(HouseCardBackground(residence.Id)) ')" @onclick="@(() => NavigationManager.NavigateTo($"/recidencedetails/{residence.Id}"))">
                     <div class="house-info">
                         <span class="title">@residence.Category.Name @residence.Municipality.MunicipalityName</span>
                         @residence.ObjectDescription
@@ -57,11 +61,11 @@ else
 
 @code {
     private List<ResidenceDto>? residences;
-    private IEnumerable<ResidenceDto>? filteredRecidences;
     private List<CategoryDto>? categories;
-    private int selectedCategory = -1;
     private List<MunicipalityDto>? municipalities;
+    private int selectedCategory = -1;
     private int selectedMunicipality = -1;
+    private string? searchTerm;
     private string? errorString;
     private string DefaultPicture = "https://saterdesign.com/cdn/shop/products/property-placeholder_a9ec7710-1f1e-4654-9893-28c34e3b6399_600x.jpg?v=1500393334";
 
@@ -72,8 +76,6 @@ else
             residences = await Http.GetFromJsonAsync<List<ResidenceDto>>("api/residence");
             categories = await Http.GetFromJsonAsync<List<CategoryDto>>("api/category");
             municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
-
-            FilteredResidences();
         }
         catch (Exception ex)
         {
@@ -83,35 +85,44 @@ else
 
     protected string HouseCardBackground(int id)
     {
-        ResidenceDto residence = residences.FirstOrDefault(x => x.Id == id);
-        if (residence.Pictures.Count() != 0)
+        var residence = residences.FirstOrDefault(x => x.Id == id);
+        if (residence != null && residence.Pictures.Any())
         {
             return residence.Pictures[0].Picture;
         }
-        else { return DefaultPicture; }
+        else
+        {
+            return DefaultPicture;
+        }
     }
 
     protected IEnumerable<ResidenceDto> FilteredResidences()
     {
-        if (selectedCategory > -1 || selectedMunicipality > -1)
+        var filteredResidences = residences.AsEnumerable();
+
+        if (selectedCategory > -1)
         {
-            if (selectedCategory > -1 && selectedMunicipality == -1)
-            {
-                return filteredRecidences.Where(x => x.Category.Id == selectedCategory);
-            }
-            else if (selectedMunicipality > -1 && selectedCategory == -1)
-            {
-                return filteredRecidences.Where(x => x.Municipality.Id == selectedMunicipality);
-            }
-            else
-            {
-                return filteredRecidences.Where(x => x.Category.Id == selectedCategory).Where(x => x.Municipality.Id == selectedMunicipality);
-            }
+            filteredResidences = filteredResidences.Where(x => x.Category.Id == selectedCategory);
         }
-        else
+
+        if (selectedMunicipality > -1)
         {
-            return filteredRecidences = residences;
+            filteredResidences = filteredResidences.Where(x => x.Municipality.Id == selectedMunicipality);
         }
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredResidences = filteredResidences.Where(x =>
+                x.Address.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.ObjectDescription.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Municipality.MunicipalityName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Category.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Realtor.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || 
+                x.Realtor.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Realtor.Agency.AgencyName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.ConstructionYear.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return filteredResidences;
     }
 }
-

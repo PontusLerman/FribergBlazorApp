@@ -1,9 +1,13 @@
-﻿@*author: Johan Krångh*@
+﻿@*author: Johan Krångh, co-author: Christian Alp*@
 @page "/agencies"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
 <h3>Alla Mäklarbyråer</h3>
+
+<div style="position: absolute; right: 50px;">
+    <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+</div>
 
 @if (agencies == null)
 {
@@ -18,7 +22,7 @@ else
 {
     <div class="main">
         <ul class="house-cards">
-            @foreach (var agency in agencies)
+            @foreach (var agency in FilteredAgencies())
             {
                 <li style="background-image: url('@agency.AgencyLogoURL')" @onclick="@(()=>NavigationManager.NavigateTo($"/agencydetails/{agency.AgencyId}"))">
                     <div class="house-info">
@@ -34,6 +38,7 @@ else
 @code {
     private List<AgencyDto>? agencies;
     private string? errorString;
+    private string? searchTerm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,6 +50,20 @@ else
         {
             errorString = $"Exception: {ex.Message}";
         }
+    }
+
+    protected IEnumerable<AgencyDto> FilteredAgencies()
+    {
+        var filteredAgencies = agencies.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredAgencies = filteredAgencies.Where(x =>
+                x.AgencyName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.AgencyDescription.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return filteredAgencies;
     }
 }
 

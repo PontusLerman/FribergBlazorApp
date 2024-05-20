@@ -1,4 +1,4 @@
-﻿@* Author: Pontus Lerman *@
+﻿@* Author: Pontus Lerman, co-author: Christian Alp*@
 @page "/agencydetails/{id:int}"
 @inject HttpClient HttpClient
 
@@ -13,12 +13,16 @@ else if (errorString != null)
 }
 else
 {
+    <div style="position: absolute; right: 50px;">
+        <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+    </div>
+
     <h3>@agency.AgencyName</h3>
     <h4>@agency.AgencyDescription</h4>
     <div class="person-main">
         <ul class="person-cards">
             
-            @foreach (var realtor in realtors)
+            @foreach (var realtor in FilteredRealtors())
             {
                 <div class="realtor-container">
                     <li style="background-image: url('@(realtor.Picture)')" ></li>
@@ -46,11 +50,29 @@ else
     string errorString;
     AgencyDto agency = new AgencyDto();
     List<RealtorDto> realtors = new List<RealtorDto>();
+    public string? searchTerm;
 
     protected override async Task OnInitializedAsync()
     {
         agency = await HttpClient.GetFromJsonAsync<AgencyDto>($"api/agencies/{Id}");
         realtors = await HttpClient.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{Id}");
+    }
+
+    protected IEnumerable<RealtorDto> FilteredRealtors()
+    {
+        var filteredRealtors = realtors.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredRealtors = filteredRealtors.Where(x =>
+                x.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || 
+                x.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Agency.AgencyName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.PhoneNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return filteredRealtors;
     }
 }
 

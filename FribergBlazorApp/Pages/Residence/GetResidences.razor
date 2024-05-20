@@ -1,54 +1,59 @@
-﻿@*author: Johan Krångh*@
-@page "/residences"
+﻿@page "/residences"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HomeRedirect HomeRedirect
+
 <AuthorizeView>
     <Authorized>
-        <h3>Bostäder</h3>
+      
+<h3>Bostäder</h3>
 
-        @if (residences == null)
-        {
-            <p><em>Laddar...</em></p>
-            <p>@errorString</p>
-        }
-        else if (errorString != null)
-        {
-            <p>An error occurred: @errorString</p>
-        }
-        else
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Kategori</th>
-                        <th>Adress</th>
-                        <th>Kommun</th>
-                        <th>Boyta</th>
-                        <th>Pris</th>
-                        <th>Mäklare</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var residence in residences)
-                    {
-                        <tr>
-                            <td>@residence.Category.Name</td>
-                            <td>@residence.Address</td>
-                            <td>@residence.Municipality.MunicipalityName</td>
-                            <td>@residence.LivingArea</td>
-                            <td>@residence.StartingPrice</td>
-                            <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
-                            <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button></td>
-                            <td><a class="btn btn-danger" href="remove-residence/@residence.Id">Ta Bort</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        <button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
+@if (residences == null)
+{
+    <p><em>Laddar...</em></p>
+    <p>@errorString</p>
+}
+else if (errorString != null)
+{
+    <p>An error occurred: @errorString</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Kategori</th>
+                <th>Adress</th>
+                <th>Kommun</th>
+                <th>Boyta</th>
+                <th>Pris</th>
+                <th>Mäklare</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var residence in residences)
+            {
+                <tr>
+                    <td>@residence.Category.Name</td>
+                    <td>@residence.Address</td>
+                    <td>@residence.Municipality.MunicipalityName</td>
+                    <td>@residence.LivingArea</td>
+                    <td>@residence.StartingPrice</td>
+                    <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
+                    <td>
+                        <button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button>
+                        <a class="btn btn-danger" href="remove-residence/@residence.Id">Ta Bort</a>
+                        <button class="btn btn-info" @onclick="@(() => ManagePictures(residence.Id))">Hantera Bilder</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
     </Authorized>
 </AuthorizeView>
 
@@ -57,7 +62,6 @@
     public AuthResponseDto CurrentUser = new AuthResponseDto();
     public RealtorDto Realtor = new RealtorDto();
     private string? errorString;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,12 +79,14 @@
             }
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
 
-            //Gets different residence-list based on user role
             if (Realtor.Roles.Contains("SuperRealtor"))
             {
                 residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-agency/{Realtor.Agency.AgencyId}");
             }
-            else { residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}"); }
+            else
+            {
+                residences = await Http.GetFromJsonAsync<List<ResidenceDto>>($"api/residence/residences-by-realtor/{Realtor.Id}");
+            }
         }
         catch (Exception ex)
         {
@@ -96,5 +102,10 @@
     void EditResidence(int id)
     {
         NavigationManager.NavigateTo($"edit-residence/{id}");
+    }
+
+    void ManagePictures(int id)
+    {
+        NavigationManager.NavigateTo($"/residence-pictures/{id}");
     }
 }
