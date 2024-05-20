@@ -27,7 +27,6 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Bild</th>
                     <th>Val</th>
                 </tr>
@@ -35,8 +34,8 @@
             <tbody>
                 @foreach (var picture in FilteredItems())
                 {
+                    
                     <tr>
-                        <td>@picture.Id</td>
                         <td><img src="@picture.Picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
                         <td>
                             <button @onclick="() => ShowForm(PictureAction.Edit, picture)">Ändra</button>
