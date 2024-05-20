@@ -116,12 +116,16 @@
 
     private void ShowForm(PictureAction action, PictureDto picture = null)
     {
-        pictureAction = action;
-        if (picture != null)
+        if (pictures.Count < 40)
         {
-            this.picture = picture;
+            pictureAction = action;
+            if (picture != null)
+            {
+                this.picture = picture;
+            }
+            showForm = true;
         }
-        showForm = true;
+        else errorString = $"Du kan inte lägga till fler än {pictures.Count} bilder på ett hus.";
     }
 
     private void ShowConfirmationDialog(int pictureId)
