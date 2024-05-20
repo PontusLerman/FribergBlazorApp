@@ -6,57 +6,63 @@
 @inject NavigationManager NavigationManager
 @inject AuthService authService
 @inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
-@if (Realtor == null)
-{
-    <h3>Laddar...</h3>
-}  
-else
-{
+<AuthorizeView>
+    <Authorized>
+        @if (Realtor == null)
+        {
+            <h3>Laddar...</h3>
+        }
+        else
+        {
 
-<h3>Ändra @Realtor.FirstName @Realtor.LastName</h3>
+            <h3>Ändra @Realtor.FirstName @Realtor.LastName</h3>
 
 
-<EditForm Model="Realtor" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+            <EditForm Model="Realtor" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-    <div>
-        <label for="FirstName">Förnamn:</label>
-        <InputText id="FirstName" @bind-Value="Realtor.FirstName" class="form-control" />
-        <ValidationMessage For="@(() => Realtor.FirstName)" />
-    </div>
-    <div>
-        <label for="LastName">Efternamn:</label>
-        <InputText id="LastName" @bind-Value="Realtor.LastName" class="form-control" />
-        <ValidationMessage For="@(() => Realtor.LastName)" />
-    </div>
-    <div>
-        <label for="phone">Telefonnummer:</label>
-        <InputText id="phone" @bind-Value="Realtor.PhoneNumber" class="form-control" />
-        <ValidationMessage For="@(() => Realtor.PhoneNumber)" />
-    </div>
-    <div>
-        <label for="picture">Bild:</label>
-        <InputText id="picture" @bind-Value="Realtor.Picture" class="form-control" />
-        <ValidationMessage For="@(() => Realtor.Picture)" />
-    </div>
-    <div>
-        <label for="email">Email:</label>
-        <InputText id="email" @bind-Value="Realtor.Email" class="form-control" />
-        <ValidationMessage For="@(() => Realtor.Email)" />
-    </div>
-    <div>
-        <label for="password">Lösenord:</label>
-            <InputText type="password" placeholder="Lösenord" id="password" @bind-Value="Realtor.Password" class="form-control" />
-        <ValidationMessage For="@(() => Realtor.Password)" />
-    </div>
-      
-    <button type="submit" class="btn btn-primary">Spara</button>
-</EditForm>
+                <div>
+                    <label for="FirstName">Förnamn:</label>
+                    <InputText id="FirstName" @bind-Value="Realtor.FirstName" class="form-control" />
+                    <ValidationMessage For="@(() => Realtor.FirstName)" />
+                </div>
+                <div>
+                    <label for="LastName">Efternamn:</label>
+                    <InputText id="LastName" @bind-Value="Realtor.LastName" class="form-control" />
+                    <ValidationMessage For="@(() => Realtor.LastName)" />
+                </div>
+                <div>
+                    <label for="phone">Telefonnummer:</label>
+                    <InputText id="phone" @bind-Value="Realtor.PhoneNumber" class="form-control" />
+                    <ValidationMessage For="@(() => Realtor.PhoneNumber)" />
+                </div>
+                <div>
+                    <label for="picture">Bild:</label>
+                    <InputText id="picture" @bind-Value="Realtor.Picture" class="form-control" />
+                    <ValidationMessage For="@(() => Realtor.Picture)" />
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <InputText id="email" @bind-Value="Realtor.Email" class="form-control" />
+                    <ValidationMessage For="@(() => Realtor.Email)" />
+                </div>
+                <div>
+                    <label for="password">Lösenord:</label>
+                    <InputText type="password" placeholder="Lösenord" id="password" @bind-Value="Realtor.Password" class="form-control" />
+                    <ValidationMessage For="@(() => Realtor.Password)" />
+                </div>
 
-<p>@errorMessage</p>
-}
+                <button type="submit" class="btn btn-primary">Spara</button>
+            </EditForm>
+
+            <p>@errorMessage</p>
+        }
+    </Authorized>
+</AuthorizeView>
 @code {
     [Parameter]
     public string? Id { get; set; }
@@ -81,6 +87,8 @@ else
     {
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
         }
         catch (Exception ex)
@@ -94,8 +102,8 @@ else
         try
         {
             await Http.PutAsJsonAsync($"api/realtor/{Id}", Realtor);
-            if(CurrentUser.Roles.Contains("SuperRealtor"))
-            {                
+            if (CurrentUser.Roles.Contains("SuperRealtor"))
+            {
                 NavigationManager.NavigateTo("/gr");
             }
             else { NavigationManager.NavigateTo($"/agencydetails/{Realtor.Agency.AgencyId}"); }

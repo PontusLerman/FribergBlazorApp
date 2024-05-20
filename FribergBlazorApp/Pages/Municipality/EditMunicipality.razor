@@ -3,7 +3,11 @@
 @page "/edit-municipality/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
+<AuthorizeView>
+    <Authorized>
 @if(Id == null)
 {
     <h3>Lägg till kommun</h3>
@@ -21,14 +25,20 @@ else
     <button type="submit" class="btn btn-primary">Spara</button>
     <p>@errorString</p>
 </EditForm>
-
-
+    </Authorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
     public int? Id { get; set; }
     public MunicipalityDto Municipality { get; set; } = new MunicipalityDto();
     public string errorString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
+    }
 
     protected override async Task OnParametersSetAsync()
     {

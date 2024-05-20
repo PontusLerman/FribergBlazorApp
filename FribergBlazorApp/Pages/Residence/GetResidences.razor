@@ -3,53 +3,57 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
+<AuthorizeView>
+    <Authorized>
+        <h3>Bostäder</h3>
 
-<h3>Bostäder</h3>
-
-@if (residences == null)
-{
-    <p><em>Laddar...</em></p>
-    <p>@errorString</p>
-}
-else if (errorString != null)
-{
-    <p>An error occurred: @errorString</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kategori</th>
-                <th>Adress</th>
-                <th>Kommun</th>
-                <th>Boyta</th>
-                <th>Pris</th>
-                <th>Mäklare</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var residence in residences)
-            {
-                <tr>
-                    <td>@residence.Category.Name</td>
-                    <td>@residence.Address</td>
-                    <td>@residence.Municipality.MunicipalityName</td>
-                    <td>@residence.LivingArea</td>
-                    <td>@residence.StartingPrice</td>
-                    <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
-                    <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button></td>
-                    <td><a class="btn btn-danger" href="remove-residence/@residence.Id">Ta Bort</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-<button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
+        @if (residences == null)
+        {
+            <p><em>Laddar...</em></p>
+            <p>@errorString</p>
+        }
+        else if (errorString != null)
+        {
+            <p>An error occurred: @errorString</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Kategori</th>
+                        <th>Adress</th>
+                        <th>Kommun</th>
+                        <th>Boyta</th>
+                        <th>Pris</th>
+                        <th>Mäklare</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var residence in residences)
+                    {
+                        <tr>
+                            <td>@residence.Category.Name</td>
+                            <td>@residence.Address</td>
+                            <td>@residence.Municipality.MunicipalityName</td>
+                            <td>@residence.LivingArea</td>
+                            <td>@residence.StartingPrice</td>
+                            <td>@residence.Realtor.FirstName @residence.Realtor.LastName</td>
+                            <td><button class="btn btn-outline-primary" @onclick="@(() => EditResidence(residence.Id))">Ändra</button></td>
+                            <td><a class="btn btn-danger" href="remove-residence/@residence.Id">Ta Bort</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <button class="btn btn-primary" @onclick="AddResidence">Lägg till bostad</button>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private List<ResidenceDto>? residences;
-    //Used for 
     public AuthResponseDto CurrentUser = new AuthResponseDto();
     public RealtorDto Realtor = new RealtorDto();
     private string? errorString;
@@ -59,6 +63,8 @@ else
     {
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             try
             {
                 CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");

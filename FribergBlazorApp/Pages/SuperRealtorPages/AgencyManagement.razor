@@ -3,6 +3,8 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
 <AuthorizeView Roles="SuperRealtor">
     <Authorized>
@@ -68,9 +70,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            HomeRedirect.CheckIfSuperRealtor(authState.User);
             CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
             Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
             agency = await Http.GetFromJsonAsync<AgencyDto>($"api/agencies/{Realtor.Agency.AgencyId}");

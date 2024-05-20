@@ -2,21 +2,32 @@
 @page "/remove-municipality/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
-<h3>Ta Bort @(Municipality.MunicipalityName)?</h3>
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
+        <h3>Ta Bort @(Municipality.MunicipalityName)?</h3>
 
 
- <button class="btn btn-danger" @onclick="@(() => RemoveMunicipality(Id))">Ta Bort</button>
-<a class="btn btn-outline-primary" href="municipalities">Tillbaka</a>
-    
+        <button class="btn btn-danger" @onclick="@(() => RemoveMunicipality(Id))">Ta Bort</button>
+        <a class="btn btn-outline-primary" href="municipalities">Tillbaka</a>
 
-<p>@errorString</p>
 
+        <p>@errorString</p>
+    </Authorized>
+</AuthorizeView>
 @code {
     [Parameter]
     public int? Id { get; set; }
     public MunicipalityDto Municipality { get; set; } = new MunicipalityDto();
     private string? errorString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        HomeRedirect.CheckIfSuperRealtor(authState.User);
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -39,7 +50,7 @@
         }
         else
         {
-            errorString = response.ReasonPhrase;
+            errorString = "Du kan inte ta bort en kommun som används.";
         }
     }
 }

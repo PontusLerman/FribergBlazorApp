@@ -3,7 +3,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<h3 style ="padding: .375rem .75rem;">Alla Bostäder</h3>
+<h3 style="padding: .375rem .75rem;">Alla Bostäder</h3>
 
 @if (residences == null)
 {
@@ -18,26 +18,26 @@ else
 {
     <h5 style="padding: .375rem .75rem;">Filtrering:</h5>
     <div style="display:flex">
-    <div style="display:flex">
+        <div style="display:flex">
             <label style="padding: .375rem .75rem;" for="categoryName">Kategori:</label>
-        <InputSelect id="categoryName" @bind-Value="selectedCategory" class="form-control">
-            <option value="-1">Alla</option>
-            @foreach (var category in categories)
-            {
-                <option value="@category.Id">@category.Name</option>
-            }
-        </InputSelect>
-    </div>
-    <div style ="display:flex">
+            <InputSelect id="categoryName" @bind-Value="selectedCategory" class="form-control">
+                <option value="-1">Alla</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </InputSelect>
+        </div>
+        <div style="display:flex">
             <label style="padding: .375rem .75rem;" for="municipalityName">Kommun:</label>
             <InputSelect id="municipalityName" @bind-Value="selectedMunicipality" class="form-control">
-            <option value="-1">Alla</option>
+                <option value="-1">Alla</option>
                 @foreach (var municipality in municipalities)
-            {
+                {
                     <option value="@municipality.Id">@municipality.MunicipalityName</option>
-            }
-        </InputSelect>
-    </div>
+                }
+            </InputSelect>
+        </div>
     </div>
     <div class="main">
         <ul class="house-cards">

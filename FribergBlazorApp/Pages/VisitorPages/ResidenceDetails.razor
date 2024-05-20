@@ -17,7 +17,8 @@ else
     <h3>@residence.Category.Name @residence.Municipality.MunicipalityName</h3>
     <div class="main">
         <div style="display:flex; flex-direction:row">
-            <div style="display:flex; flex-direction:column; padding: 3rem;"> @* Lift out to classes in app.css *@
+            <div style="display:flex; flex-direction:column; padding: 3rem;">
+                @* Lift out to classes in app.css *@
                 <p>Pris</p>
                 <p>Kategori</p>
                 <p>Adress</p>
@@ -41,11 +42,11 @@ else
         <ul class="house-cards">
             @foreach (var p in residence.Pictures)
             {
-                <li style="background-image: url('@(p.Picture) ')" @onclick="() => ShowOverlay(p.Picture)" />               
+                <li style="background-image: url('@(p.Picture) ')" @onclick="() => ShowOverlay(p.Picture)" />
             }
         </ul>
     </div>
-    
+
     @if (OverlayService.IsVisible)
     {
         <div class="overlay" @onclick="CloseOverlay">
@@ -60,7 +61,7 @@ else
     [Parameter]
     public int Id { get; set; }
     string errorString;
-    ResidenceDto residence = new ResidenceDto() {};
+    ResidenceDto residence = new ResidenceDto() { };
 
     protected override async Task OnInitializedAsync()
     {

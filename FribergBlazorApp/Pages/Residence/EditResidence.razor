@@ -4,112 +4,118 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HomeRedirect HomeRedirect
 
-@if (Id == null)
-{
-    <h3>Lägg till bostad</h3>
-}
-else if (Residence.Category == null)
-{
-    <h3>Laddar...</h3>
-}
-else
-{
-    <h3>Ändra @Residence.Category.Name @Residence.Address</h3>
-}
+<AuthorizeView>
+    <Authorized Context="editresidence1">
+        @if (Id == null)
+        {
+            <h3>Lägg till bostad</h3>
+        }
+        else if (Residence.Category == null)
+        {
+            <h3>Laddar...</h3>
+        }
+        else
+        {
+            <h3>Ändra @Residence.Category.Name @Residence.Address</h3>
+        }
 
-<EditForm Model="Residence" OnSubmit="HandleSubmit">
-    <div>
-        <label for="Category">Kategori</label>
-        <InputSelect id="Category" @bind-Value="selectedCategory" class="form-control">
-            <option value="">Välj kategori</option>
-            @foreach (var c in categories)
-            {
-                <option value="@c.Id">@c.Name</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => Residence.Category)" />
-    </div>
-    <div>
-        <label for="address">Adress</label>
-        <InputText id="address" @bind-Value="Residence.Address" class="form-control" />
-        <ValidationMessage For="@(() => Residence.Address)" />
-    </div>
-    <div>
-        <label for="municipality">Kommun</label>
-        <InputSelect id="municipality" @bind-Value="selectedMunicipality" class="form-control">
-            <option value="">Välj kommun</option>
-            @foreach (var m in municipalities)
-            {
-                <option value="@m.Id">@m.MunicipalityName</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => Residence.Municipality)" />
-    </div>
-    <div>
-        <label for="StartingPrice">Utgångspris</label>
-        <InputNumber id="StartingPrice" @bind-Value="Residence.StartingPrice" class="form-control" />
-        <ValidationMessage For="@(() => Residence.StartingPrice)" />
-    </div>
-    <div>
-        <label for="LivingArea">Boyta</label>
-        <InputNumber id="LivingArea" @bind-Value="Residence.LivingArea" class="form-control" />
-        <ValidationMessage For="@(() => Residence.LivingArea)" />
-    </div>
-    <div>
-        <label for="BiArea">Biyta</label>
-        <InputNumber id="BiArea" @bind-Value="Residence.BiArea" class="form-control" />
-        <ValidationMessage For="@(() => Residence.BiArea)" />
-    </div>
-    <div>
-        <label for="PlotArea">Tomtstorlek</label>
-        <InputNumber id="PlotArea" @bind-Value="Residence.PlotArea" class="form-control" />
-        <ValidationMessage For="@(() => Residence.PlotArea)" />
-    </div>
-    <div>
-        <label for="ObjectDescription">Beskrivning</label>
-        <InputText id="ObjectDescription" @bind-Value="Residence.ObjectDescription" class="form-control" />
-        <ValidationMessage For="@(() => Residence.ObjectDescription)" />
-    </div>
-    <div>
-        <label for="NumberOfRooms">Rum</label>
-        <InputNumber id="NumberOfRooms" @bind-Value="Residence.NumberOfRooms" class="form-control" />
-        <ValidationMessage For="@(() => Residence.NumberOfRooms)" />
-    </div>
-    <div>
-        <label for="MonthlyFee">Månadskostnad</label>
-        <InputNumber id="MonthlyFee" @bind-Value="Residence.MonthlyFee" class="form-control" />
-        <ValidationMessage For="@(() => Residence.MonthlyFee)" />
-    </div>
-    <div>
-        <label for="OperatingCostPerYear">Driftkostnad</label>
-        <InputNumber id="OperatingCostPerYear" @bind-Value="Residence.OperatingCostPerYear" class="form-control" />
-        <ValidationMessage For="@(() => Residence.OperatingCostPerYear)" />
-    </div>
-    <div>
-        <label for="ConstructionYear">Byggår</label>
-        <InputNumber id="ConstructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
-        <ValidationMessage For="@(() => Residence.ConstructionYear)" />
-    </div>
-     @* Lets SuperRealtor set Realtor from own Agency *@
-     <AuthorizeView Roles="SuperRealtor">
-    <Authorized Context="authContext">
-       <div>
-        <label for="Realtor">Mäklare</label>
-        <InputSelect id="Realtor" @bind-Value="selectedRealtor" class="form-control">
-            <option value="">Välj mäklare</option>
-            @foreach (var r in realtors)
-            {
-                <option value="@r.Id">@r.FirstName @r.LastName</option>
-            }
-        </InputSelect>
-    </div> 
+        <EditForm Model="Residence" OnSubmit="HandleSubmit">
+            <div>
+                <label for="Category">Kategori</label>
+                <InputSelect id="Category" @bind-Value="selectedCategory" class="form-control">
+                    <option value="">Välj kategori</option>
+                    @foreach (var c in categories)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => Residence.Category)" />
+            </div>
+            <div>
+                <label for="address">Adress</label>
+                <InputText id="address" @bind-Value="Residence.Address" class="form-control" />
+                <ValidationMessage For="@(() => Residence.Address)" />
+            </div>
+            <div>
+                <label for="municipality">Kommun</label>
+                <InputSelect id="municipality" @bind-Value="selectedMunicipality" class="form-control">
+                    <option value="">Välj kommun</option>
+                    @foreach (var m in municipalities)
+                    {
+                        <option value="@m.Id">@m.MunicipalityName</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => Residence.Municipality)" />
+            </div>
+            <div>
+                <label for="StartingPrice">Utgångspris</label>
+                <InputNumber id="StartingPrice" @bind-Value="Residence.StartingPrice" class="form-control" />
+                <ValidationMessage For="@(() => Residence.StartingPrice)" />
+            </div>
+            <div>
+                <label for="LivingArea">Boyta</label>
+                <InputNumber id="LivingArea" @bind-Value="Residence.LivingArea" class="form-control" />
+                <ValidationMessage For="@(() => Residence.LivingArea)" />
+            </div>
+            <div>
+                <label for="BiArea">Biyta</label>
+                <InputNumber id="BiArea" @bind-Value="Residence.BiArea" class="form-control" />
+                <ValidationMessage For="@(() => Residence.BiArea)" />
+            </div>
+            <div>
+                <label for="PlotArea">Tomtstorlek</label>
+                <InputNumber id="PlotArea" @bind-Value="Residence.PlotArea" class="form-control" />
+                <ValidationMessage For="@(() => Residence.PlotArea)" />
+            </div>
+            <div>
+                <label for="ObjectDescription">Beskrivning</label>
+                <InputText id="ObjectDescription" @bind-Value="Residence.ObjectDescription" class="form-control" />
+                <ValidationMessage For="@(() => Residence.ObjectDescription)" />
+            </div>
+            <div>
+                <label for="NumberOfRooms">Rum</label>
+                <InputNumber id="NumberOfRooms" @bind-Value="Residence.NumberOfRooms" class="form-control" />
+                <ValidationMessage For="@(() => Residence.NumberOfRooms)" />
+            </div>
+            <div>
+                <label for="MonthlyFee">Månadskostnad</label>
+                <InputNumber id="MonthlyFee" @bind-Value="Residence.MonthlyFee" class="form-control" />
+                <ValidationMessage For="@(() => Residence.MonthlyFee)" />
+            </div>
+            <div>
+                <label for="OperatingCostPerYear">Driftkostnad</label>
+                <InputNumber id="OperatingCostPerYear" @bind-Value="Residence.OperatingCostPerYear" class="form-control" />
+                <ValidationMessage For="@(() => Residence.OperatingCostPerYear)" />
+            </div>
+            <div>
+                <label for="ConstructionYear">Byggår</label>
+                <InputNumber id="ConstructionYear" @bind-Value="Residence.ConstructionYear" class="form-control" />
+                <ValidationMessage For="@(() => Residence.ConstructionYear)" />
+            </div>
+            @* Lets SuperRealtor set Realtor from own Agency *@
+            <AuthorizeView Roles="SuperRealtor">
+                <Authorized Context="editrecidense2">
+                    <div>
+                        <label for="Realtor">Mäklare</label>
+                        <InputSelect id="Realtor" @bind-Value="selectedRealtor" class="form-control">
+                            <option value="">Välj mäklare</option>
+                            @foreach (var r in realtors)
+                            {
+                                <option value="@r.Id">@r.FirstName @r.LastName</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+            <ValidationMessage For="@(() => Residence.Realtor)" />
+            <button type="submit" class="btn btn-primary">Spara</button>
+            <p>@errorString</p>
+        </EditForm>
     </Authorized>
-</AuthorizeView>   
-        <ValidationMessage For="@(() => Residence.Realtor)" />
-    <button type="submit" class="btn btn-primary">Spara</button>
-    <p>@errorString</p>
-</EditForm>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -122,7 +128,7 @@ else
     public List<CategoryDto> categories = new List<CategoryDto>();
     public List<MunicipalityDto> municipalities = new List<MunicipalityDto>();
     public List<RealtorDto> realtors = new List<RealtorDto>();
-    //Fields for bind-Value 
+    //Fields for bind-Value
     private int? selectedMunicipality;
     private int? selectedCategory;
     private string? selectedRealtor;
@@ -144,6 +150,8 @@ else
     {
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             try
             {
                 CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
@@ -166,21 +174,21 @@ else
 
     async Task HandleSubmit()
     {
-try
-      {
-        Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
-        Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
-        
-        //Sets Residence.Realtor differently depending on user role
-        if (Realtor.Roles.Contains("SuperRealtor"))
+        try
         {
-            Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
-        }
-        else { Residence.Realtor = Realtor; }
+            Residence.Category = await Http.GetFromJsonAsync<CategoryDto>($"api/category/{selectedCategory}");
+            Residence.Municipality = await Http.GetFromJsonAsync<MunicipalityDto>($"api/municipalities/{selectedMunicipality}");
 
-        Residence.Realtor.Password = "s"; //Needed to post form, does not change password on Realtor TODO: Find better work-around
+            //Sets Residence.Realtor differently depending on user role
+            if (Realtor.Roles.Contains("SuperRealtor"))
+            {
+                Residence.Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{selectedRealtor}");
+            }
+            else { Residence.Realtor = Realtor; }
 
-        if (Id != null)
+            Residence.Realtor.Password = "s"; //Needed to post form, does not change password on Realtor TODO: Find better work-around
+
+            if (Id != null)
             {
                 var result = await Http.PutAsJsonAsync($"api/residence/{Id}", Residence);
                 string json = await result.Content.ReadAsStringAsync(); //Delete this!
