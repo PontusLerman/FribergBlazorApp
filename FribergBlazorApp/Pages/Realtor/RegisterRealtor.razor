@@ -6,12 +6,10 @@
 @inject NavigationManager NavigationManager
 @inject AuthService authService
 
-<h3>RegisterRealtor</h3>
+<h3>Registera mäklare och mäklarbyrå</h3>
 
 <EditForm Model="realtor" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
-
     <div>
         <label for="FirstName">Förnamn:</label>
         <InputText id="FirstName" @bind-Value="realtor.FirstName" class="form-control" />

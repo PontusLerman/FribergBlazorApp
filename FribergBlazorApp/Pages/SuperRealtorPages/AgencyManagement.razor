@@ -1,0 +1,92 @@
+﻿@* Author: Pontus Lerman *@
+@page "/agencymanagement"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService localStorage
+
+<AuthorizeView Roles="SuperRealtor">
+    <Authorized>
+
+        @if (Realtor.Agency == null)
+        {
+            <h3>Loading...</h3>
+        }
+        else if (errorString != null)
+        {
+            <h3>@errorString</h3>
+        }
+        else
+        {
+            <h3>@agency.AgencyName</h3>
+            <div style="display:flex; flex-direction:column;">
+                <div style="display:flex;">
+                    <img src="@agency.AgencyLogoURL" />
+                </div>
+                <div style="display:flex;">
+                    <h5>@agency.AgencyDescription</h5>
+                </div>
+            </div>
+            <button class="btn btn-warning" onclick=@(() =>NavigationManager.NavigateTo($"/cea/{agency.AgencyId}"))>Ändra</button>
+            <h3>Mäklare</h3>
+            <table>
+                <thead>
+                <th>Bild</th>
+                <th>Förnamn</th>
+                <th>Efternamn</th>
+                <th>Email</th>
+                <th>Telefonnummer</th>
+                <th>Mäklarbyrå</th>
+                </thead>
+                <tbody>
+                    @foreach (var realtor in realtors)
+                    {
+                        <tr>
+                            <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px " /></td>
+                            <td>@realtor.FirstName</td>
+                            <td>@realtor.LastName</td>
+                            <td>@realtor.Email</td>
+                            <td>@realtor.PhoneNumber</td>
+                            <td>@realtor.Agency.AgencyName</td>
+                            <td><button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/edit-realtor/{realtor.Id}"))>Ändra</button></td>
+                            <td><a class="btn btn-danger" href="remove-realtor/@realtor.Id">Ta Bort</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="btn btn-primary" onclick=@(() =>NavigationManager.NavigateTo($"/register/realtor"))>Skapa</button>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    List<RealtorDto> realtors = new List<RealtorDto>();
+    public AuthResponseDto CurrentUser = new AuthResponseDto();
+    public RealtorDto Realtor = new RealtorDto();
+    AgencyDto agency;
+    string errorString;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+            Realtor = await Http.GetFromJsonAsync<RealtorDto>($"api/realtor/{CurrentUser.Id}");
+            agency = await Http.GetFromJsonAsync<AgencyDto>($"api/agencies/{Realtor.Agency.AgencyId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching current user: {ex.Message}");
+        }
+
+        try
+        {
+            realtors = await Http.GetFromJsonAsync<List<RealtorDto>>($"api/realtor/realtors-by-agency/{Realtor.Agency.AgencyId}");
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception: {ex.Message}";
+        }
+    }
+}
