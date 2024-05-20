@@ -13,7 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-//author: Christian Alp, Pontus Lerman
+//author: Christian Alp, Pontus Lerman, co-author: Johan Krångh
 namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]
@@ -117,7 +117,11 @@ namespace FribergWebAPI.Controllers
 			realtor.Approved = model.Approved;
 			realtor.Agency = agency;
 
-			var result = await _userManager.UpdateAsync(realtor);
+            // Hash the password
+            var passwordHasher = new PasswordHasher<Realtor>();
+            realtor.PasswordHash = passwordHasher.HashPassword(realtor, model.Password);
+
+            var result = await _userManager.UpdateAsync(realtor);
 			if (result.Succeeded)
 			{
 				return NoContent();

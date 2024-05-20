@@ -5,6 +5,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject AuthService authService
+@inject ILocalStorageService localStorage
 
 @if (Realtor == null)
 {
@@ -60,6 +61,7 @@ else
     [Parameter]
     public string? Id { get; set; }
     public RealtorDto Realtor { get; set; } = new RealtorDto();
+    public AuthResponseDto CurrentUser = new AuthResponseDto();
     public string errorMessage { get; set; }
 
     protected override async Task OnParametersSetAsync()
@@ -77,6 +79,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching current user: {ex.Message}");
+        }
     }
 
     private async Task HandleSubmit()
@@ -84,7 +94,11 @@ else
         try
         {
             await Http.PutAsJsonAsync($"api/realtor/{Id}", Realtor);
-            NavigationManager.NavigateTo("/gr");
+            if(CurrentUser.Roles.Contains("SuperRealtor"))
+            {                
+                NavigationManager.NavigateTo("/gr");
+            }
+            else { NavigationManager.NavigateTo($"/agencydetails/{Realtor.Agency.AgencyId}"); }
         }
         catch (Exception ex)
         {
