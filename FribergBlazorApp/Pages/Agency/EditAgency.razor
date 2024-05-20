@@ -1,11 +1,12 @@
-﻿@page "/cea/{id:int}"
+﻿@* Author: Pontus Lerman Co-author: Christian Alp*@
+@page "/cea/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HomeRedirect HomeRedirect
 
 <AuthorizeView Roles="SuperRealtor">
-    <Authorized>
+    <Authorized Context="editagency1">
         @if (Id == null)
         {
             <h3>Ny mäklarbyrå</h3>
@@ -15,7 +16,7 @@
             <h3>Ändra @agency.AgencyName</h3>
         }
 
-        <EditForm Model="agency" OnSubmit="HandleSubmit">
+        <EditForm Model="agency" OnSubmit="HandleSubmit" Context="editagency2">
             <div>
                 <label for="agencyLogoURL">Mäklarbyrå logotyp url:</label>
                 <InputText id="agencyLogoURL" @bind-Value="agency.AgencyLogoURL" class="form-control" />

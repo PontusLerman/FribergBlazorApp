@@ -10,7 +10,7 @@
 @inject HomeRedirect HomeRedirect
 
 <AuthorizeView>
-    <Authorized>
+    <Authorized Context="editrealtor1">
         @if (Realtor == null)
         {
             <h3>Laddar...</h3>
@@ -20,8 +20,7 @@
 
             <h3>Ändra @Realtor.FirstName @Realtor.LastName</h3>
 
-
-            <EditForm Model="Realtor" OnValidSubmit="HandleSubmit">
+            <EditForm Model="Realtor" OnValidSubmit="HandleSubmit" Context="editrealtor2">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
