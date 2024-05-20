@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-//author: Christian
+//author: Christian Alp
 namespace FribergBlazorApp.Helpers
 {
 	public class SearchFilter<T>

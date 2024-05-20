@@ -1,4 +1,4 @@
-﻿@* Author: Pontus Lerman *@
+﻿@*author: Pontus Lerman, co-author: Christian Alp *@
 @page "/agencymanagement"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -18,6 +18,11 @@
         else
         {
             <h3>@agency.AgencyName</h3>
+
+            <div style="position: absolute; right: 50px;">
+                <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+            </div>
+
             <div style="display:flex; flex-direction:column;">
                 <div style="display:flex;">
                     <img src="@agency.AgencyLogoURL" />
@@ -38,7 +43,7 @@
                 <th>Mäklarbyrå</th>
                 </thead>
                 <tbody>
-                    @foreach (var realtor in realtors)
+                    @foreach (var realtor in FilteredAgencyRealtor())
                     {
                         <tr>
                             <td><img src="@realtor.Picture" style="max-height: 150px; max-width: 150px " /></td>
@@ -64,6 +69,7 @@
     public RealtorDto Realtor = new RealtorDto();
     AgencyDto agency;
     string errorString;
+    public string? searchTerm;
 
 
     protected override async Task OnInitializedAsync()
@@ -88,5 +94,21 @@
         {
             errorString = $"Exception: {ex.Message}";
         }
+    }
+
+    protected IEnumerable<RealtorDto> FilteredAgencyRealtor()
+    {
+        var filteredAgencyRealtor = realtors.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredAgencyRealtor = filteredAgencyRealtor.Where(x =>
+                x.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.PhoneNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return filteredAgencyRealtor;
     }
 }
