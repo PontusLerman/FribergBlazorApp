@@ -1,4 +1,4 @@
-﻿@*author: Johan Krångh, co-author: Pontus Lerman*@
+﻿@*author: Johan Krångh, co-author: Pontus Lerman, Christian Alp*@
 @page "/"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -6,7 +6,7 @@
 <h3 style="padding: .375rem .75rem;">Alla Bostäder</h3>
 
 <div style="position: absolute; right: 50px;">
-    <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
+    <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." title="Sök efter Adress, Kommun, Årtal, Mäklare eller Mäklar Byrå."  />
 </div>
 
 @if (residences == null)
@@ -117,7 +117,10 @@ else
                 x.ObjectDescription.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                 x.Municipality.MunicipalityName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                 x.Category.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                x.Realtor.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                x.Realtor.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || 
+                x.Realtor.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Realtor.Agency.AgencyName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.ConstructionYear.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
         return filteredResidences;
