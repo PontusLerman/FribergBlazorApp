@@ -56,7 +56,7 @@
         try
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
+            await HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             municipalities = await Http.GetFromJsonAsync<List<MunicipalityDto>>("api/municipalities");
         }
         catch (Exception ex)

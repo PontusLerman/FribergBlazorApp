@@ -151,7 +151,7 @@
         try
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
+            await HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
             try
             {
                 CurrentUser = await localStorage.GetItemAsync<AuthResponseDto>("currentUser");

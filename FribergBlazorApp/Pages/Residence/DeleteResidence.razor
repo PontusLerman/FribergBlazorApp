@@ -25,7 +25,7 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
+        await HomeRedirect.CheckIfDefaultRealtorOrSuperRealtor(authState.User);
     }
 
     protected override async Task OnParametersSetAsync()
