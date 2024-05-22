@@ -10,12 +10,8 @@
         {
             <h3>Bilder</h3>
 
-            //<div style="position: absolute; right: 50px;">
-               // <input type="text" @bind:event="oninput" @bind="searchTerm" placeholder="Sök..." />
-           // </div>
-
             <div>
-                <button @onclick="() => ShowForm(PictureAction.Create)">Skapa en ny bild</button>
+                <button class="btn btn-primary" @onclick="() => ShowForm(PictureAction.Create)">Skapa en ny bild</button>
             </div>
       
     @if (pictures == null)
@@ -42,8 +38,7 @@
                     <tr>
                         <td><img src="@picture.Picture" alt="Picture" style="max-width: 200px; max-height: 200px;" /></td>
                         <td>
-                            <button @onclick="() => ShowForm(PictureAction.Edit, picture)">Ändra</button>
-                            <button @onclick="() => ShowConfirmationDialog(picture.Id)">Radera</button>
+                            <button class="btn btn-danger" @onclick="() => ShowConfirmationDialog(picture.Id)">Radera</button>
                         </td>
                     </tr>
                 }
@@ -59,8 +54,8 @@
         <div>
             <h3>@(pictureAction == PictureAction.Create ? "Skapa en ny bild" : "Redigera bild")</h3>
             <input type="text" @bind="picture.Picture" />
-            <button @onclick="SavePicture">@(pictureAction == PictureAction.Create ? "Skapa" : "Spara")</button>
-            <button @onclick="Cancel">Avbryt</button>
+            <button class="btn btn-primary" @onclick="SavePicture">@(pictureAction == PictureAction.Create ? "Skapa" : "Spara")</button>
+            <button class="btn btn-outline-primary" @onclick="Cancel">Avbryt</button>
         </div>      
     }
 }
@@ -70,8 +65,8 @@
             <div>
                 <h3>Radera bild</h3>
                 <p>Är du säker på att du vill radera denna bild?</p>
-                <button @onclick="() => DeletePicture(selectedPictureId)">Ja, Radera</button>
-                <button @onclick="Cancel">Avbryt</button>
+                <button class="btn btn-danger" @onclick="() => DeletePicture(selectedPictureId)">Ja, Radera</button>
+                <button class="btn btn-outline-primary" @onclick="Cancel">Avbryt</button>
             </div>
         }
     </Authorized>

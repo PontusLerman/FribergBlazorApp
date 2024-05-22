@@ -17,7 +17,7 @@
             </div>
 
             <div>
-                <button @onclick="() => ShowForm(CategoryAction.Create)">Skapa en ny kategori</button>
+                <button class="btn btn-primary" @onclick="() => ShowForm(CategoryAction.Create)">Skapa en ny kategori</button>
             </div>
 
             @if (categories == null)
@@ -45,8 +45,8 @@
                                 <td>@category.Id</td>
                                 <td>@category.Name</td>
                                 <td>
-                                    <button @onclick="() => ShowForm(CategoryAction.Edit, category)">Ändra</button>
-                                    <button @onclick="() => ShowConfirmationDialog(category.Id)">Radera </button>
+                                    <button class="btn btn-outline-primary" @onclick="() => ShowForm(CategoryAction.Edit, category)">Ändra</button>
+                                    <button class="btn btn-danger" @onclick="() => ShowConfirmationDialog(category.Id)">Radera </button>
                                 </td>
                             </tr>
                         }
@@ -62,8 +62,8 @@
                 <div>
                     <h3>@(categoryAction == CategoryAction.Create ? "Skapa en ny kategori" : "Redigera kategori")</h3>
                     <input type="text" @bind="category.Name" />
-                    <button @onclick="SaveCategory">@(categoryAction == CategoryAction.Create ? "Skapa" : "Spara")</button>
-                    <button @onclick="Cancel">Avbryt</button>
+                    <button class="btn btn-primary" @onclick="SaveCategory">@(categoryAction == CategoryAction.Create ? "Skapa" : "Spara")</button>
+                    <button class="btn btn-outline-primary" @onclick="Cancel">Avbryt</button>
                 </div>
             }
         }
@@ -73,8 +73,8 @@
             <div>
                 <h3>Radera kategori</h3>
                 <p>Är du säker på att du vill radera denna kategori?</p>
-                <button @onclick="() => DeleteCategory(selectedCategoryId)">Ja, Radera</button>
-                <button @onclick="Cancel">Avbryt</button>
+                <button class="btn btn-danger" @onclick="() => DeleteCategory(selectedCategoryId)">Ja, Radera</button>
+                <button class="btn btn-outline" @onclick="Cancel">Avbryt</button>
             </div>
         }
     </Authorized>
