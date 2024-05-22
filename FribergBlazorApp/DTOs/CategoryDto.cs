@@ -1,5 +1,4 @@
-﻿
-// Christian Alp, Johan Krångh, Pontus Lerman
+﻿// Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergBlazorApp.DTOs
 {
 	public class CategoryDto

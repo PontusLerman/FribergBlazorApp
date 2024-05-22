@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp, Johan Krångh, Pontus Lerman
+﻿//author: Christian Alp, Johan Krångh, Pontus Lerman
 using System.ComponentModel.DataAnnotations;
 
 namespace FribergBlazorApp.DTOs

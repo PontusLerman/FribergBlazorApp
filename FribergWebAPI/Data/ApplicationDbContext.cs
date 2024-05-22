@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//author: Christian Alp, Johan Krångh, Pontus Lerman
+using Microsoft.EntityFrameworkCore;
 using FribergWebAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
@@ -12,15 +13,10 @@ namespace FribergWebAPI.Data
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options)
 		{ 
 		}
-	
-		//author: Pontus Lerman
+
 		public DbSet<Realtor> Realtors { get; set; }
-		
-		//author: Johan Krångh
 		public DbSet<Agency> Agency { get; set; } = default!;
 		public DbSet<Municipality> Municipality { get; set; } = default!;
-		
-		//author: Christian Alp
 		public DbSet<Residence> Residences { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<ResidencePicture> ResidencePicture { get; set; } = default!;

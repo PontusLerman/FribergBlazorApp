@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp
+﻿//author: Christian Alp
 namespace FribergBlazorApp.DTOs
 {
 	public class AuthResponseDto

@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+//author: Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergBlazorApp.DTOs
 {
   public class PictureDto

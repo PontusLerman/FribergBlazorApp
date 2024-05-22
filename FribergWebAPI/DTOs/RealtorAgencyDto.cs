@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp, Johan Krångh
+﻿//author: Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergWebAPI.DTOs
 {
 	public class RealtorAgencyDto

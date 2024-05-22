@@ -1,4 +1,5 @@
-﻿@page "/residences"
+﻿@* author: Johan Krångh, Pontus Lerman, Christian Alp*@
+@page "/residences"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorage
@@ -6,8 +7,7 @@
 @inject HomeRedirect HomeRedirect
 
 <AuthorizeView>
-    <Authorized>
-      
+    <Authorized>     
 <h3>Bostäder</h3>
 
 @if (residences == null)

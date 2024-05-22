@@ -9,7 +9,7 @@ using FribergWebAPI.Data;
 using FribergWebAPI.Models;
 using FribergWebAPI.Data.Interfaces;
 
-//author: Christian Alp
+//author: Christian Alp, Johan Krångh, Pontus Lerman 
 namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]

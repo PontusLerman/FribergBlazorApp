@@ -1,3 +1,4 @@
+//author: Christian Alp
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using System.Text.Json;

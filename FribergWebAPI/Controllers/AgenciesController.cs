@@ -10,7 +10,7 @@ using FribergWebAPI.Data.Interfaces;
 using FribergWebAPI.DTOs;
 using AutoMapper;
 
-//author:  Christian Alp, Johan Krångh
+//author: Christian Alp, Johan Krångh
 namespace FribergWebAPI.Controllers
 {
 	[Route("api/[controller]")]

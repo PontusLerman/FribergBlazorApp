@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp, Johan Krångh, Pontus Lerman
+﻿//author: Christian Alp, Johan Krångh, Pontus Lerman
 namespace FribergBlazorApp.DTOs
 {
 	public class AgencyDto
@@ -8,6 +7,5 @@ namespace FribergBlazorApp.DTOs
 		public string AgencyName { get; set; }
 		public string AgencyDescription { get; set; }
 		public string? AgencyLogoURL { get; set; } = "";
-		//public List<RealtorDto>? Employees { get; set; }
 	}
 }

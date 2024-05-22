@@ -39,7 +39,6 @@ namespace FribergWebAPI.Data.Repositories
 		public async Task UpdateAsync(Agency agency)
 		{
 			applicationDbContext.Update(agency);
-			//applicationDbContext.Entry(agency.Employees).State = EntityState.Unchanged;
 			await applicationDbContext.SaveChangesAsync();
 		}
 	}

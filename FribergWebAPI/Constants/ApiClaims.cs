@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp
+﻿//author: Christian Alp
 namespace FribergWebAPI.Constants
 {
     public static class ApiClaims

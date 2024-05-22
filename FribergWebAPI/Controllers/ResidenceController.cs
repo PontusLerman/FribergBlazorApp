@@ -25,7 +25,6 @@ namespace FribergWebAPI.Controllers
 		public async Task<ActionResult<IEnumerable<CRUDResidenceDto>>> GetResidence()
 		{
 			var residence = await residenceRepository.GetAll();
-			//CrudResidenceDto or the one now?
 			var residenceDtos = mapper.Map<List<CRUDResidenceDto>>(residence);
 			return Ok(residenceDtos);
 		}

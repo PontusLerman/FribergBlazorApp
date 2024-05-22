@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp
+﻿//author: Christian Alp
 namespace FribergWebAPI.DTOs
 {
     public class RealtorCreateAgency : AgencyDto

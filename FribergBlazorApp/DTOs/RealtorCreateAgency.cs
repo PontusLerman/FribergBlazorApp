@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp
+﻿//author: Christian Alp
 using System.ComponentModel.DataAnnotations;
 
 namespace FribergBlazorApp.DTOs

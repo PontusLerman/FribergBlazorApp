@@ -12,12 +12,15 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7280/") });
 
+//author: Christian Alp
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+//author: Johan Krångh
 builder.Services.AddScoped<IOverlayService, OverlayService>();
+//author: Pontus Lerman
 builder.Services.AddScoped<HomeRedirect>();
 
 await builder.Build().RunAsync();

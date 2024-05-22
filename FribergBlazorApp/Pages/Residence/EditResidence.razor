@@ -1,4 +1,4 @@
-﻿@* author: Johan Krångh *@
+﻿@* author: Johan Krångh, Pontus Lerman*@
 @page "/edit-residence"
 @page "/edit-residence/{Id:int}"
 @inject HttpClient Http
@@ -170,7 +170,6 @@
             errorString = ex.Message;
         }
     }
-
 
     async Task HandleSubmit()
     {

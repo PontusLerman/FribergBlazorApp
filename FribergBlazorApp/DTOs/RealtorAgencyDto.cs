@@ -1,5 +1,4 @@
-﻿
-//author: Christian Alp, Johan Krångh
+﻿//author: Christian Alp, Johan Krångh
 namespace FribergBlazorApp.DTOs
 {
 	public class RealtorAgencyDto
